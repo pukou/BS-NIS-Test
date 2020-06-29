@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.nurserecord.NurseRecordConfigMapper">
+
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+
+	<select id="getNurseRecordStructureList" flushCache="false" resultType="Structure" useCache="true">
+		SELECT LBBH, SJLBBH, LBMC,XSMC
+		FROM V_MOB_EMR_BLLB
+		WHERE (SJLBBH = 2000049) AND SJLBBH != LBBH
+	</select>
+
+	<select id="getStructrueListForNurse" flushCache="false" resultType="Structure" useCache="true">
+		SELECT LBBH,YDLBBM,SJLBBH,LBMC,XSMC
+		FROM V_MOB_EMR_BLLB
+		WHERE SJLBBH='2000049'
+	</select>
+
+	<select id="getNurseRecordTemplateList" flushCache="true" resultType="Template">
+		SELECT JGBH,BLLB,MBLB,JGMC,SSKS,DLYM,BZXX
+		FROM ENR_JG01
+		WHERE  ZXBZ = 0
+		<if test="LBBH == null and KSDM == null">
+			AND BLLB='2000049'
+		</if>
+		<if test="LBBH != null and KSDM != null">
+			AND BLLB='2000049'AND MBLB=#{LBBH} AND SSKS LIKE '%,${KSDM},%'
+		</if>
+		<if test="KSDM != null and LBBH == null">
+			AND BLLB='2000049' AND SSKS LIKE '%,${KSDM},%'
+		</if>
+		<if test="LBBH != null and KSDM == null">
+			AND BLLB='2000049' AND MBLB=#{LBBH}
+		</if>
+		ORDER BY PLCX
+	</select>
+
+	<select id="getNurseRecordTemplateByJgbh" flushCache="true" resultType="Template">
+		SELECT JGBH,BLLB,MBLB FROM ENR_JG01 WHERE JGBH = #{JGBH}
+	</select>
+
+	<select id="getNurseReocrdItemByJgbh" flushCache="true" resultType="NRItem">
+		SELECT JGBH, XMBH, XMMC, XSMC, XMQZ, KSLH, JSLH, HDBZ, YMCLFS, HHJG FROM ENR_JG02 WHERE JGBH = #{JGBH}
+	</select>
+</mapper>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.bloodglucose.BloodGlucoseMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+	<select id="getBloodGlucoseDetail" resultType="BloodGlucoseDetail" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT MX.MXXH, MX.XMXH, MX.XMLX, MX.XMDW, MX.XMNR, MX.JHNR,
+				   MX.JHBZ, MX.JLSJ, MX.JLGH, MX.ZTBZ, JL.JLXH, JL.YDSMC
+			FROM IENR_XTJLMX MX, IENR_XTJL JL
+			WHERE MX.JLXH = JL.JLXH AND MX.XMLX = #{XMLX} AND MX.XMXH = #{XMXH} AND
+				  JL.ZYH = ${ZYH} AND JL.BRBQ = #{BRBQ} AND
+				  JL.JHRQ = #{JHRQ} AND JL.JGID = #{JGID}
+			ORDER BY MX.XMXH
+		</if>
+		<if test="dbtype == 'oracle'">
+			SELECT MX.MXXH, MX.XMXH, MX.XMLX, MX.XMDW, MX.XMNR, MX.JHNR,
+				   MX.JHBZ, MX.JLSJ, MX.JLGH, MX.ZTBZ, JL.JLXH, JL.YDSMC
+			FROM IENR_XTJLMX MX, IENR_XTJL JL
+			WHERE MX.JLXH = JL.JLXH AND MX.XMLX = #{XMLX} AND MX.XMXH = #{XMXH} AND
+				  JL.ZYH = ${ZYH} AND JL.BRBQ = #{BRBQ} AND
+				  JL.JHRQ = to_date(#{JHRQ}, 'yyyy-mm-dd') AND JL.JGID = #{JGID}
+			ORDER BY MX.XMXH
+		</if>
+	</select>
+
+	<insert id="addBloodGlucose" parameterType="BGDetailVo">
+		<if test="dbtype == 'sqlserver'">
+			INSERT INTO IENR_XTJLMX
+			(MXXH, JLXH, XMXH, XMLX, XMDW, XMNR, JHNR, JHBZ, JLSJ, JLGH, ZTBZ)
+			VALUES
+			(#{MXXH}, #{JLXH}, #{XMXH}, #{XMLX}, #{XMDW}, #{XMNR}, #{JHNR}, #{JHBZ}, #{JLSJ}, #{JLGH}, #{ZTBZ})
+		</if>
+		<if test="dbtype == 'oracle'">
+			INSERT INTO IENR_XTJLMX
+			(MXXH, JLXH, XMXH, XMLX, XMDW, XMNR, JHNR, JHBZ, JLSJ, JLGH, ZTBZ)
+			VALUES
+			(#{MXXH}, #{JLXH}, #{XMXH}, #{XMLX}, #{XMDW}, #{XMNR}, #{JHNR},
+			 #{JHBZ}, to_date(#{JLSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{JLGH}, #{ZTBZ})
+		</if>
+	</insert>
+
+	<update id="updateBloodGlucose" parameterType="BGDetailVo">
+		<if test="dbtype == 'sqlserver'">
+			UPDATE IENR_XTJLMX
+			SET JHNR = #{JHNR},
+				JLSJ = #{JLSJ},
+				JLGH = #{JLGH},
+				ZTBZ = 1
+			WHERE MXXH = #{MXXH}
+		</if>
+		<if test="dbtype == 'oracle'">
+			UPDATE IENR_XTJLMX
+			SET JHNR = #{JHNR},
+				JLSJ = to_date(#{JLSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+				JLGH = #{JLGH},
+				ZTBZ = 1
+			WHERE MXXH = #{MXXH}
+		</if>
+	</update>
+
+	<update id="checkInsulin">
+		<if test="dbtype == 'sqlserver'">
+			UPDATE IENR_XTJLMX
+			SET JLSJ = #{JLSJ},
+				JLGH = #{JLGH},
+				ZTBZ = 1
+			WHERE MXXH = #{MXXH}
+		</if>
+		<if test="dbtype == 'oracle'">
+			UPDATE IENR_XTJLMX
+			SET JLSJ = to_date(#{JLSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+				JLGH = #{JLGH},
+				ZTBZ = 1
+			WHERE MXXH = #{MXXH}
+		</if>
+	</update>
+
+	<select id="getBGHistoryByJlxh" resultType="BloodGlucoseDetail" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT MX.MXXH, MX.XMLX, MX.XMXH, MX.XMNR, MX.JHNR, MX.XMDW, MX.JHBZ,
+				   MX.JLSJ, MX.JLGH, MX.ZTBZ, JL.JHRQ, JL.YDSMC
+			FROM IENR_XTJL JL, IENR_XTJLMX MX
+			WHERE JL.JLXH = MX.JLXH AND JL.ZYH = ${ZYH} AND JL.BRBQ = #{BRBQ} AND
+				  JL.JHRQ = #{JHRQ} AND MX.XMLX = #{XMLX} AND JL.JGID = #{JGID}
+			ORDER BY MX.XMLX, MX.XMXH
+		</if>
+		<if test="dbtype == 'oracle'">
+			SELECT MX.MXXH, MX.XMLX, MX.XMXH, MX.XMNR, MX.JHNR, MX.XMDW, MX.JHBZ,
+				   MX.JLSJ, MX.JLGH, MX.ZTBZ, JL.JHRQ, JL.YDSMC
+			FROM IENR_XTJL JL, IENR_XTJLMX MX
+			WHERE JL.JLXH = MX.JLXH AND JL.ZYH = ${ZYH} AND JL.BRBQ = #{BRBQ} AND
+				  JL.JHRQ = to_date(#{JHRQ}, 'yyyy-mm-dd') AND
+				  MX.XMLX = #{XMLX} AND JL.JGID = #{JGID}
+			ORDER BY MX.XMLX, MX.XMXH
+		</if>
+	</select>
+
+	<select id="getBGHistoryList" resultType="BloodGlucoseDetail" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT MX.MXXH, MX.XMLX, MX.XMXH, MX.XMNR, MX.JHNR, MX.XMDW, MX.JHBZ,
+				   MX.JLSJ, MX.JLGH, MX.ZTBZ, JL.JHRQ, JL.YDSMC
+			FROM IENR_XTJL JL, IENR_XTJLMX MX
+			WHERE JL.JLXH = MX.JLXH AND JL.ZYH = #{ZYH} AND JL.BRBQ = #{BRBQ} AND
+				  JL.JHRQ >= #{KSSJ} AND JL.JHRQ <![CDATA[<=]]> #{JSSJ} AND
+				  JL.JGID = #{JGID}
+			ORDER BY MX.XMLX, MX.XMXH
+		</if>
+		<if test="dbtype == 'oracle'">
+			SELECT MX.MXXH, MX.XMLX, MX.XMXH, MX.XMNR, MX.JHNR, MX.XMDW, MX.JHBZ,
+				   MX.JLSJ, MX.JLGH, MX.ZTBZ, JL.JHRQ, JL.YDSMC
+			FROM IENR_XTJL JL, IENR_XTJLMX MX
+			WHERE JL.JLXH = MX.JLXH AND JL.ZYH = #{ZYH} AND JL.BRBQ = #{BRBQ} AND
+				  JL.JHRQ >= to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss') AND
+				  JL.JHRQ <![CDATA[<=]]> to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss') AND
+				  JL.JGID = #{JGID}
+			ORDER BY MX.XMLX, MX.XMXH
+		</if>
+	</select>
+
+	<select id="getFirstJlxhOfBG" resultType="java.lang.String" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT JLXH
+			FROM IENR_XTJL
+			WHERE ZYH = #{ZYH} AND BRBQ = #{BRBQ} AND
+				  JHRQ = #{JHRQ} AND JGID = #{JGID}
+		</if>
+		<if test="dbtype == 'oracle'">
+			SELECT JLXH
+			FROM IENR_XTJL
+			WHERE ZYH = #{ZYH} AND BRBQ = #{BRBQ} AND JGID = #{JGID} AND
+				  JHRQ = to_date(#{JHRQ}, 'yyyy-mm-dd')
+		</if>
+	</select>
+
+	<insert id="addBGRecord" parameterType="BGRecordVo">
+		<if test="dbtype == 'sqlserver'">
+			INSERT INTO IENR_XTJL
+			(JLXH, JLGH, ZYH, BRXM, KSDM, BRBQ, BRCH, JHRQ, JLSJ, YDSMC, YZBXH, JGID)
+			VALUES
+			(#{JLXH}, #{JLGH}, #{ZYH}, #{BRXM}, #{KSDM}, #{BRBQ}, #{BRCH}, #{JHRQ}, #{JLSJ}, #{YDSMC}, #{YZBXH}, #{JGID})
+		</if>
+		<if test="dbtype == 'oracle'">
+			INSERT INTO IENR_XTJL
+			(JLXH, JLGH, ZYH, BRXM, KSDM, BRBQ, BRCH, JHRQ, JLSJ, YDSMC, YZBXH, JGID)
+			VALUES
+			(#{JLXH}, #{JLGH}, #{ZYH}, #{BRXM}, #{KSDM}, #{BRBQ}, #{BRCH},
+			 to_date(#{JHRQ}, 'yyyy-mm-dd'), to_date(#{JLSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{YDSMC}, #{YZBXH}, #{JGID})
+		</if>
+	</insert>
+
+	<select id="getMxxhListByJhrq" resultType="java.lang.String" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT MX.MXXH
+			FROM IENR_XTJL JL, IENR_XTJLMX MX
+			WHERE JL.JLXH = MX.JLXH AND JL.ZYH = #{ZYH} AND MX.ZTBZ = 0 AND
+				  JL.JHRQ = #{JHRQ} AND MX.XMLX = #{XMLX} AND
+				  MX.XMXH = #{XMXH} AND JL.JGID = #{JGID}
+		</if>
+		<if test="dbtype == 'oracle'">
+			SELECT MX.MXXH
+			FROM IENR_XTJL JL, IENR_XTJLMX MX
+			WHERE JL.JLXH = MX.JLXH AND JL.ZYH = #{ZYH} AND MX.ZTBZ = 0 AND
+				  JL.JHRQ = to_date(#{JHRQ}, 'yyyy-mm-dd') AND
+				  MX.XMLX = #{XMLX} AND MX.XMXH = #{XMXH} AND JL.JGID = #{JGID}
+		</if>
+	</select>
+
+	<delete id="deleteDetail">
+		DELETE IENR_XTJLMX
+		WHERE MXXH = #{MXXH}
+	</delete>
+</mapper>

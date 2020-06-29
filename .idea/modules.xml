@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-Advice/BS-NIS-Advice.iml" filepath="$PROJECT_DIR$/BS-NIS-Advice/BS-NIS-Advice.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-AdvicePlan/BS-NIS-AdvicePlan.iml" filepath="$PROJECT_DIR$/BS-NIS-AdvicePlan/BS-NIS-AdvicePlan.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-Bean/BS-NIS-Bean.iml" filepath="$PROJECT_DIR$/BS-NIS-Bean/BS-NIS-Bean.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-BloodGlucose/BS-NIS-BloodGlucose.iml" filepath="$PROJECT_DIR$/BS-NIS-BloodGlucose/BS-NIS-BloodGlucose.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-BloodSugar/BS-NIS-BloodSugar.iml" filepath="$PROJECT_DIR$/BS-NIS-BloodSugar/BS-NIS-BloodSugar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-BloodTransfusion/BS-NIS-BloodTransfusion.iml" filepath="$PROJECT_DIR$/BS-NIS-BloodTransfusion/BS-NIS-BloodTransfusion.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-Catheter/BS-NIS-Catheter.iml" filepath="$PROJECT_DIR$/BS-NIS-Catheter/BS-NIS-Catheter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-Core/BS-NIS-Core.iml" filepath="$PROJECT_DIR$/BS-NIS-Core/BS-NIS-Core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-CoreApi/BS-NIS-CoreApi.iml" filepath="$PROJECT_DIR$/BS-NIS-CoreApi/BS-NIS-CoreApi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-DailyCare/BS-NIS-DailyCare.iml" filepath="$PROJECT_DIR$/BS-NIS-DailyCare/BS-NIS-DailyCare.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-DailyWork/BS-NIS-DailyWork.iml" filepath="$PROJECT_DIR$/BS-NIS-DailyWork/BS-NIS-DailyWork.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-DangerEvaluate/BS-NIS-DangerEvaluate.iml" filepath="$PROJECT_DIR$/BS-NIS-DangerEvaluate/BS-NIS-DangerEvaluate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-Evaluation/BS-NIS-Evaluation.iml" filepath="$PROJECT_DIR$/BS-NIS-Evaluation/BS-NIS-Evaluation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-Expense/BS-NIS-Expense.iml" filepath="$PROJECT_DIR$/BS-NIS-Expense/BS-NIS-Expense.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-ExternalInerface/BS-NIS-ExternalInerface.iml" filepath="$PROJECT_DIR$/BS-NIS-ExternalInerface/BS-NIS-ExternalInerface.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-HandOver/BS-NIS-HandOver.iml" filepath="$PROJECT_DIR$/BS-NIS-HandOver/BS-NIS-HandOver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-HealthGuid/BS-NIS-HealthGuid.iml" filepath="$PROJECT_DIR$/BS-NIS-HealthGuid/BS-NIS-HealthGuid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-Inspection/BS-NIS-Inspection.iml" filepath="$PROJECT_DIR$/BS-NIS-Inspection/BS-NIS-Inspection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-LifeSign/BS-NIS-LifeSign.iml" filepath="$PROJECT_DIR$/BS-NIS-LifeSign/BS-NIS-LifeSign.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-NursePlan/BS-NIS-NursePlan.iml" filepath="$PROJECT_DIR$/BS-NIS-NursePlan/BS-NIS-NursePlan.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-NurseRecord/BS-NIS-NurseRecord.iml" filepath="$PROJECT_DIR$/BS-NIS-NurseRecord/BS-NIS-NurseRecord.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-OutControl/BS-NIS-OutControl.iml" filepath="$PROJECT_DIR$/BS-NIS-OutControl/BS-NIS-OutControl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-Parent.iml" filepath="$PROJECT_DIR$/BS-NIS-Parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-Patient/BS-NIS-Patient.iml" filepath="$PROJECT_DIR$/BS-NIS-Patient/BS-NIS-Patient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-RPC/BS-NIS-RPC.iml" filepath="$PROJECT_DIR$/BS-NIS-RPC/BS-NIS-RPC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-SkinTest/BS-NIS-SkinTest.iml" filepath="$PROJECT_DIR$/BS-NIS-SkinTest/BS-NIS-SkinTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-TraditionalNursing/BS-NIS-TraditionalNursing.iml" filepath="$PROJECT_DIR$/BS-NIS-TraditionalNursing/BS-NIS-TraditionalNursing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-User/BS-NIS-User.iml" filepath="$PROJECT_DIR$/BS-NIS-User/BS-NIS-User.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-Util/BS-NIS-Util.iml" filepath="$PROJECT_DIR$/BS-NIS-Util/BS-NIS-Util.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS-Visit/BS-NIS-Visit.iml" filepath="$PROJECT_DIR$/BS-NIS-Visit/BS-NIS-Visit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BS-NIS/NIS.iml" filepath="$PROJECT_DIR$/BS-NIS/NIS.iml" />
+    </modules>
+  </component>
+</project>

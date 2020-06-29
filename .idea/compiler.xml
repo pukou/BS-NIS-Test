@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="BS-NIS-ExternalInerface" />
+        <module name="BS-NIS-HealthGuid" />
+        <module name="BS-NIS-TraditionalNursing" />
+        <module name="BS-NIS-AdvicePlan" />
+        <module name="BS-NIS-Evaluation" />
+        <module name="BS-NIS-BloodTransfusion" />
+        <module name="BS-NIS-DailyCare" />
+        <module name="BS-NIS-Advice" />
+        <module name="BS-NIS-Util" />
+        <module name="BS-NIS-SkinTest" />
+        <module name="BS-NIS-Bean" />
+        <module name="BS-NIS-Patient" />
+        <module name="BS-NIS-Expense" />
+        <module name="BS-NIS-OutControl" />
+        <module name="NIS" />
+        <module name="BS-NIS-Core" />
+        <module name="BS-NIS-DangerEvaluate" />
+        <module name="BS-NIS-BloodSugar" />
+        <module name="BS-NIS-BloodGlucose" />
+        <module name="BS-NIS-NursePlan" />
+        <module name="BS-NIS-LifeSign" />
+        <module name="BS-NIS-RPC" />
+        <module name="BS-NIS-Catheter" />
+        <module name="BS-NIS-Inspection" />
+        <module name="BS-NIS-HandOver" />
+        <module name="BS-NIS-CoreApi" />
+        <module name="BS-NIS-DailyWork" />
+        <module name="BS-NIS-User" />
+        <module name="BS-NIS-NurseRecord" />
+        <module name="BS-NIS-Visit" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="BS-NIS-Advice" target="1.8" />
+      <module name="BS-NIS-AdvicePlan" target="1.8" />
+      <module name="BS-NIS-Bean" target="1.8" />
+      <module name="BS-NIS-BloodGlucose" target="1.8" />
+      <module name="BS-NIS-BloodSugar" target="1.8" />
+      <module name="BS-NIS-BloodTransfusion" target="1.8" />
+      <module name="BS-NIS-Catheter" target="1.8" />
+      <module name="BS-NIS-Core" target="1.8" />
+      <module name="BS-NIS-CoreApi" target="1.8" />
+      <module name="BS-NIS-DailyCare" target="1.8" />
+      <module name="BS-NIS-DailyWork" target="1.8" />
+      <module name="BS-NIS-DangerEvaluate" target="1.8" />
+      <module name="BS-NIS-Evaluation" target="1.8" />
+      <module name="BS-NIS-Expense" target="1.8" />
+      <module name="BS-NIS-ExternalInerface" target="1.8" />
+      <module name="BS-NIS-HandOver" target="1.8" />
+      <module name="BS-NIS-HealthGuid" target="1.8" />
+      <module name="BS-NIS-Inspection" target="1.8" />
+      <module name="BS-NIS-LifeSign" target="1.8" />
+      <module name="BS-NIS-NursePlan" target="1.8" />
+      <module name="BS-NIS-NurseRecord" target="1.8" />
+      <module name="BS-NIS-OutControl" target="1.8" />
+      <module name="BS-NIS-Parent" target="1.5" />
+      <module name="BS-NIS-Patient" target="1.8" />
+      <module name="BS-NIS-RPC" target="1.8" />
+      <module name="BS-NIS-SkinTest" target="1.8" />
+      <module name="BS-NIS-TraditionalNursing" target="1.8" />
+      <module name="BS-NIS-User" target="1.8" />
+      <module name="BS-NIS-Util" target="1.8" />
+      <module name="BS-NIS-Visit" target="1.8" />
+      <module name="NIS" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

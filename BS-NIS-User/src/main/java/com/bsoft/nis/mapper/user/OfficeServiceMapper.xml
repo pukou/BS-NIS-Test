@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.user.OfficeServiceMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getOfficesByYGDM" resultType="AreaVo" flushCache="true">
+		SELECT T1.YGDM, T1.KSDM,
+				T1.MRBZ,T2.KSMC
+		  FROM V_MOB_HIS_HSQL T1,V_MOB_HIS_KSDM T2
+		 WHERE T1.YGDM=#{YGDM} AND
+		 	    T1.KSDM= T2.KSDM AND
+		 	    T1.JGID= T2.JGID AND
+		 	    T2.JGID = #{JGID} ORDER BY T2.PLSX
+	</select>
+
+    <select id="getAreaVoForSurgery" flushCache="true" resultType="AreaVo">
+        SELECT SSKS KSDM, KSMC, JGID
+        FROM V_MOB_HIS_SSKS
+        WHERE 1 = 1
+        <if test="JGID != null">
+            AND JGID = #{JGID}
+        </if>
+    </select>
+</mapper>

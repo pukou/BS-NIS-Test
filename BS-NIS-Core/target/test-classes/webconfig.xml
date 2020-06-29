@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configs>
+    <system>
+        <!--多机构判断，1 多机构 0 单机构-->
+        <organization>1</organization>
+    </system>
+</configs>

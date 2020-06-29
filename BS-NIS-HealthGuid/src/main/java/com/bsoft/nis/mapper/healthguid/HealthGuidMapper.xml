@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.healthguid.HealthGuidMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getHealthGuidList" resultType="HealthGuid" flushCache="true">
+		SELECT DISTINCT YSXH XH ,YSLX GLLX , YSMC MS
+		FROM IENR_XJYS, IENR_XJBQDZ
+		WHERE IENR_XJYS.YSXH = IENR_XJBQDZ.GLXH AND IENR_XJYS.ZFBZ = 0 AND BQDM = #{BQID} AND IENR_XJYS.JGID = #{JGID}
+	</select>
+
+    <select id="getHealthGuidItemListForBd" resultType="HealthGuidItem" flushCache="true">
+		SELECT JLXH XH, GLXH LXBH,
+				(CASE
+         			WHEN IENR_JKXJJL.GLLX = 1 THEN
+          				(SELECT YSMC FROM IENR_XJYS WHERE IENR_XJYS.YSXH = IENR_JKXJJL.GLXH)
+         			WHEN IENR_JKXJJL.GLLX = 2 THEN
+          				(SELECT GLMS FROM IENR_XMGL WHERE IENR_XMGL.GLXH = IENR_JKXJJL.GLXH)
+       			END) MS,
+			  	(SELECT MAX(XJSJ) XJSJ FROM IENR_XJJLXM WHERE IENR_XJJLXM.JLXH = IENR_JKXJJL.JLXH) XJSJ ,
+			  	 '0' SL
+		FROM IENR_JKXJJL
+		WHERE GLLX = #{GLLX} AND GLXH = #{GLXH} AND ZYH = #{ZYH} AND BRBQ = #{BQID} AND JGID = #{JGID}
+	</select>
+
+    <select id="getHealthGuidItemListForFl" resultType="HealthGuidItem" flushCache="true">
+        SELECT JLXH XH, GLXH LXBH,
+                (CASE
+                    WHEN IENR_JKXJJL.GLLX = 1 THEN
+                        (SELECT YSMC FROM IENR_XJYS WHERE IENR_XJYS.YSXH = IENR_JKXJJL.GLXH)
+                    WHEN IENR_JKXJJL.GLLX = 2 THEN
+                        (SELECT GLMS FROM IENR_XMGL WHERE IENR_XMGL.GLXH = IENR_JKXJJL.GLXH)
+                END) MS,
+                (SELECT MAX(XJSJ) XJSJ FROM IENR_XJJLXM WHERE IENR_XJJLXM.JLXH = IENR_JKXJJL.JLXH) XJSJ,
+                '0' SL
+        FROM IENR_JKXJJL
+        WHERE GLLX = #{GLLX} AND GLXH IN (SELECT GLXH FROM IENR_XJFL WHERE YSXH = #{YSXH} AND ZFBZ = 0)
+                 AND ZYH = #{ZYH} AND BRBQ = #{BQID} AND JGID = #{JGID}
+    </select>
+
+    <select id="getMaxJlxh" resultType="String" flushCache="true">
+        SELECT MAX(JLXH) JLXH
+        FROM IENR_JKXJJL
+        WHERE GLXH = #{GLXH} AND GLLX = #{GLLX}
+    </select>
+
+    <select id="getHealthGuidXjdx" resultType="HealthGuidOperItem" flushCache="true">
+        SELECT PZBH XH,DMMC MS FROM MOB_XTPZ WHERE DMLB = 452 AND DMSB &lt;> 0
+    </select>
+
+    <select id="getHealthGuidXjfs" resultType="HealthGuidOperItem" flushCache="true">
+        SELECT PZBH XH,DMMC MS FROM MOB_XTPZ WHERE DMLB = 437 AND DMSB &lt;> 0
+    </select>
+
+    <select id="getHealthGuidXgpj" resultType="HealthGuidOperItem" flushCache="true">
+        SELECT PZBH XH,DMMC MS FROM MOB_XTPZ WHERE DMLB = 438 AND DMSB &lt;> 0
+    </select>
+
+    <select id="getHealthGuidTypeListByYsxh" resultType="HealthGuidType" flushCache="true">
+        SELECT GLXH LXBH, YSXH, GLMS MS
+        FROM IENR_XJFL
+        WHERE YSXH = #{YSXH} AND ZFBZ = 0
+    </select>
+
+    <select id="getHealthGuidTypeListByGlxh" resultType="HealthGuidType" flushCache="true">
+        SELECT GLXH LXBH, YSXH, GLMS MS
+        FROM IENR_XJFL
+        WHERE GLXH = #{GLXH} AND ZFBZ = 0
+    </select>
+
+    <select id="getHealthGuidDetailListByGlxh" resultType="HealthGuidDetail" flushCache="true">
+        SELECT XMXH XH, GLXH, DLBZ, CASE WHEN DLBZ = 1 THEN 0 ELSE XMZH END XMZH, '0' ZDYBZ, XMNR MS
+        FROM IENR_XJXM
+        WHERE GLXH = #{GLXH} AND ZFBZ = 0
+        ORDER BY XMZH
+    </select>
+
+    <select id="getHealthGuidDataByJlxh" resultType="HealthGuidData" flushCache="true">
+        SELECT JLXH XH, GLXH , GLLX , JLSJ, JLGH, QMGH
+        FROM IENR_JKXJJL WHERE JLXH = #{JLXH}
+    </select>
+
+    <select id="getHealthGuidDetailListByJlxh" resultType="HealthGuidDetail" flushCache="true">
+        SELECT JLXM, JLXH, GLXH, XMXH XH, ZDYBZ, XMNR MS, BZXX, XJSJ, XJGH, XJDX, XJFS, XJPJ, PJSJ, PJGH, '0' ISOPER
+        FROM IENR_XJJLXM WHERE JLXH = #{JLXH}
+    </select>
+
+    <insert id="addHealthGuidJkxjjl" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_JKXJJL(JLXH, ZYH, BRBQ, GLXH, GLLX, JLSJ, JLGH, CJSJ, CJGH, QMSJ, QMGH, JGID, BZXX)
+            VALUES(#{JLXH}, #{ZYH}, #{BQID}, #{GLXH}, #{GLLX}, #{JLSJ}, #{JLGH}, #{CJSJ}, #{CJGH}, #{QMSJ}, #{QMGH},
+            #{JGID}, #{BZXX})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_JKXJJL(JLXH, ZYH, BRBQ, GLXH, GLLX, JLSJ, JLGH, CJSJ, CJGH, QMSJ, QMGH, JGID, BZXX)
+            VALUES(#{JLXH}, #{ZYH}, #{BQID}, #{GLXH}, #{GLLX}, to_date(#{JLSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{JLGH},
+            to_date(#{CJSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{CJGH}, to_date(#{QMSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{QMGH},
+            #{JGID}, #{BZXX})
+        </if>
+    </insert>
+
+    <insert id="addHealthGuidXjjlxm" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_XJJLXM(JLXM, JLXH, GLXH, XMXH, ZDYBZ, XMNR, BZXX, XJSJ, XJGH, XJDX, XJFS, XJPJ)
+            VALUES(#{JLXM}, #{JLXH}, #{GLXH}, #{XMXH}, #{ZDYBZ}, #{XMNR}, #{BZXX}, #{XJSJ}, #{XJGH}, #{XJDX}, #{XJFS},
+            #{XJPJ})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_XJJLXM(JLXM, JLXH, GLXH, XMXH, ZDYBZ, XMNR, BZXX, XJSJ, XJGH, XJDX, XJFS, XJPJ)
+            VALUES(#{JLXM}, #{JLXH}, #{GLXH}, #{XMXH}, #{ZDYBZ}, #{XMNR}, #{BZXX}, to_date(#{XJSJ}, 'yyyy-mm-dd
+            hh24:mi:ss'), #{XJGH}, #{XJDX}, #{XJFS}, #{XJPJ})
+        </if>
+    </insert>
+
+    <update id="editHealthGuidXjjlxm" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_XJJLXM SET XJSJ = #{XJSJ}, XJGH = #{XJGH}, XJDX = #{XJDX}, XJFS = #{XJFS}, XJPJ = #{XJPJ} WHERE
+            JLXM = #{JLXM}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_XJJLXM SET XJSJ = to_date(#{XJSJ}, 'yyyy-mm-dd hh24:mi:ss'), XJGH = #{XJGH}, XJDX = #{XJDX},
+            XJFS = #{XJFS}, XJPJ = #{XJPJ} WHERE JLXM = #{JLXM}
+        </if>
+    </update>
+
+    <delete id="deleteHealthGuidJkxjjlByJlxh" flushCache="true">
+        DELETE FROM IENR_JKXJJL WHERE JLXH = #{JLXH}
+    </delete>
+
+    <delete id="deleteHealthGuidXjjlxmByJlxm" flushCache="true">
+        DELETE FROM IENR_XJJLXM WHERE JLXM = #{JLXM}
+    </delete>
+
+    <delete id="deleteHealthGuidXjjlxmByJlxh" flushCache="true">
+        DELETE FROM IENR_XJJLXM WHERE JLXH = #{JLXH}
+    </delete>
+
+    <delete id="deleteHealthGuidXjjlxmByGlxh" flushCache="true">
+        DELETE FROM IENR_XJJLXM WHERE JLXH = #{JLXH} AND GLXH = #{GLXH}
+    </delete>
+
+    <select id="getYsxhByGlxh" resultType="String" flushCache="true">
+        SELECT MAX(YSXH) FROM IENR_XJFL WHERE GLXH = #{GLXH} AND ZFBZ = 0
+    </select>
+
+    <select id="getHealthGuidRemark" resultType="String" flushCache="true">
+        SELECT BZXX FROM IENR_XJXM WHERE XMXH = #{XMXH}
+    </select>
+
+    <update id="Signature" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_JKXJJL SET QMSJ = #{QMSJ}, QMGH = #{QMGH} WHERE JLXH = #{JLXH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_JKXJJL SET QMSJ = to_date(#{QMSJ}, 'yyyy-mm-dd hh24:mi:ss'), QMGH = #{QMGH} WHERE JLXH = #{JLXH}
+        </if>
+    </update>
+
+    <update id="CancleSignature" flushCache="true">
+        UPDATE IENR_JKXJJL SET QMSJ = NULL, QMGH = NULL WHERE JLXH = #{JLXH}
+    </update>
+
+    <update id="Evaluate" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_XJJLXM SET XJPJ = #{XJPJ}, PJSJ = #{PJSJ}, PJGH = #{PJGH} WHERE JLXM = #{JLXM}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_XJJLXM SET XJPJ = #{XJPJ}, PJSJ = to_date(#{PJSJ}, 'yyyy-mm-dd hh24:mi:ss'), PJGH = #{PJGH}
+            WHERE JLXM = #{JLXM}
+        </if>
+    </update>
+
+    <update id="CancleEvaluateByJlxm" flushCache="true">
+        UPDATE IENR_XJJLXM SET XJPJ = '', PJSJ = NULL, PJGH = NULL WHERE JLXM = #{JLXM}
+    </update>
+
+    <update id="CancleEvaluateByJlxhAndGlxh" flushCache="true">
+        UPDATE IENR_XJJLXM SET XJPJ = '', PJSJ = NULL, PJGH = NULL WHERE GLXH = #{GLXH} AND JLXH = #{JLXH}
+    </update>
+
+
+</mapper>

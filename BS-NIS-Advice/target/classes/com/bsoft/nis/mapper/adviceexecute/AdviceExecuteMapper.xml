@@ -1,0 +1,1261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.adviceexecute.AdviceExecuteMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getPlanInfoByJhh" resultType="PlanInfo" flushCache="true">
+        SELECT YSYZBH,JHH,GLJHH,ZYH,BRBQ,GSLX,LXH,YZZH,YSYZBH,YZXH,XMLX,XMXH,SRHDBZ,YZZX,YZMC,YPYF,SYPC,YCJL,JLDW,YCSL,SLDW,LSYZ,JHSJ,SJBH,SJMC,QRBZ,QRDH,ZXZT,KSSJ,KSGH,JSSJ,JSGH,ZQRQ,KSHDSJ,KSHDGH,JSHDSJ,JSHDGH,ZXLX,JGID,LSBS
+            ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = ENR_YZJH.BRBQ And b.LXH = ENR_YZJH.LXH And b.JGID = ENR_YZJH.JGID) TZJZ
+        FROM ENR_YZJH
+        WHERE JHH = #{JHH} AND ZFBZ = 0 AND JGID = #{JGID}
+    </select>
+
+    <select id="getPlanInfoListByQrdh" resultType="PlanInfo" flushCache="true">
+        SELECT YSYZBH,JHH,GLJHH,ZYH,BRBQ,GSLX,LXH,YZZH,YSYZBH,YZXH,XMLX,XMXH,SRHDBZ,YZZX,YZMC,YPYF,SYPC,YCJL,JLDW,YCSL,SLDW,LSYZ,JHSJ,SJBH,SJMC,QRBZ,QRDH,ZXZT,KSSJ,KSGH,JSSJ,JSGH,ZQRQ,KSHDSJ,KSHDGH,JSHDSJ,JSHDGH,ZXLX,JGID,LSBS
+            ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = ENR_YZJH.BRBQ And b.LXH = ENR_YZJH.LXH And b.JGID = ENR_YZJH.JGID) TZJZ
+        FROM ENR_YZJH
+        <if test="GSLX!=4">
+            WHERE QRDH = #{QRDH} AND GSLX = #{GSLX} AND JGID = #{JGID} AND ZFBZ = 0
+        </if>
+
+        <if test="GSLX==4">
+            WHERE JHH IN(
+                SELECT h.JHH
+                FROM ENR_SYD s, ENR_SYMX m, ENR_YZJH h
+                WHERE s.SYDH = #{QRDH} AND s.SYDH = m.SYDH AND m.YZXH = h.YZXH AND s.SYRQ = h.JHRQ AND s.SJBH = h.SJBH And h.GSLX = #{GSLX} AND h.ZFBZ = 0
+            )
+        </if>
+    </select>
+
+    <select id="getPlanInfoListByYzzhAndJhsj" resultType="PlanInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT YSYZBH,JHH, GLJHH, ZYH, BRBQ, GSLX, LXH, YZZH, YSYZBH, SRHDBZ, YZXH, XMLX, XMXH, YZZX, YZMC, YPYF,
+            SYPC,
+            YCJL, JLDW, YCSL, SLDW, LSYZ, JHSJ, SJBH, SJMC, QRBZ, QRDH, ZXZT, KSSJ, KSGH, JSSJ, JSGH, ZQRQ, KSHDSJ,
+            KSHDGH, JSHDSJ, JSHDGH, ZXLX, JGID,LSBS
+            ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = ENR_YZJH.BRBQ And b.LXH = ENR_YZJH.LXH And b.JGID = ENR_YZJH.JGID) TZJZ
+            FROM ENR_YZJH
+            WHERE YZZH = #{YZZH} AND JHSJ = #{JHSJ} AND ZFBZ = 0 AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT YSYZBH,JHH, GLJHH, ZYH, BRBQ, GSLX, LXH, YZZH, YSYZBH, SRHDBZ, YZXH, XMLX, XMXH, YZZX, YZMC, YPYF,
+            SYPC,
+            YCJL, JLDW, YCSL, SLDW, LSYZ, JHSJ, SJBH, SJMC, QRBZ, QRDH, ZXZT, KSSJ, KSGH, JSSJ, JSGH, ZQRQ, KSHDSJ,
+            KSHDGH, JSHDSJ, JSHDGH, ZXLX, JGID,LSBS
+            ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = ENR_YZJH.BRBQ And b.LXH = ENR_YZJH.LXH And b.JGID = ENR_YZJH.JGID) TZJZ
+            FROM ENR_YZJH
+            WHERE YZZH = #{YZZH} AND JHSJ = to_date(#{JHSJ}, 'yyyy-mm-dd hh24:mi:ss') AND ZFBZ = 0 AND JGID = #{JGID}
+        </if>
+    </select>
+
+    <select id="getPlanInfoListByYzzhAndSjbh" resultType="PlanInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT YSYZBH,JHH, GLJHH, ZYH, BRBQ, GSLX, LXH, YZZH, YSYZBH, SRHDBZ, YZXH, XMLX, XMXH, YZZX, YZMC, YPYF,
+            SYPC,
+            YCJL, JLDW, YCSL, SLDW, LSYZ, JHSJ, SJBH, SJMC, QRBZ, QRDH, ZXZT, KSSJ, KSGH, JSSJ, JSGH, ZQRQ, KSHDSJ,
+            KSHDGH, JSHDSJ, JSHDGH, ZXLX, JGID,LSBS
+            ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = ENR_YZJH.BRBQ And b.LXH = ENR_YZJH.LXH And b.JGID = ENR_YZJH.JGID) TZJZ
+            FROM ENR_YZJH
+            WHERE YZZH = #{YZZH} AND JHRQ = #{JHRQ} AND SJBH = #{SJBH} AND ZFBZ = 0 AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT YSYZBH,JHH, GLJHH, ZYH, BRBQ, GSLX, LXH, YZZH, YSYZBH, SRHDBZ, YZXH, XMLX, XMXH, YZZX, YZMC, YPYF,
+            SYPC,
+            YCJL, JLDW, YCSL, SLDW, LSYZ, JHSJ, SJBH, SJMC, QRBZ, QRDH, ZXZT, KSSJ, KSGH, JSSJ, JSGH, ZQRQ, KSHDSJ,
+            KSHDGH, JSHDSJ, JSHDGH, ZXLX, JGID,LSBS
+            ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = ENR_YZJH.BRBQ And b.LXH = ENR_YZJH.LXH And b.JGID = ENR_YZJH.JGID) TZJZ
+            FROM ENR_YZJH
+            WHERE YZZH = #{YZZH} AND JHRQ = to_date(#{JHRQ}, 'yyyy-mm-dd hh24:mi:ss') AND SJBH = #{SJBH} AND ZFBZ = 0
+            AND JGID = #{JGID}
+        </if>
+    </select>
+
+    <select id="getPlanInfoByYzxhAndJhsj" resultType="PlanInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT
+            YSYZBH,JHH,GLJHH,ZYH,BRBQ,GSLX,LXH,YZZH,YSYZBH,SRHDBZ,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,SYPC,YCJL,JLDW,YCSL,
+            SLDW, LSYZ,JHSJ,SJBH,SJMC,QRBZ,QRDH,ZXZT,KSSJ,KSGH,JSSJ,JSGH,ZQRQ,KSHDSJ,KSHDGH,JSHDSJ,JSHDGH,ZXLX,JGID,LSBS
+            ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = ENR_YZJH.BRBQ And b.LXH = ENR_YZJH.LXH And b.JGID = ENR_YZJH.JGID) TZJZ
+            FROM ENR_YZJH
+            WHERE YZXH = #{YZXH} AND JHSJ = #{JHSJ} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT
+            YSYZBH,JHH,GLJHH,ZYH,BRBQ,GSLX,LXH,YZZH,YSYZBH,SRHDBZ,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,SYPC,YCJL,JLDW,YCSL,
+            SLDW, LSYZ,JHSJ,SJBH,SJMC,QRBZ,QRDH,ZXZT,KSSJ,KSGH,JSSJ,JSGH,ZQRQ,KSHDSJ,KSHDGH,JSHDSJ,JSHDGH,ZXLX,JGID,LSBS
+            ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = ENR_YZJH.BRBQ And b.LXH = ENR_YZJH.LXH And b.JGID = ENR_YZJH.JGID) TZJZ
+            FROM ENR_YZJH
+            WHERE YZXH = #{YZXH} AND JHSJ = to_date(#{JHSJ}, 'yyyy-mm-dd hh24:mi:ss') AND JGID = #{JGID}
+        </if>
+    </select>
+
+    <select id="getPlanInfoByYzxhAndSjbh" resultType="PlanInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT YSYZBH,JHH,GLJHH,ZYH,BRBQ,GSLX,LXH,YZZH,YSYZBH,SRHDBZ,YZXH,XMLX,XMXH,YZZX,YZMC,
+            YPYF,SYPC,YCJL,JLDW,YCSL,SLDW, LSYZ,JHSJ,SJBH,SJMC,QRBZ,QRDH,
+            ZXZT,KSSJ,KSGH,JSSJ,JSGH,ZQRQ,KSHDSJ,KSHDGH,JSHDSJ,JSHDGH,ZXLX, JGID,LSBS
+            ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = ENR_YZJH.BRBQ And b.LXH = ENR_YZJH.LXH And b.JGID = ENR_YZJH.JGID) TZJZ
+            FROM ENR_YZJH
+            WHERE YZXH = #{YZXH} AND SJBH = #{SJBH} AND JHRQ = #{JHRQ} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT YSYZBH,JHH,GLJHH,ZYH,BRBQ,GSLX,LXH,YZZH,YSYZBH,SRHDBZ,YZXH,XMLX,XMXH,YZZX,YZMC,
+            YPYF,SYPC,YCJL,JLDW,YCSL,SLDW, LSYZ,JHSJ,SJBH,SJMC,QRBZ,QRDH,
+            ZXZT,KSSJ,KSGH,JSSJ,JSGH,ZQRQ,KSHDSJ,KSHDGH,JSHDSJ,JSHDGH,ZXLX,JGID,LSBS
+            ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = ENR_YZJH.BRBQ And b.LXH = ENR_YZJH.LXH And b.JGID = ENR_YZJH.JGID) TZJZ
+            FROM ENR_YZJH
+            WHERE YZXH = #{YZXH} AND SJBH = #{SJBH} AND JHRQ = to_date(#{JHRQ}, 'yyyy-mm-dd hh24:mi:ss') AND JGID =
+            #{JGID}
+        </if>
+    </select>
+
+
+    <select id="getAdviceBqyzInfo" resultType="AdviceBqyzInfo" flushCache="true">
+        SELECT T1.JLXH YZXH,T1.YZZH,T1.YZMC,T1.ZYH,T1.YPXH,T1.YPLX,T1.XMLX,T1.YPYF,T1.SYPC,T1.JLDW,T1.YCJL,T1.YCSL,T1.SLDW,T1.YZZT,T1.KZSJ,T1.TZSJ,T1.SRHDBZ,T1.YEPB,T1.YEWYH,T1.ZFPB,T1.LSYZ,T1.KZYS,T1.YFSB,T1.PSPB,T1.PSJG,T1.YSYZBH
+        FROM V_MOB_HIS_BQYZ T1
+        WHERE T1.JLXH = #{YZXH} AND T1.JGID = #{JGID} AND T1.ZFBZ = 0
+    </select>
+
+    <select id="getAdviceBqyzInfoList" resultType="AdviceBqyzInfo" flushCache="true">
+        SELECT T1.JLXH YZXH,T1.YZZH,T1.YZMC,T1.ZYH,T1.YPXH,T1.YPLX,T1.XMLX,T1.YPYF,T1.SYPC,T1.JLDW,T1.YCJL,T1.YCSL,T1.SLDW,T1.YZZT,T1.KZSJ,T1.TZSJ,T1.SRHDBZ,T1.YEPB,T1.YEWYH,T1.ZFPB,T1.LSYZ,T1.KZYS,T1.YFSB,T1.PSPB,T1.PSJG,T1.YSYZBH
+        FROM V_MOB_HIS_BQYZ T1
+        WHERE T1.YZZH = #{YZZH} AND T1.JGID = #{JGID} AND T1.ZFBZ = 0 And T1.YPLX IN(1,2)
+    </select>
+
+
+    <select id="getAdviceYzbInfo" resultType="AdviceYzbInfo" flushCache="true">
+        SELECT T1.YZBXH YZXH,T1.YZZH,T1.YZMC,T1.ZYH,T1.XMID YPXH,T1.GYTJ YPYF,T1.SYPC,T1.JLDW,T1.YCJL,T1.ZL YCSL,T1.ZLDW SLDW,T1.YZZT,T1.KZSJ,T1.TZSJ,T1.YEPB,T1.ZFPB,T1.YZQX,T1.HSZXSJ,T1.KZYS
+        FROM V_MOB_HIS_YZB T1
+        WHERE T1.YZBXH = #{YZXH} AND T1.JGID = #{JGID} AND T1.YZZT = 5
+    </select>
+
+    <select id="getAdviceYzbInfoList" resultType="AdviceYzbInfo" flushCache="true">
+        SELECT T1.YZBXH YZXH,T1.YZZH,T1.YZMC,T1.ZYH,T1.XMID YPXH,T1.GYTJ YPYF,T1.SYPC,T1.JLDW,T1.YCJL,T1.ZL YCSL,T1.ZLDW SLDW,T1.YZZT,T1.KZSJ,T1.TZSJ,T1.YEPB,T1.ZFPB,T1.YZQX,T1.HSZXSJ,T1.KZYS
+        FROM V_MOB_HIS_YZB T1
+        WHERE T1.YZBXH IN
+        <foreach collection="YSYZBH" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND T1.JGID = #{JGID} /** AND T1.YZZT = 5 **/
+    </select>
+
+
+    <select id="getInjectionInfoByJhhAndSjd" resultType="InjectionInfo" flushCache="true">
+        SELECT T1.ZSDH,T1.ZYH,T1.TMBH,T1.YZZH,T1.YPYF,T1.ZSSJ,T1.SJBH,T1.SJMC,T1.ZSZT,T1.ZXSJ,T1.ZXGH,T1.JSSJ,T1.JSGH,T1.ZXHDSJ,T1.ZXHDGH,T1.JSHDSJ,T1.JSHDGH,T1.BYHDBZ,T1.JYHDBZ,T2.ZSMX,T2.YZXH,T2.YPXH,T2.YZZX,T2.YCJL,T2.JLDW,T2.YCSL,T2.SLDW
+        FROM ENR_ZSD T1, ENR_ZSMX T2, ENR_YZJH T3
+        WHERE T1.ZSDH = T2.ZSDH AND T1.ZSSJ = T3.JHSJ AND T3.YZXH = T2.YZXH AND T3.JHH = #{JHH} AND T1.JGID = T3.JGID AND T1.JGID = #{JGID}
+    </select>
+
+    <select id="getInjectionInfoByJhhAndSjbh" resultType="InjectionInfo" flushCache="true">
+        SELECT T1.ZSDH,T1.ZYH,T1.TMBH,T1.YZZH,T1.YPYF,T1.ZSSJ,T1.SJBH,T1.SJMC,T1.ZSZT,T1.ZXSJ,T1.ZXGH,T1.JSSJ,T1.JSGH,T1.ZXHDSJ,T1.ZXHDGH,T1.JSHDSJ,T1.JSHDGH,T1.BYHDBZ,T1.JYHDBZ,T2.ZSMX,T2.YZXH,T2.YPXH,T2.YZZX,T2.YCJL,T2.JLDW,T2.YCSL,T2.SLDW
+        FROM ENR_ZSD T1, ENR_ZSMX T2, ENR_YZJH T3
+        WHERE T1.ZSDH = T2.ZSDH AND T1.SJBH = T3.SJBH AND T1.ZSRQ = T3.JHRQ AND T3.YZXH = T2.YZXH AND T1.JGID = T3.JGID AND T3.JHH = #{JHH} AND T3.JGID = #{JGID}
+    </select>
+
+    <select id="getInjectionInfoByBarcode" resultType="InjectionInfo" flushCache="true">
+        SELECT ZSDH, ZYH, TMBH, YZZH, YPYF, ZSSJ, SJBH, SJMC, ZSZT, ZXSJ, ZXGH, JSSJ, JSGH, ZXHDSJ, ZXHDGH, JSHDSJ, JSHDGH, BYHDBZ, JYHDBZ
+        FROM ENR_ZSD
+        WHERE TMBH = #{TMBH} AND JGID = #{JGID}
+    </select>
+
+    <select id="getInjectionDetailInfoList" resultType="InjectionDetailInfo" flushCache="true">
+        SELECT T2.ZSMX ,T2.YZXH ,T2.YPXH ,T2.YZZX ,T2.YCJL ,T2.JLDW ,T2.YCSL ,T2.SLDW
+        FROM ENR_ZSD T1 , ENR_ZSMX T2
+        WHERE T1.ZSDH = T2.ZSDH AND T1.ZSDH = #{ZSDH} AND T1.JGID = #{JGID}
+    </select>
+
+
+    <select id="getOralModelInfoListByJhhAndSjd" resultType="OralModelInfo" flushCache="true">
+        SELECT T1.KFDH,T1.ZYH,T1.YPYF,T1.KFSJ,T2.KFMX,T2.TMBH,T2.YDMS,T2.KFZT,T2.ZXSJ,T2.ZXGH,T2.HDSJ,T2.HDGH,T2.ZFBZ,T3.BZMX,T3.YZXH,T3.YPXH,T3.BZJL,T3.JLDW,T3.BZSL,T3.SLDW,T3.SJBH,T3.SJMC
+        FROM ENR_KFD T1,ENR_KFBZ T2,ENR_BZMX T3,ENR_YZJH T4
+        WHERE T1.KFDH=T2.KFDH AND T2.KFMX=T3.KFMX AND T4.JHSJ=T1.KFSJ AND T4.YZXH=T3.YZXH AND T1.JGID=T4.JGID AND T4.JHH = #{JHH} AND T4.JGID = #{JGID} ORDER BY T2.KFMX
+    </select>
+
+    <select id="getOralModelInfoListByJhhAndSjbh" resultType="OralModelInfo" flushCache="true">
+        SELECT T1.KFDH,T1.ZYH,T1.YPYF,T1.KFSJ,T2.KFMX,T2.TMBH,T2.YDMS,T2.KFZT,T2.ZXSJ,T2.ZXGH,T2.HDSJ,T2.HDGH,T2.ZFBZ,T3.BZMX,T3.YZXH,T3.YPXH,T3.BZJL,T3.JLDW,T3.BZSL,T3.SLDW,T3.SJBH,T3.SJMC
+        FROM ENR_KFD T1,ENR_KFBZ T2,ENR_BZMX T3,ENR_YZJH T4
+        WHERE T1.KFDH=T2.KFDH AND T2.KFMX=T3.KFMX AND T4.SJBH=T3.SJBH AND T4.YZXH=T3.YZXH AND T1.KFRQ=T4.JHRQ AND T1.JGID=T4.JGID AND T4.JHH = #{JHH} AND T4.JGID = #{JGID} ORDER BY T2.KFMX
+    </select>
+
+    <select id="getOralModelInfoListByBarcode" resultType="OralModelInfo" flushCache="true">
+        SELECT T1.KFDH,T1.ZYH,T1.YPYF,T1.KFSJ,T2.KFMX,T2.TMBH,T2.YDMS,T2.KFZT,T2.ZXSJ,T2.ZXGH,T2.HDSJ,T2.HDGH,T2.ZFBZ,T3.BZMX,T3.YZXH,T3.YPXH,T3.BZJL,T3.JLDW,T3.BZSL,T3.SLDW,T3.SJBH,T3.SJMC
+        FROM ENR_KFD T1,ENR_KFBZ T2,ENR_BZMX T3
+        WHERE T1.KFDH = T2.KFDH AND T2.KFMX = T3.KFMX AND T2.TMBH = #{TMBH} AND T1.JGID = #{JGID}
+        ORDER BY T2.KFMX
+    </select>
+
+    <select id="getOralModelInfoListByKfdh" resultType="OralModelInfo" flushCache="true">
+        SELECT T1.KFDH,T1.ZYH,T1.YPYF,T1.KFSJ,T2.KFMX,T2.TMBH,T2.YDMS,T2.KFZT,T2.ZXSJ,T2.ZXGH,T2.HDSJ,T2.HDGH,T2.ZFBZ,T3.BZMX,T3.YZXH,T3.YPXH,T3.BZJL,T3.JLDW,T3.BZSL,T3.SLDW,T3.SJBH,T3.SJMC
+        FROM ENR_KFD T1,ENR_KFBZ T2,ENR_BZMX T3
+        WHERE T1.KFDH = T2.KFDH AND T2.KFMX = T3.KFMX AND T1.KFDH = #{KFDH} AND T1.JGID = #{JGID}
+        ORDER BY T2.KFMX
+    </select>
+
+
+    <select id="getTransfusionInfoByJhhAndSjd" resultType="TransfusionInfo" flushCache="true">
+        SELECT T1.SYDH,T1.YPYF,T1.ZYH,T1.SYPC,T1.YZZH,T1.SYSJ,T1.SJBH,T1.SJMC,T1.LYBS,T1.KSSJ,T1.KSGH,T1.JSSJ,T1.JSGH,T1.ZXDH,T1.SPBZ,T1.MPBZ,
+        T1.KSHDSJ,T1.KSHDGH,T1.JSHDSJ,T1.JSHDGH,T1.SYZT,T1.BYHDBZ,T1.JYHDBZ,T2.SYMX,T2.YZXH,T2.YPXH,T2.YCJL,T2.JLDW,T2.YCSL,T2.SLDW
+        FROM ENR_SYD T1,ENR_SYMX T2,ENR_YZJH T3
+        WHERE T1.SYDH = T2.SYDH AND T2.YZXH = T3.YZXH AND T1.SYSJ = T3.JHSJ AND T1.JGID=T3.JGID AND T3.JGID = #{JGID} AND T3.JHH = #{JHH}
+        ORDER BY T3.YZZH ASC,T2.YZZX DESC
+    </select>
+
+    <select id="getTransfusionInfoByJhhAndSjbh" resultType="TransfusionInfo" flushCache="true">
+        SELECT T1.SYDH,T1.YPYF,T1.ZYH,T1.SYPC,T1.YZZH,T1.SYSJ,T1.SJBH,T1.SJMC,T1.LYBS,T1.KSSJ,T1.KSGH,T1.JSSJ,T1.JSGH,T1.ZXDH,T1.SPBZ,T1.MPBZ,
+        T1.KSHDSJ,T1.KSHDGH,T1.JSHDSJ,T1.JSHDGH,T1.SYZT,T1.BYHDBZ,T1.JYHDBZ,T2.SYMX,T2.YZXH,T2.YPXH,T2.YCJL,T2.JLDW,T2.YCSL,T2.SLDW
+        FROM ENR_SYD T1,ENR_SYMX T2,ENR_YZJH T3
+        WHERE T1.SYDH = T2.SYDH AND T2.YZXH = T3.YZXH AND T1.SJBH = T3.SJBH AND T1.SYRQ = T3.JHRQ AND T1.JGID = T3.JGID AND T3.JHH = #{JHH} AND T3.JGID = #{JGID}
+        ORDER BY T3.YZZH ASC,T2.YZZX DESC
+    </select>
+
+    <select id="getTransfusionInfoByBarcode" resultType="TransfusionInfo" flushCache="true">
+        SELECT SYDH,YPYF,ZYH,SYPC,YZZH,SYSJ,SJBH,SJMC,LYBS,KSSJ,KSGH,JSSJ,JSGH,ZXDH,SPBZ,MPBZ,KSHDSJ,KSHDGH,JSHDSJ,JSHDGH,SYZT,BYHDBZ,JYHDBZ
+        FROM ENR_SYD
+        WHERE TMBH = #{TMBH} AND JGID = #{JGID}
+        ORDER BY YZZH ASC
+    </select>
+
+    <select id="getTransfusionInfoBySydh" resultType="TransfusionInfo" flushCache="true">
+        SELECT SYDH,YPYF,ZYH,SYPC,YZZH,SYSJ,SJBH,SJMC,LYBS,KSSJ,KSGH,JSSJ,JSGH,ZXDH,SPBZ,MPBZ,KSHDSJ,KSHDGH,JSHDSJ,JSHDGH,SYZT,BYHDBZ,JYHDBZ
+        FROM ENR_SYD
+        WHERE SYDH = #{SYDH} AND JGID = #{JGID}
+        ORDER BY YZZH ASC
+    </select>
+
+    <select id="getTransfusionDetailInfoList" resultType="TransfusionDetailInfo" flushCache="true">
+        SELECT T2.SYMX,T2.YZXH,T2.YPXH,T2.YCJL,T2.JLDW,T2.YCSL,T2.SLDW
+        FROM ENR_SYD T1,ENR_SYMX T2
+        WHERE T1.SYDH = T2.SYDH AND T1.SYDH = #{SYDH} AND T1.JGID = #{JGID}
+        ORDER BY T1.YZZH ASC,T2.YZZX DESC
+    </select>
+
+
+    <!--
+    <select id="getFlowRecordDetailInfoListForOral" resultType="FlowRecordDetailInfo" flushCache="true">
+        SELECT MX.YZXH, MX.KFMX,MX.BZJL,MX.JLDW,MX.BZSL,MX.SLDW,BZ.TMBH,BZ.YDMS,BQYZ.YZMC
+        FROM ENR_BZMX MX,ENR_KFBZ BZ,ENR_KFD KFD,V_MOB_HIS_BQYZ BQYZ
+        WHERE BZ.KFDH = #{KFDH} AND BZ.KFMX = MX.KFMX AND KFD.KFDH = BZ.KFDH AND BQYZ.JLXH = MX.YZXH AND KFD.JGID = #{JGID}
+    </select>
+
+    <select id="getFlowRecordDetailInfoListForTran" resultType="FlowRecordDetailInfo" flushCache="true">
+        SELECT MX.SYDH,MX.YCJL,MX.JLDW,MX.YCSL,MX.SLDW,MX.YZXH,SYD.TMBH,SYD.SYSJ,BQYZ.YZMC
+        FROM ENR_SYMX MX,ENR_SYD SYD,V_MOB_HIS_BQYZ BQYZ
+        WHERE SYD.ZYH = #{ZYH} AND SYD.SYZT = 2 AND SYD.SYDH = MX.SYDH AND BQYZ.JLXH = MX.YZXH AND SYD.JGID = #{JGID}
+    </select>
+    -->
+    <select id="getFlowRecordDetailInfoListForOral" resultType="FlowRecordDetailInfo" flushCache="true">
+        SELECT MX.YZXH, MX.KFMX,MX.BZJL,MX.JLDW,MX.BZSL,MX.SLDW,BZ.TMBH,BZ.YDMS
+        FROM ENR_BZMX MX,ENR_KFBZ BZ,ENR_KFD KFD
+        WHERE BZ.KFDH = #{KFDH} AND BZ.KFMX = MX.KFMX AND KFD.KFDH = BZ.KFDH AND KFD.JGID = #{JGID}
+    </select>
+
+    <select id="getFlowRecordDetailInfoListForTran" resultType="FlowRecordDetailInfo" flushCache="true">
+        SELECT MX.SYDH,MX.YCJL,MX.JLDW,MX.YCSL,MX.SLDW,MX.YZXH,SYD.TMBH,SYD.SYSJ
+        FROM ENR_SYMX MX,ENR_SYD SYD
+        WHERE SYD.ZYH = #{ZYH} AND SYD.SYZT = 2 AND SYD.SYDH = MX.SYDH AND SYD.JGID = #{JGID}
+    </select>
+
+    <select id="getAdviceBqyzExt" resultType="AdviceBqyzExt" flushCache="true">
+        SELECT JLXH YZXH, YZMC From V_MOB_HIS_BQYZ Where JLXH IN
+        <foreach collection="FRDIS" index="index" item="item" open="(" separator="," close=")">
+            #{item.YZXH}
+        </foreach>
+    </select>
+
+
+    <select id="getSydhListForDp" resultType="String" flushCache="true">
+        SELECT SYDH
+        FROM ENR_SYD
+        WHERE ZYH = #{ZYH} AND SYZT = 2 AND JGID = #{JGID}
+    </select>
+
+
+    <update id="editPlanInfoForDoubleCheckControl" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_YZJH
+            SET KSHDSJ = #{KSHDSJ}, KSHDGH = #{KSHDGH}
+            WHERE ZFBZ = 0 AND JHH = #{JHH} AND JGID = #{JGID} AND ZXZT = 0
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_YZJH
+            SET KSHDSJ = to_date(#{KSHDSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSHDGH = #{KSHDGH}
+            WHERE ZFBZ = 0 AND JHH = #{JHH} AND JGID = #{JGID} AND ZXZT = 0
+        </if>
+    </update>
+
+    <update id="editOralInfoForDoubleCheckControl">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_KFBZ
+            SET HDGH = #{HDGH}, HDSJ = #{HDSJ}
+            WHERE KFMX = #{KFMX} AND KFZT = 0
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_KFBZ
+            SET HDGH = #{HDGH}, HDSJ = to_date(#{HDSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE KFMX = #{KFMX} AND KFZT = 0
+        </if>
+    </update>
+
+    <update id="editTransfusionInfoForDoubleCheckControl">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_SYD
+            SET KSHDGH = #{HDGH}, KSHDSJ = #{HDSJ}
+            WHERE SYDH = #{SYDH} AND SYZT = 0 AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_SYD
+            SET KSHDGH = #{HDGH}, KSHDSJ = to_date(#{HDSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE SYDH = #{SYDH} AND SYZT = 0 AND JGID = #{JGID}
+        </if>
+    </update>
+
+    <update id="editInjectionInfoForDoubleCheckControl">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_ZSD
+            SET ZXHDSJ = #{HDSJ}, ZXHDGH = #{HDGH}
+            WHERE ZSDH = #{ZSDH} AND ZSZT = 0 AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_ZSD
+            SET ZXHDSJ = to_date(#{HDSJ}, 'yyyy-mm-dd hh24:mi:ss'), ZXHDGH = #{HDGH}
+            WHERE ZSDH = #{ZSDH} AND ZSZT = 0 AND JGID = #{JGID}
+        </if>
+    </update>
+
+
+    <update id="editPlanInfo" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_YZJH
+            SET
+            <if test="ZXZT == 2">
+                ZXZT = 2, KSSJ = #{KSSJ}, KSGH = #{KSGH},
+            </if>
+            <if test="ZXZT == 1">
+                ZXZT = 1, JSSJ = #{JSSJ}, JSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 0">
+                ZXZT = 0, JSSJ = #{JSSJ}, JSGH = #{JSGH},KSSJ = #{KSSJ}, KSGH = #{KSGH},
+            </if>
+             ZDLX = 1
+            WHERE JHH = #{JHH} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_YZJH
+            SET
+            <if test="ZXZT == 2">
+                ZXZT = 2, KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{KSGH},
+            </if>
+            <if test="ZXZT == 1">
+                ZXZT = 1, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 0">
+                ZXZT = 0, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},
+                KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{KSGH},
+            </if>
+                ZDLX = 1
+            WHERE JHH = #{JHH} AND JGID = #{JGID}
+        </if>
+    </update>
+
+    <update id="editAdviceYzbInfo" parameterType="AdviceYzbInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE EMR_YZB
+            SET HSZXGH = #{HSZXGH}, HSZXSJ = #{HSZXSJ}
+            WHERE YZBXH = #{YZXH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE EMR_YZB
+            SET HSZXGH = #{HSZXGH}, HSZXSJ = to_date(#{HSZXSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE YZBXH = #{YZXH}
+        </if>
+    </update>
+
+    <update id="editAdviceYzbInfoHD" parameterType="AdviceYzbInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE EMR_YZB
+            SET HSZXGH = #{HSZXGH}, HSZXSJ = #{HSZXSJ}, HSZXGH2= #{HSZXGH2}
+            WHERE YZBXH = #{YZXH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE EMR_YZB
+            SET HSZXGH = #{HSZXGH}, HSZXSJ = to_date(#{HSZXSJ}, 'yyyy-mm-dd hh24:mi:ss'), HSZXGH2= #{HSZXGH2}
+            WHERE YZBXH = #{YZXH}
+        </if>
+    </update>
+
+    <update id="editAdviceBqyzInfo" parameterType="AdviceBqyzInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ZY_BQYZ
+            SET HSZXGH = #{HSZXGH}, HSZXSJ = #{HSZXSJ}
+            WHERE JLXH = #{YZXH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ZY_BQYZ
+            SET HSZXGH = #{HSZXGH}, HSZXSJ = to_date(#{HSZXSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE JLXH = #{YZXH}
+        </if>
+    </update>
+
+    <update id="editAdviceBqyzInfoHD" parameterType="AdviceBqyzInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ZY_BQYZ
+            SET HSZXGH = #{HSZXGH}, HSZXSJ = #{HSZXSJ}, HSZXGH2= #{HSZXGH2}
+            WHERE JLXH = #{YZXH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ZY_BQYZ
+            SET HSZXGH = #{HSZXGH}, HSZXSJ = to_date(#{HSZXSJ}, 'yyyy-mm-dd hh24:mi:ss'), HSZXGH2= #{HSZXGH2}
+            WHERE JLXH = #{YZXH}
+        </if>
+    </update>
+<!-- ZXZT == 2 取消开始时候使用 ：  JSSJ = #{JSSJ}, JSGH = #{JSGH}, -->
+    <update id="editBQPlanInfo" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE BQ_YZJH
+            SET
+            <if test="ZXZT == 2">
+                ZXZT = 2, KSSJ = #{KSSJ}, KSGH = #{KSGH}, JSSJ = #{JSSJ}, JSGH = #{JSGH},
+           </if>
+            <if test="ZXZT == 1">
+                ZXZT = 1, JSSJ = #{JSSJ}, JSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 0">
+                ZXZT = 0, JSSJ = #{JSSJ}, JSGH = #{JSGH},KSSJ = #{KSSJ}, KSGH = #{KSGH},
+            </if>
+            CZR = #{JSGH}, CZKHD = 'PDA'
+            WHERE ZYH = #{ZYH} And YZZH = #{YZZH} And JHSJ = #{JHSJ}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE BQ_YZJH
+            SET
+            <if test="ZXZT == 2">
+                ZXZT = 2, KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{KSGH},JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 1">
+                ZXZT = 1, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 0">
+                ZXZT = 0, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},
+                KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{KSGH},
+            </if>
+            CZR = #{JSGH}, CZKHD = 'PDA'
+            WHERE ZYH = #{ZYH} And YZZH = #{YZZH} And JHSJ = to_date(substr(#{JHSJ},1,19), 'yyyy-mm-dd hh24:mi:ss')
+        </if>
+    </update>
+    <!--
+    editBQPlanInfo, editBQPlanInfoForTrans 两者都改
+    WHERE JHH = #{GLJHH} ==> ZYH = #{ZYH} And YZZH = #{YZZH} And JHSJ = to_date(substr(#{JHSJ},1,19), 'yyyy-mm-dd hh24:mi:ss') -->
+
+    <update id="editBQPlanInfoForTrans" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE BQ_YZJH
+            SET
+            <if test="ZXZT == 2">
+                ZXZT = 2, KSSJ = #{KSSJ}, KSGH = #{KSGH}, JSSJ = #{JSSJ}, JSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 1">
+                ZXZT = 1, JSSJ = #{JSSJ}, JSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 0">
+                ZXZT = 0, JSSJ = #{JSSJ}, JSGH = #{JSGH},KSSJ = #{KSSJ}, KSGH = #{KSGH},
+            </if>
+            CZR = #{JSGH}, CZKHD = 'PDA'
+            WHERE ZYH = #{ZYH} And YZZH = #{YZZH} And JHSJ = #{JHSJ}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE BQ_YZJH
+            SET
+            <if test="ZXZT == 2">
+                ZXZT = 2, KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{KSGH},JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 1">
+                ZXZT = 1, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 0">
+                ZXZT = 0, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},
+                KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{KSGH},
+            </if>
+            CZR = #{JSGH}, CZKHD = 'PDA'
+            WHERE ZYH = #{ZYH} And YZZH = #{YZZH} And JHSJ = to_date(substr(#{JHSJ},1,19), 'yyyy-mm-dd hh24:mi:ss')
+        </if>
+    </update>
+
+    <update id="editPlanInfoList" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_YZJH
+            SET
+            <if test="ZXZT == 2">
+                ZXZT = 2, KSSJ = #{KSSJ}, KSGH = #{KSGH},
+            </if>
+            <if test="ZXZT == 1">
+                ZXZT = 1, JSSJ = #{JSSJ}, JSGH = #{JSGH},
+                    KSSJ = (Case WHen GSLX In(3,5) Then #{JSSJ} Else KSSJ End),
+                    KSGH = (Case WHEN GSLX In(3,5) Then #{JSGH} Else KSGH End),
+            </if>
+            <if test="ZXZT == 0">
+                ZXZT = 0, JSSJ = #{JSSJ}, JSGH = #{JSGH},KSSJ = #{KSSJ}, KSGH = #{KSGH},
+            </if>
+            ZDLX = 1
+            WHERE JHH IN
+            <foreach collection="JHHList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_YZJH
+            SET
+            <if test="ZXZT == 2">
+                ZXZT = 2, KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{KSGH},
+            </if>
+            <if test="ZXZT == 1">
+                ZXZT = 1, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},
+                          KSSJ = (Case WHen GSLX In(3,5) Then to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss') Else KSSJ End),
+                          KSGH = (Case WHEN GSLX In(3,5) Then #{JSGH} Else KSGH End),
+            </if>
+            <if test="ZXZT == 0">
+                ZXZT = 0, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},
+                KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{KSGH},
+            </if>
+            ZDLX = 1
+            WHERE JHH IN
+            <foreach collection="JHHList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            AND JGID = #{JGID}
+        </if>
+    </update>
+
+    <update id="editInjectionInfoJs" parameterType="InjectionInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_ZSD
+            SET
+            <choose>
+                <when test="ZSZT == 2">
+                    ZSZT = 2, ZXSJ = #{ZXSJ}, ZXGH = #{ZXGH}
+                </when>
+                <when test="ZSZT == 1">
+                    ZSZT = 1, JSSJ = #{JSSJ}, JSGH = #{JSGH}, ZXSJ = #{JSSJ}, ZXGH = #{JSGH}
+                </when>
+                <when test="ZSZT == 0">
+                    ZSZT = 0, JSSJ = #{JSSJ}, JSGH = #{JSGH},ZXSJ = #{ZXSJ}, ZXGH = #{ZXGH}
+                </when>
+                <otherwise>
+                    ZSZT = 1, JSSJ = #{JSSJ}, JSGH = #{JSGH}, ZXSJ = #{JSSJ}, ZXGH = #{JSGH}
+                </otherwise>
+            </choose>
+            WHERE ZSDH = #{ZSDH} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_ZSD
+            SET
+            <choose>
+                <when test="ZSZT == 2">
+                    ZSZT = 2, ZXSJ = to_date(#{ZXSJ}, 'yyyy-mm-dd hh24:mi:ss'), ZXGH = #{ZXGH}
+                </when>
+                <when test="ZSZT == 1">
+                    ZSZT = 1, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH}, ZXSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), ZXGH = #{JSGH}
+                </when>
+                <when test="ZSZT == 0">
+                    ZSZT = 0, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},ZXSJ = to_date(#{ZXSJ}, 'yyyy-mm-dd hh24:mi:ss'), ZXGH = #{ZXGH}
+                </when>
+                <otherwise>
+                    ZSZT = 1, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH}, ZXSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), ZXGH = #{JSGH}
+                </otherwise>
+            </choose>
+            WHERE ZSDH = #{ZSDH} AND JGID = #{JGID}
+        </if>
+    </update>
+
+    <update id="editInjectionInfoKsAndJs" parameterType="InjectionInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_ZSD
+            SET
+            <choose>
+                <when test="ZSZT == 2">
+                    ZSZT = 2, ZXSJ = #{ZXSJ}, ZXGH = #{ZXGH}
+                </when>
+                <when test="ZSZT == 1">
+                    ZSZT = 1, JSSJ = #{JSSJ}, JSGH = #{JSGH}, ZXSJ = #{JSSJ}, ZXGH = #{JSGH}
+                </when>
+                <when test="ZSZT == 0">
+                    ZSZT = 0, JSSJ = #{JSSJ}, JSGH = #{JSGH},ZXSJ = #{ZXSJ}, ZXGH = #{ZXGH}
+                </when>
+                <otherwise>
+                    ZSZT = 1, JSSJ = #{JSSJ}, JSGH = #{JSGH}, ZXSJ = #{JSSJ}, ZXGH = #{JSGH}
+                </otherwise>
+            </choose>
+            WHERE ZSDH = #{ZSDH} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_ZSD
+            SET
+            <choose>
+            <when test="ZSZT == 2">
+                ZSZT = 2, ZXSJ = to_date(#{ZXSJ}, 'yyyy-mm-dd hh24:mi:ss'), ZXGH = #{ZXGH}
+            </when>
+            <when test="ZSZT == 1">
+                ZSZT = 1, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH}, ZXSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), ZXGH = #{JSGH}
+            </when>
+            <when test="ZSZT == 0">
+                ZSZT = 0, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},ZXSJ = to_date(#{ZXSJ}, 'yyyy-mm-dd hh24:mi:ss'), ZXGH = #{ZXGH}
+            </when>
+            <otherwise>
+                ZSZT = 1, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH}, ZXSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), ZXGH = #{JSGH}
+            </otherwise>
+        </choose>
+            WHERE ZSDH = #{ZSDH} AND JGID = #{JGID}
+        </if>
+    </update>
+
+    <update id="editPlanInfoListJs" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_YZJH SET
+            <if test="ZXZT == 2">
+            ZXZT = 2, KSSJ = #{KSSJ}, KSGH = #{KSGH},
+            </if>
+            <if test="ZXZT == 1">
+                ZXZT = 1, JSSJ = #{JSSJ}, JSGH = #{JSGH},KSSJ = #{JSSJ}, KSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 0">
+                ZXZT = 0, JSSJ = #{JSSJ}, JSGH = #{JSGH},KSSJ = #{KSSJ}, KSGH = #{KSGH},
+            </if>
+            ZDLX = #{ZDLX}
+            WHERE JHH IN(SELECT ENR_YZJH.JHH FROM ENR_ZSMX MX,ENR_ZSD ZSD,ENR_YZJH WHERE MX.ZSDH = ZSD.ZSDH AND ZSD.ZYH = #{ZYH} AND
+            ZSD.ZSDH = #{QRDH} AND MX.YZXH = ENR_YZJH.YZXH AND ZSD.ZSSJ = ENR_YZJH.JHSJ)
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_YZJH SET
+            <if test="ZXZT == 2">
+                ZXZT = 2, KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{KSGH},
+            </if>
+            <if test="ZXZT == 1">
+                ZXZT = 1, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},KSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 0">
+                ZXZT = 0, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},
+                KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{KSGH},
+            </if>
+            ZDLX = #{ZDLX}
+            WHERE JHH IN(SELECT ENR_YZJH.JHH FROM ENR_ZSMX MX,ENR_ZSD ZSD,ENR_YZJH WHERE MX.ZSDH = ZSD.ZSDH AND ZSD.ZYH = #{ZYH} AND
+            ZSD.ZSDH = #{QRDH} AND MX.YZXH = ENR_YZJH.YZXH AND ZSD.ZSSJ = ENR_YZJH.JHSJ)
+        </if>
+    </update>
+    <!-- editPlanInfoListKsAndJs
+    2018-5-30 11:06:03 加  JHHList 条件，原因是  注射存在多组药，如果 不加  第一次循环 FinalOperate——> InjectionDBOperate ——》
+           planInfoManager.editPlanInfoListKsAndJs(adviceArg.PlanInfoList.get(0))  的更新操作 把 2 组药都更新了，导致第二次更新就提示失败了
+           -->
+    <update id="editPlanInfoListKsAndJs" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_YZJH SET
+            <if test="ZXZT == 2">
+                ZXZT = 2, KSSJ = #{KSSJ}, KSGH = #{KSGH},
+            </if>
+            <if test="ZXZT == 1">
+                ZXZT = 1, JSSJ = #{JSSJ}, JSGH = #{JSGH},KSSJ = #{JSSJ}, KSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 0">
+                ZXZT = 0, JSSJ = #{JSSJ}, JSGH = #{JSGH},KSSJ = #{KSSJ}, KSGH = #{KSGH},
+            </if>
+            ZDLX = #{ZDLX}
+            WHERE ZXZT = 0 AND JHH IN(SELECT ENR_YZJH.JHH FROM ENR_ZSMX MX,ENR_ZSD ZSD,ENR_YZJH WHERE MX.ZSDH = ZSD.ZSDH AND ZSD.ZYH =
+            #{ZYH} AND ZSD.ZSDH = #{QRDH} AND MX.YZXH = ENR_YZJH.YZXH AND ZSD.ZSSJ = ENR_YZJH.JHSJ AND
+            ENR_YZJH.JGID=ZSD.JGID AND ZSD.JGID = #{JGID} )
+            AND ENR_YZJH.JHH IN
+            <foreach collection="JHHList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_YZJH SET
+            <if test="ZXZT == 2">
+                ZXZT = 2, KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{KSGH},
+            </if>
+            <if test="ZXZT == 1">
+                ZXZT = 1, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH}, KSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{JSGH},
+            </if>
+            <if test="ZXZT == 0">
+                ZXZT = 0, JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH},
+                KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'), KSGH = #{KSGH},
+            </if>
+            ZDLX = #{ZDLX}
+            WHERE ZXZT = 0 AND JHH IN(SELECT ENR_YZJH.JHH FROM ENR_ZSMX MX,ENR_ZSD ZSD,ENR_YZJH WHERE MX.ZSDH = ZSD.ZSDH AND ZSD.ZYH =
+            #{ZYH} AND ZSD.ZSDH = #{QRDH} AND MX.YZXH = ENR_YZJH.YZXH AND ZSD.ZSSJ = ENR_YZJH.JHSJ AND
+            ENR_YZJH.JGID=ZSD.JGID AND ZSD.JGID = #{JGID} )
+            AND ENR_YZJH.JHH IN
+            <foreach collection="JHHList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+
+        </if>
+    </update>
+
+<!-- 口服药 一组多条
+   第二次执行更新 KFZT 已经不再是 0 了 修改去掉 KFZT =0 条件
+   <update id="editOralPackageInfo" parameterType="OralPackageInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_KFBZ
+            SET KFZT = 1,ZXGH = #{ZXGH},ZXSJ = #{ZXSJ}
+            WHERE KFDH = #{KFDH} AND ZFBZ = 0 AND KFZT = 0
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_KFBZ
+            SET KFZT = 1,ZXGH = #{ZXGH},ZXSJ = to_date(#{ZXSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE KFDH = #{KFDH} AND ZFBZ = 0 AND KFZT = 0
+        </if>
+    </update>-->
+
+    <!--
+    <update id="editOralPackageInfo" parameterType="OralPackageInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_KFBZ
+            SET KFZT = 1,ZXGH = #{ZXGH},ZXSJ = #{ZXSJ}
+            WHERE KFDH = #{KFDH} AND ZFBZ = 0
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_KFBZ
+            SET KFZT = 1,ZXGH = #{ZXGH},ZXSJ = to_date(#{ZXSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE KFDH = #{KFDH} AND ZFBZ = 0
+        </if>
+    </update>
+    -->
+    <update id="editOralPackageInfo" parameterType="OralPackageInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_KFBZ
+            SET KFZT = #{KFZT},ZXGH = #{ZXGH},ZXSJ = #{ZXSJ}
+            WHERE KFMX = #{KFMX} AND ZFBZ = 0
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_KFBZ
+            SET KFZT = #{KFZT},ZXGH = #{ZXGH},ZXSJ = to_date(#{ZXSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE KFMX = #{KFMX} AND ZFBZ = 0
+        </if>
+    </update>
+
+    <select id="getTransfusionInfoListByZyh" resultType="TransfusionInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT SYDH, SYZT, ZXDH
+            FROM ENR_SYD
+            WHERE ZYH = #{ZYH} AND (SYZT=2 OR SYZT=4) AND JGID = #{JGID} AND SYRQ=#{SYRQ}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT SYDH, SYZT, ZXDH
+            FROM ENR_SYD
+            WHERE ZYH = #{ZYH} AND (SYZT=2 OR SYZT=4) AND JGID = #{JGID} AND SYRQ=to_date(#{SYRQ}, 'yyyy-mm-dd
+            hh24:mi:ss')
+        </if>
+    </select>
+
+    <!-- 升级编号【56010053】============================================= start
+     多瓶超过2瓶转接瓶后提示选择接哪瓶的问题
+    ================= Classichu 2017/11/14 16:43
+
+    -->
+    <select id="getTransfusionInfoListByZyh4TransfuseExecut" resultType="TransfusionInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT SYDH, SYZT, ZXDH
+            FROM ENR_SYD
+            WHERE ZYH = #{ZYH} AND (SYZT=2 OR SYZT=4) AND JGID = #{JGID} AND SYRQ=#{SYRQ}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT SYDH, SYZT, ZXDH
+            FROM ENR_SYD
+            WHERE ZYH = #{ZYH} AND (SYZT=2 OR SYZT=4) AND JGID = #{JGID} AND SYRQ=to_date(#{SYRQ}, 'yyyy-mm-dd hh24:mi:ss')
+        </if>
+    </select>
+    <!-- =============================================================== end -->
+
+    <select id="getTransfusionInfoListByZyh4TransfuseExecutAll" resultType="TransfusionInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT SYDH, SYZT, ZXDH
+            FROM ENR_SYD
+            WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND SYRQ=#{SYRQ}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT SYDH, SYZT, ZXDH
+            FROM ENR_SYD
+            WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND SYRQ=to_date(#{SYRQ}, 'yyyy-mm-dd hh24:mi:ss')
+        </if>
+    </select>
+
+    <select id="checkRefuse" resultType="java.lang.Integer" flushCache="true">
+        SELECT COUNT(1)
+        FROM IENR_JHJJ
+        WHERE JHH = #{JHH} AND YYXH = #{DYXH}
+    </select>
+
+    <insert id="insertPlanRefusal" parameterType="PlanRefusalVo">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_JHJJ
+            (JHH, YYXH, JJSJ, JJGH, JGID)
+            VALUES
+            (#{JHH}, #{YYXH}, #{JJSJ}, #{JJGH}, #{JGID})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_JHJJ
+            (JHH, YYXH, JJSJ, JJGH, JGID)
+            VALUES
+            (#{JHH}, #{YYXH}, to_date(#{JJSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{JJGH}, #{JGID})
+        </if>
+    </insert>
+
+    <update id="updateAdvicePlanOfRefuse" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_YZJH
+            SET ZXZT = 5,
+            JSGH = #{JSGH},
+            JSSJ = #{JSSJ},
+            KSGH = #{KSGH},
+            KSSJ = #{KSSJ}
+            WHERE JHH = #{JHH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_YZJH
+            SET ZXZT = 5,
+            JSGH = #{JSGH},
+            JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+            KSGH = #{KSGH},
+            KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE JHH = #{JHH}
+        </if>
+    </update>
+
+    <update id="transfuseStopEnd">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_SYZT
+            SET JSSJ = #{JSSJ},
+            JSGH = #{JSGH}
+            WHERE SYDH = #{SYDH} AND JSSJ IS NULL AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_SYZT
+            SET JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+            JSGH = #{JSGH}
+            WHERE SYDH = #{SYDH} AND JSSJ IS NULL AND JGID = #{JGID}
+        </if>
+    </update>
+
+    <update id="updateTransfusionStatus">
+        UPDATE ENR_SYD
+        SET SYZT = #{SYZT}
+        WHERE SYDH = #{SYDH} AND JGID = #{JGID}
+    </update>
+
+    <update id="editTransfusion" parameterType="TransfusionInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_SYD
+            SET
+            <if test="KSSJ != null and KSSJ != ''">
+                KSSJ = #{KSSJ},
+                KSGH = #{KSGH},
+                ZXDH = #{ZXDH},
+            </if>
+            <if test="JSSJ != null and JSSJ != ''">
+                JSSJ = #{JSSJ},
+                JSGH = #{JSGH},
+                PJDS = #{PJDS},
+            </if>
+            <if test="SPBZ != null and SPBZ != ''">SPBZ = #{SPBZ},</if>
+            <if test="MPBZ != null and MPBZ != ''">MPBZ = #{MPBZ},</if>
+            SYZT = #{SYZT}
+            WHERE SYDH = #{SYDH} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_SYD
+            SET
+            <if test="KSSJ != null and KSSJ != ''">
+                KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                KSGH = #{KSGH},
+                ZXDH = #{ZXDH},
+            </if>
+            <if test="JSSJ != null and JSSJ != ''">
+                JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                JSGH = #{JSGH},
+                PJDS = #{PJDS},
+            </if>
+            <if test="SPBZ != null and SPBZ != ''">SPBZ = #{SPBZ},</if>
+            <if test="MPBZ != null and MPBZ != ''">MPBZ = #{MPBZ},</if>
+            SYZT = #{SYZT}
+            WHERE SYDH = #{SYDH} AND JGID = #{JGID}
+        </if>
+    </update>
+
+    <update id="editTransfusion4Clear" parameterType="TransfusionInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_SYD
+            SET
+            <if test="KSSJ != ''">
+                KSSJ = #{KSSJ},
+                KSGH = #{KSGH},
+                ZXDH = #{ZXDH},
+            </if>
+            <if test="JSSJ != ''">
+                JSSJ = #{JSSJ},
+                JSGH = #{JSGH},
+                PJDS = #{PJDS},
+            </if>
+            <if test="SPBZ != ''">SPBZ = #{SPBZ},</if>
+            <if test="MPBZ != ''">MPBZ = #{MPBZ},</if>
+            SYZT = #{SYZT}
+            WHERE SYDH = #{SYDH} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_SYD
+            SET
+            <if test="KSSJ != ''">
+                KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                KSGH = #{KSGH},
+                ZXDH = #{ZXDH},
+            </if>
+            <if test="JSSJ != ''">
+                JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                JSGH = #{JSGH},
+                PJDS = #{PJDS},
+            </if>
+            <if test="SPBZ != ''">SPBZ = #{SPBZ},</if>
+            <if test="MPBZ != ''">MPBZ = #{MPBZ},</if>
+            SYZT = #{SYZT}
+            WHERE SYDH = #{SYDH} AND JGID = #{JGID}
+        </if>
+    </update>
+
+
+    <select id="getDropSpeedInfo" resultType="TransfusionInfoVoTemp" flushCache="true">
+        SELECT MX.YCJL, MX.JLDW, SYD.KSSJ
+        FROM ENR_SYD SYD, ENR_SYMX MX
+        WHERE SYD.SYDH = #{SYDH} AND SYD.SYDH = MX.SYDH AND SYD.JGID = #{JGID}
+    </select>
+
+    <update id="updatePlanInfoForSYD" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_YZJH
+            SET
+            <if test="KSSJ != null and KSSJ != ''">
+                KSSJ = #{KSSJ},
+                KSGH = #{KSGH},
+                QRDH = #{QRDH},
+                ZXLX = #{ZXLX},
+            </if>
+            <if test="JSSJ != null and JSSJ != ''">
+                JSSJ = #{JSSJ},
+                JSGH = #{JSGH},
+            </if>
+            <if test="LSBS != null">
+                LSBS=#{LSBS},
+            </if>
+            ZXZT = #{ZXZT},
+            ZDLX = #{ZDLX}
+            WHERE JHH IN(SELECT JHH FROM ENR_SYMX MX, ENR_SYD SYD,ENR_YZJH
+            WHERE MX.SYDH = #{QRDH} AND SYD.JGID = #{JGID} AND SYD.JGID = ENR_YZJH.JGID AND
+            MX.SYDH = SYD.SYDH AND ENR_YZJH.GSLX = 4 AND MX.YZXH = ENR_YZJH.YZXH AND
+            SYD.SJBH = ENR_YZJH.SJBH AND SYD.SYRQ = ENR_YZJH.JHRQ)
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_YZJH
+            SET
+            <if test="KSSJ != null and KSSJ != ''">
+                KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                KSGH = #{KSGH},
+                QRDH = #{QRDH},
+                ZXLX = #{ZXLX},
+            </if>
+            <if test="JSSJ != null and JSSJ != ''">
+                JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                JSGH = #{JSGH},
+            </if>
+            <if test="LSBS != null">
+                LSBS=#{LSBS},
+            </if>
+            ZXZT = #{ZXZT},
+            ZDLX = #{ZDLX}
+            WHERE JHH IN(SELECT ENR_YZJH.JHH FROM ENR_SYMX MX, ENR_SYD SYD,ENR_YZJH
+            WHERE MX.SYDH = #{QRDH} AND SYD.JGID = #{JGID} AND SYD.JGID = ENR_YZJH.JGID AND
+            MX.SYDH = SYD.SYDH AND ENR_YZJH.GSLX = 4 AND MX.YZXH = ENR_YZJH.YZXH AND
+            SYD.SJBH = ENR_YZJH.SJBH AND SYD.SYRQ = ENR_YZJH.JHRQ)
+        </if>
+    </update>
+
+    <update id="updatePlanInfoForSYD4Clear" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_YZJH
+            SET
+            <if test="KSSJ != ''">
+                KSSJ = #{KSSJ},
+                KSGH = #{KSGH},
+                QRDH = #{QRDH},
+                ZXLX = #{ZXLX},
+            </if>
+            <if test="JSSJ != ''">
+                JSSJ = #{JSSJ},
+                JSGH = #{JSGH},
+            </if>
+            LSBS=#{LSBS},
+            ZXZT = #{ZXZT},
+            ZDLX = #{ZDLX}
+            WHERE JHH IN(SELECT ENR_YZJH.JHH FROM ENR_SYMX MX, ENR_SYD SYD,ENR_YZJH
+            WHERE MX.SYDH = #{QRDH} AND SYD.JGID = #{JGID} AND SYD.JGID = ENR_YZJH.JGID AND
+            MX.SYDH = SYD.SYDH AND ENR_YZJH.GSLX = 4 AND MX.YZXH = ENR_YZJH.YZXH AND
+            SYD.SJBH = ENR_YZJH.SJBH AND SYD.SYRQ = ENR_YZJH.JHRQ)
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_YZJH
+            SET
+            <if test="KSSJ != ''">
+                KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                KSGH = #{KSGH},
+                QRDH = #{QRDH},
+                ZXLX = #{ZXLX},
+            </if>
+            <if test="JSSJ != ''">
+                JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                JSGH = #{JSGH},
+            </if>
+            LSBS=#{LSBS},
+            ZXZT = #{ZXZT},
+            ZDLX = #{ZDLX}
+            WHERE JHH IN(SELECT ENR_YZJH.JHH FROM ENR_SYMX MX, ENR_SYD SYD,ENR_YZJH
+            WHERE MX.SYDH = #{QRDH} AND SYD.JGID = #{JGID} AND SYD.JGID = ENR_YZJH.JGID AND
+            MX.SYDH = SYD.SYDH AND ENR_YZJH.GSLX = 4 AND MX.YZXH = ENR_YZJH.YZXH AND
+            SYD.SJBH = ENR_YZJH.SJBH AND SYD.SYRQ = ENR_YZJH.JHRQ)
+        </if>
+    </update>
+
+    <update id="updatePlanInfoForSYDByTime" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_YZJH
+            SET
+            <if test="KSSJ != null and KSSJ != ''">
+                KSSJ = #{KSSJ},
+                KSGH = #{KSGH},
+                QRDH = #{QRDH},
+                ZXLX = #{ZXLX},
+            </if>
+            <if test="JSSJ != null and JSSJ != ''">
+                JSSJ = #{JSSJ},
+                JSGH = #{JSGH},
+            </if>
+            <if test="LSBS != null">
+                LSBS=#{LSBS},
+            </if>
+            ZXZT = #{ZXZT},
+            ZDLX = #{ZDLX}
+            WHERE JHH IN(SELECT ENR_YZJH.JHH FROM ENR_SYMX MX, ENR_SYD SYD,ENR_YZJH
+            WHERE MX.SYDH = #{QRDH} AND SYD.JGID = #{JGID} AND SYD.JGID = ENR_YZJH.JGID AND
+            MX.SYDH = SYD.SYDH AND ENR_YZJH.GSLX = 4 AND MX.YZXH = ENR_YZJH.YZXH AND
+            SYD.SYSJ = ENR_YZJH.JHSJ)
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_YZJH
+            SET
+            <if test="KSSJ != null and KSSJ != ''">
+                KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                KSGH = #{KSGH},
+                QRDH = #{QRDH},
+                ZXLX = #{ZXLX},
+            </if>
+            <if test="JSSJ != null and JSSJ != ''">
+                JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                JSGH = #{JSGH},
+            </if>
+            <if test="LSBS != null">
+                LSBS=#{LSBS},
+            </if>
+            ZXZT = #{ZXZT},
+            ZDLX = #{ZDLX}
+            WHERE JHH IN(SELECT ENR_YZJH.JHH FROM ENR_SYMX MX, ENR_SYD SYD,ENR_YZJH
+            WHERE MX.SYDH = #{QRDH} AND SYD.JGID = #{JGID} AND SYD.JGID = ENR_YZJH.JGID AND
+            MX.SYDH = SYD.SYDH AND ENR_YZJH.GSLX = 4 AND MX.YZXH = ENR_YZJH.YZXH AND
+            SYD.SYSJ = ENR_YZJH.JHSJ)
+        </if>
+    </update>
+
+    <update id="updatePlanInfoForSYDByTime4Clear" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_YZJH
+            SET
+            <if test="KSSJ != ''">
+                KSSJ = #{KSSJ},
+                KSGH = #{KSGH},
+                QRDH = #{QRDH},
+                ZXLX = #{ZXLX},
+            </if>
+            <if test="JSSJ != ''">
+                JSSJ = #{JSSJ},
+                JSGH = #{JSGH},
+            </if>
+            LSBS=#{LSBS},
+            ZXZT = #{ZXZT},
+            ZDLX = #{ZDLX}
+            WHERE JHH IN(SELECT ENR_YZJH.JHH FROM ENR_SYMX MX, ENR_SYD SYD,ENR_YZJH
+            WHERE MX.SYDH = #{QRDH} AND SYD.JGID = #{JGID} AND SYD.JGID = ENR_YZJH.JGID AND
+            MX.SYDH = SYD.SYDH AND ENR_YZJH.GSLX = 4 AND MX.YZXH = ENR_YZJH.YZXH AND
+            SYD.SYSJ = ENR_YZJH.JHSJ)
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_YZJH
+            SET
+            <if test="KSSJ != ''">
+                KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                KSGH = #{KSGH},
+                QRDH = #{QRDH},
+                ZXLX = #{ZXLX},
+            </if>
+            <if test="JSSJ != ''">
+                JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                JSGH = #{JSGH},
+            </if>
+            LSBS=#{LSBS},
+            ZXZT = #{ZXZT},
+            ZDLX = #{ZDLX}
+            WHERE JHH IN(SELECT ENR_YZJH.JHH FROM ENR_SYMX MX, ENR_SYD SYD,ENR_YZJH
+            WHERE MX.SYDH = #{QRDH} AND SYD.JGID = #{JGID} AND SYD.JGID = ENR_YZJH.JGID AND
+            MX.SYDH = SYD.SYDH AND ENR_YZJH.GSLX = 4 AND MX.YZXH = ENR_YZJH.YZXH AND
+            SYD.SYSJ = ENR_YZJH.JHSJ)
+        </if>
+    </update>
+
+    <select id="transfuseStopCheck" resultType="TransfusionInfo" flushCache="true">
+        SELECT SYZT, ZXDH, ZYH
+        FROM ENR_SYD
+        WHERE SYDH = #{SYDH} AND JGID = #{JGID}
+    </select>
+
+    <select id="getZxsjOfAdviceYzb" resultType="AdviceYzbInfo" flushCache="true">
+        SELECT HSZXSJ, YZQX
+        FROM EMR_YZB
+        WHERE YZBXH = #{YZBXH}
+    </select>
+
+    <select id="getGLJHHByJHH" resultType="java.lang.String" flushCache="true">
+        SELECT GLJHH
+        FROM ENR_YZJH
+        WHERE JHH IN
+        <foreach collection="JHHLIST" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <select id="getAllFeeRule" resultType="FeeRule">
+        SELECT GZBH, YPYF, FYXH, YXJB, JFLX, FYXZ, JFDY, DYDW, BRLX, JGID, JFZH, ZFBZ
+        FROM IENR_FYGZ
+        WHERE ZFBZ =0
+    </select>
+
+    <!-- 升级编号【56010041】============================================= start
+    医嘱排序调整，将已完成的医嘱排后面
+     【56010040】 增加医嘱执行情况显示，如2/5,2表示已完成，5表示总量
+    ================= Classichu 2017/11/20 16:33
+    2018-03-20 17:40:10
+    //  '023451' '240351'
+    -->
+    <select id="getPlanInfoList" resultType="PlanInfo" flushCache="true">
+    <if test="dbtype == 'sqlserver'">
+        SELECT JH.YCSL, JH.SLDW, JH.YCJL, JH.JLDW, JH.ZFBZ, JH.YSYZBH,JH.JHH, JH.YZMC, JH.YZXH, JH.YZZH, JH.ZXZT,
+        JH.JSGH, JH.JSSJ,JH.KSGH, JH.KSSJ, LX.GSLX, JH.JHSJ, JH.SJBH, JH.SJMC, JH.ZXWZ, JH.JGID, JH.YPYF, JH.YZZX,JH.LSBS,JH.LXH,
+        CHARINDEX(convert(nvarchar(1),JH.ZXZT),'023451') myZXZT
+        ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = JH.BRBQ And b.LXH = JH.LXH And b.JGID = JH.JGID) TZJZ
+        FROM ENR_YZJH JH,ENR_JHLX LX
+        WHERE JH.ZFBZ = 0 AND JH.ZYH = #{ZYH} AND JH.LXH = LX.LXH AND JH.JHSJ >= #{START} AND JH.JHSJ &lt; #{END}
+        AND LX.JGID = JH.JGID AND JH.JGID = #{JGID}
+        <if test="GSLX != ''">
+            AND JH.GSLX = #{GSLX}
+        </if>
+        ORDER BY myZXZT ASC ,JH.KSSJ,JH.JHSJ,JH.YZZH,JH.YZZX DESC
+    </if>
+    <if test="dbtype == 'oracle'">
+        SELECT  JH.YCSL, JH.SLDW, JH.YCJL, JH.JLDW, JH.ZFBZ, JH.YSYZBH,JH.JHH, JH.YZMC, JH.YZXH, JH.YZZH, JH.ZXZT,
+        JH.JSGH, JH.JSSJ,  JH.KSGH, JH.KSSJ, LX.GSLX, JH.JHSJ, JH.SJBH, JH.SJMC, JH.ZXWZ, JH.JGID, JH.YPYF, JH.YZZX,JH.LSBS,JH.LXH,
+        INSTR('023451',JH.ZXZT) myZXZT
+        ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = JH.BRBQ And b.LXH = JH.LXH And b.JGID = JH.JGID) TZJZ
+        FROM ENR_YZJH JH,ENR_JHLX LX
+        WHERE JH.ZFBZ = 0 AND JH.ZYH = #{ZYH} AND JH.LXH = LX.LXH
+        AND JH.JHSJ >= to_date(#{START}, 'yyyy-mm-dd hh24:mi:ss')
+        AND JH.JHSJ &lt; to_date(#{END}, 'yyyy-mm-dd hh24:mi:ss')
+        AND LX.JGID = JH.JGID AND JH.JGID = #{JGID}
+        <if test="GSLX != ''">
+            AND JH.GSLX = #{GSLX}
+        </if>
+        ORDER BY myZXZT ASC ,JH.KSSJ,JH.JHSJ,JH.YZZH,JH.YZZX DESC
+    </if>
+</select>
+    <!-- =============================================================== end -->
+
+    <select id="getRefuseReasonList" resultType="PhraseModel" flushCache="true">
+        SELECT DYXH, DYMS
+        FROM IENR_CYDY
+        WHERE DYLB =1 AND ZFBZ = 0 AND JGID = #{JGID}
+        ORDER BY PLSX
+    </select>
+
+    <select id="CheckRefuse" resultType="int" flushCache="true">
+        SELECT COUNT(1)
+        FROM IENR_JHJJ
+        WHERE JHH = #{JHH} AND YYXH = #{DYXH}
+    </select>
+
+    <update id="editPlanInfoForRefuseExecut" parameterType="PlanInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_YZJH
+            SET ZXZT = 5,JSGH = #{JSGH},JSSJ = #{JSSJ},KSGH = #{KSGH},KSSJ = #{KSSJ}
+            WHERE JHH = #{JHH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_YZJH
+            SET ZXZT = 5,JSGH = #{JSGH},JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'),KSGH = #{KSGH},KSSJ =
+            to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE JHH = #{JHH}
+        </if>
+    </update>
+
+    <insert id="addRefuseExecutReason" parameterType="String">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_JHJJ (JHH, YYXH,JJSJ,JJGH) VALUES (#{JHH},#{DYXH},#{JJSJ},#{JJGH})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_JHJJ (JHH, YYXH,JJSJ,JJGH) VALUES (#{JHH},#{DYXH},to_date(#{JJSJ}, 'yyyy-mm-dd
+            hh24:mi:ss'),#{JJGH})
+        </if>
+    </insert>
+
+    <insert id="insertTransfusionPatrol" parameterType="TransfusionPatrolRecordVo">
+        <if test="dbtype =='sqlserver'">
+            INSERT INTO ENR_SYXS
+            (XSBS, SYDH, XSSJ, XSGH, SYDS, SYFY, JGID)
+            VALUES
+            (#{XSBS}, #{SYDH}, #{XSSJ}, #{XSGH}, #{SYDS}, #{SYFY}, #{JGID})
+        </if>
+        <if test="dbtype =='oracle'">
+            INSERT INTO ENR_SYXS
+            (XSBS, SYDH, XSSJ, XSGH, SYDS, SYFY, JGID)
+            VALUES
+            (#{XSBS}, #{SYDH}, to_date(#{XSSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{XSGH}, #{SYDS}, #{SYFY}, #{JGID})
+        </if>
+    </insert>
+
+    <select id="getTbzxjlByLxh" resultType="java.lang.Float">
+        SELECT TBZXJL
+        FROM ENR_JHLX
+        WHERE LXH = #{LXH} AND JGID = #{JGID}
+    </select>
+
+    <select id="getNeedSyncDataCount" resultType="int">
+        <if test="dbtype =='sqlserver'">
+        SELECT COUNT(1) FROM BQ_YZJH WHERE ZYH=#{ZYH}
+        AND  ZFBZ=0 AND TZBZ=0 AND JHRQ =#{JHRQ} AND  YSYZBH IN (SELECT YZBXH FROM EMR_YZB WHERE ZYH=#{ZYH} AND YDYZLB = '206' AND XMLB=2 AND XMID =#{XMID})
+        </if>
+        <if test="dbtype =='oracle'">
+        SELECT COUNT(1) FROM BQ_YZJH WHERE ZYH=#{ZYH}
+        AND  ZFBZ=0 AND TZBZ=0 AND JHRQ =to_date(#{JHRQ}, 'yyyy-MM-dd') AND  YSYZBH IN (SELECT YZBXH FROM EMR_YZB WHERE ZYH=#{ZYH} AND YDYZLB = '206' AND XMLB=2 AND XMID =#{XMID})
+        </if>
+    </select>
+
+    <select id="getSqpdList" resultType="String">
+        SELECT YPXH
+        FROM V_MOB_HIS_SQPD
+        WHERE SQBZ = 1
+    </select>
+</mapper>

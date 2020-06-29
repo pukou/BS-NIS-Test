@@ -1,0 +1,110 @@
+body{
+    background-color: #7f7f7f;
+}
+#evaluate-main{
+    font-family : 微软雅黑,宋体;
+    background-color: white;
+    width:794px;
+    min-height: 1123px;
+    padding: 5px;
+    font-size: 13px;
+    line-height: 26px;
+}
+
+#evaluate-main .header{
+    width: 100%;
+    height: 60px;
+
+}
+#evaluate-main .header #title{
+    font-family: "Microsoft YaHei", "微软雅黑";
+    font-size: 18px ;
+    width: 98%;
+    background-color: rgba(168, 168, 168, 0.01);
+    text-align: center;
+    padding: 3px;
+    font-weight: bold;
+    letter-spacing:4px;
+
+}
+
+#evaluate-main .header #title2{
+    font-family: "Microsoft YaHei", "微软雅黑";
+    font-size: 20px ;
+    width: 98%;
+    background-color: rgba(168, 168, 168, 0.01);
+    text-align: center;
+    padding: 3px;
+    font-weight: bold;
+    letter-spacing:6px;
+}
+
+#evaluate-main .footer{
+    width: 100%;
+
+}
+
+#evaluate-main .content .class-label{
+    font-size: 16px;
+    font-family: 宋体;
+    font-weight: bold;
+}
+
+
+#evaluate-main .content .content-span-cell-inline{
+    display: inline;
+    height:26px;
+    line-height: 26px;
+    font-size: 13px;
+    font-family: 宋体;
+    font-weight: 400;
+
+}
+#evaluate-main .content .content-span-cell-inline-160{
+    display: inline;
+    height:26px;
+    line-height: 26px;
+    font-size: 13px;
+    font-family: 宋体;
+    font-weight: bold;
+
+}
+
+#evaluate-main .content .content-span-cell-block{
+    display: block;
+    height:26px;
+    line-height: 26px;
+    font-size: 13px;
+    font-family: 宋体;
+    font-weight: 400;
+}
+
+#evaluate-main .content .content-span-cell-none{
+    display: none;
+    height:26px;
+    line-height: 26px;
+}
+
+#evaluate-main .content .content-span-cell-visible{
+    visibility: visible;
+}
+
+#evaluate-main .content .content-span-cell-hidden{
+    visibility: hidden;
+}
+
+.content-span-cell-after-label{
+    margin-left: 5px;
+}
+
+#evaluate-main .content .important-project{
+    color: red;
+}
+
+#evaluate-main .content .blue-style{
+    color: blue;
+}
+
+
+
+

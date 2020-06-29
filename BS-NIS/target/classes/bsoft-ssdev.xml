@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ssdev="http://www.bsoft.com.cn/schema/ssdev"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+				http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				http://www.bsoft.com.cn/schema/ssdev
+				http://www.bsoft.com.cn/schema/ssdev/ssdev.xsd">
+
+
+	<ssdev:applicationDomain name="nis-core" registryAddress="zookeeper://127.0.0.1:2181"/>
+
+
+	<ssdev:connector url="tcp://0.0.0.0:9001?codec=hessian">
+		<!--<ssdev:filter class="ctd.net.rpc.server.filter.support.JSONBytesPayloadFilter"/>-->
+	</ssdev:connector>
+
+	<!-- id是自定义的rpc服务id，class配置step2中的接口实现类 -->
+	<ssdev:service id="patientsRpcService" class="com.bsoft.nis.service.patient.PatientRpcServerProvide"/>
+	<!--护理记录RPC服务-->
+	<ssdev:service id="nurseRecordRpcServerProvider" class="com.bsoft.nis.service.nurserecord.NurseRecordRpcServerProvider"/>
+	<!--医嘱拆分RPC服务-->
+	<ssdev:service id="adviceSplitRpcServerProvider" class="com.bsoft.nis.advicesplit.AdvicePlanRpcServerProvider"/>
+</beans>

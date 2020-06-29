@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.patient.PatientMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getPatient" flushCache="true" resultType="Patient">
+		SELECT ZYH,ZYHM,BRXM,CSNY,RYRQ,BRBQ,BRKS,BRCH FROM V_MOB_HIS_BRRY WHERE ZYHM = #{ZYHM}
+	</select>
+
+    <select id="getPatientByZyhmAndJg" flushCache="true" resultType="Patient">
+		SELECT ZYH,ZYHM,BRXM,CSNY,RYRQ,BRBQ,BRKS,BRCH FROM V_MOB_HIS_BRRY WHERE ZYHM = #{ZYHM} AND JGID = #{JGID}
+	</select>
+
+    <select id="getPatientByZyh" flushCache="true" resultType="Patient">
+		SELECT ZYH,ZYHM,BRXM,CSNY,RYRQ,BRBQ,BRKS,BRCH FROM V_MOB_HIS_BRRY WHERE ZYH = #{ZYH}
+	</select>
+	<select id="getPatientBRLJCount_OnWay" resultType="Integer" flushCache="true">
+		SELECT COUNT(1)
+		FROM V_MOB_HIS_BRLJ
+		WHERE   ZXZT <![CDATA[ < ]]>  2 AND BRID=#{ZYH}
+	</select>
+	<select id="getPatientBRLJCount_OutWay" resultType="Integer" flushCache="true">
+		SELECT COUNT(1)
+		FROM V_MOB_HIS_BRLJ
+		WHERE  ( ZXZT = 2 OR ZXZT = 3) AND BRID=#{ZYH}
+	</select>
+	<select id="getPatientJBZD" resultType="ZDJB" flushCache="true">
+		SELECT JZHM AS ZYH,JBMC AS ZDMC,ZDLB
+		FROM YS_ZY_JBZD
+		WHERE   TJBZ= 1 AND ZFBZ=0 AND JZHM IN
+		<foreach collection="ZYH" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="getGroupRYList" resultType="BCRYBean" flushCache="true">
+		<!-- 班次人员 -->
+		SELECT JLXH,BCBH,BCMC,YGDM,BQDM FROM IENR_BCRY WHERE YGDM = #{YGDM} AND  BQDM=#{BQDM}
+	</select>
+	<delete id="deleteGroupRYList">
+		<!-- 班次人员 -->
+		DELETE FROM IENR_BCRY WHERE  YGDM = #{YGDM} AND  BQDM = #{BQDM}
+	</delete>
+	<insert id="insertGroupRYList" parameterType="BCRYBean">
+		<!-- 班次人员 -->
+		<if test="dbtype == 'sqlserver'">
+			<foreach collection="itemList" item="item" index="index"
+				 separator=";">
+				INSERT INTO IENR_BCRY (JLXH,BCBH,BCMC,YGDM,BQDM,JGID)
+				VALUES (#{item.JLXH},#{item.BCBH},#{item.BCMC},#{item.YGDM},#{item.BQDM},#{item.JGID})
+			</foreach>
+		</if>
+		<if test="dbtype == 'oracle'">
+			BEGIN
+		<foreach collection="itemList" item="item" index="index"
+				 separator=";">
+			INSERT INTO IENR_BCRY (JLXH,BCBH,BCMC,YGDM,BQDM,JGID)
+			VALUES (#{item.JLXH},#{item.BCBH},#{item.BCMC},#{item.YGDM},#{item.BQDM},#{item.JGID})
+		</foreach>
+			;END;
+		</if>
+	</insert>
+	<select id="getGroupCWList" resultType="BCCWBean" flushCache="true">
+		<!-- 班次床位-->
+		SELECT JLXH,BCBH,CWHM FROM IENR_BCCW WHERE BCBH = #{BCBH}
+	</select>
+	<select id="getGroupCfgList" resultType="BCSZBean" flushCache="true">
+
+		<!-- 班次设置 -->
+		SELECT BCBH,BCMC,BQDM FROM IENR_BCSZ WHERE JGID = #{JGID} AND  BQDM =#{BQDM} ORDER BY PLSX
+
+	</select>
+
+	<!-- 升级编号【56010016】============================================= start
+病人信息，重整病人信息，确定哪些信息需要演示 去掉 DISTINCT
+================= Classichu 2017/10/11 16:07
+-->
+	<select id="getPatientZD" resultType="String" flushCache="true">
+		SELECT  JBMC
+		FROM V_MOB_HIS_RYZD
+		WHERE  ZYH=#{ZYH}
+	</select>
+	<select id="getPatientDMMCFromMOB_DMZD" resultType="String" flushCache="true">
+		SELECT DMMC
+		FROM MOB_DMZD
+		WHERE DMLB = #{DMLB} AND DMSB=#{DMSB}
+	</select>
+	<select id="getPatientBRXZFromMOB" resultType="String" flushCache="true">
+		SELECT XZMC FROM V_MOB_HIS_BRXZ WHERE BRXZ = #{BRXZ}
+	</select>
+
+	<!-- =============================================================== end -->
+	<!-- 查询出 每一种评估类型的 最近一次的评估记录 的 集合  -->
+	<select id="getLastDERecord" resultType="RecondBean" flushCache="true">
+		SELECT B.PGXH,B.ZYH,B.PGLX,B.PGDH,B.PGSJ,B.PGZF,B.FXCD,B.CDMS FROM IENR_FXPGJL B WHERE
+		 B.JGID = #{JGID}
+		AND B.ZTBZ = 1 AND (SELECT Count(1) FROM IENR_FXPGJL A WHERE A.ZTBZ=1 AND A.PGLX = B.PGLX AND A.ZYH = B.ZYH AND A.PGSJ >= B.PGSJ) = 1
+		<if test="ZYHLIST != null and ZYHLIST != '' and ZYHLIST.size() > 0">
+			AND B.ZYH IN
+			<foreach collection="ZYHLIST" item="item" index="index" open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+	<select id="getFXZKRecord" resultType="ZKbean" flushCache="true">
+		SELECT ZYH,BRBQ,PGLX,TXNR,TXRQ,PGZF FROM IENR_FXZKTX WHERE
+		 JGID = #{JGID} AND TXZT = 0
+		<if test="ZYHLIST != null and ZYHLIST != '' and ZYHLIST.size() > 0">
+			AND ZYH IN
+			<foreach collection="ZYHLIST" item="item" index="index" open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+	<select id="getPatientByZyhForEvalution" flushCache="true" resultType="Patient">
+		SELECT ZYH,ZYHM,BRXM,BRXB,CSNY,RYRQ,(SELECT KSMC FROM V_MOB_HIS_KSDM WHERE V_MOB_HIS_KSDM.KSDM = BRBQ) BRBQVALUE,
+		(SELECT KSMC FROM V_MOB_HIS_KSDM WHERE V_MOB_HIS_KSDM.KSDM = BRKS) BRKSVALUE,
+		BRCH,
+		CYRQ FROM V_MOB_HIS_BRRY WHERE ZYH = #{ZYH}
+	</select>
+
+    <select id="getPatientZyhByScan" resultType="String" flushCache="true">
+		SELECT ZYH FROM BQ_BRWD WHERE WDTM = #{BRWD} AND WDZT = 0
+	</select>
+
+<!-- 升级编号【56010014】============================================= start
+今日出院的病人，系统会提早出院，但是该病人当天的药品需要执行完，目前PDA无法处理该类病人的医嘱执行。（需要将当日出院的病人也显示在病人类别中，并标识）
+================= Classichu 2017/10/11 16:07
+1.修改查询条件，考虑当日出院病人情况
+-->
+	<select id="getPatientsForDept" resultType="SickPersonVo" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT ZYH,ZYHM,BRBQ,BRXM,BRXB,CSNY,BRCH,HLJB,CONVERT(VARCHAR(19),RYRQ,20) RYRQ,BRXZ,CYPB,BRXX,ZZYS
+			FROM V_MOB_HIS_BRRY
+			WHERE  BRBQ = #{BQID} AND ( CYPB = 0 OR ( CYPB = 1 AND CYRQ  >= dateadd(day,0,convert(varchar(10),getdate(),120))
+			AND CYRQ <![CDATA[ < ]]>  dateadd(day,1,convert(varchar(10),getdate(),120)) ) ) AND
+			JGID =#{JGID}
+			ORDER BY BRCH
+		</if>
+		<if test="dbtype == 'oracle'">
+			SELECT ZYH,ZYHM,BRBQ,BRXM,BRXB,CSNY,BRCH,HLJB,TO_CHAR(RYRQ,'yyyy-mm-dd hh24:mi:ss') RYRQ,BRXZ,CYPB,BRXX,ZZYS
+			FROM V_MOB_HIS_BRRY
+			WHERE BRBQ = #{BQID} AND
+			( CYPB = 0  OR (  CYPB = 1 AND CYRQ >= to_date(trunc(sysdate+0))
+			AND CYRQ <![CDATA[ < ]]> to_date(trunc(sysdate+1) ) ) ) AND
+			JGID =#{JGID}
+			ORDER BY BRCH
+		</if>
+	</select>
+	<!-- =============================================================== end -->
+
+	<!-- 升级编号【56010044】============================================= start
+下拉选中手术科室返回错误
+================= Classichu 2017/10/11 16:50
+1.sql语法错误
+-->
+ <!--sqlserver dateadd convert getdate 配合获取今天的凌晨零点和下一天的凌晨零点-->
+	<!--orcale trunc sysdate 配合获取今天的凌晨零点和下一天的凌晨零点-->
+	<select id="getPatientsForSSKS" resultType="SickPersonVo" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT
+			SSAP.ZYH,BRRY.BRBQ,BRRY.ZYHM,BRRY.BRXM,BRRY.BRXB,BRRY.CSNY,BRRY.BRCH,BRRY.HLJB,CONVERT(VARCHAR(19),BRRY.RYRQ,20) RYRQ,BRRY.BRXZ,ZZYS
+			FROM  V_MOB_HIS_SSAP SSAP,V_MOB_HIS_BRRY BRRY
+			WHERE  SSAP.ZYH=BRRY.ZYH
+			AND SSAP.SSKS = #{SSKS}
+			<if test="HSGH != null and HSGH !=''">
+				AND BRRY.ZRHS = #{HSGH}
+			</if>
+			AND BRRY.CYPB = 0 AND BRRY.JGID =#{JGID}
+			AND SSAP.APRQ  >= dateadd(day,0,convert(varchar(10),getdate(),120))
+			AND SSAP.APRQ  <![CDATA[ < ]]> dateadd(day,1,convert(varchar(10),getdate(),120))
+		</if>
+
+		<if test="dbtype == 'oracle'">
+			SELECT
+			SSAP.ZYH,BRRY.BRBQ,BRRY.ZYHM,BRRY.BRXM,BRRY.BRXB,BRRY.CSNY,BRRY.BRCH,BRRY.HLJB,BRRY.to_date(BRRY.RYRQ,'yyyy-mm-dd hh24:mi:ss') RYRQ,BRRY.BRXZ,ZZYS
+			FROM  V_MOB_HIS_SSAP SSAP,V_MOB_HIS_BRRY BRRY
+			WHERE  SSAP.ZYH=BRRY.ZYH
+			AND SSAP.SSKS = #{SSKS}
+			<if test="HSGH != null and HSGH !=''">
+				AND BRRY.ZRHS = #{HSGH}
+			</if>
+			AND BRRY.CYPB = 0 AND BRRY.JGID =#{JGID}
+			AND SSAP.APRQ  >= to_date(trunc(sysdate+0),'yyyy-mm-dd hh24:mi:ss')
+			AND SSAP.APRQ  <![CDATA[ < ]]> to_date(trunc(sysdate+1),'yyyy-mm-dd hh24:mi:ss')
+		</if>
+
+	</select>
+	<!-- =============================================================== end -->
+
+	<!-- 升级编号【56010014】============================================= start
+	今日出院的病人，系统会提早出院，但是该病人当天的药品需要执行完，目前PDA无法处理该类病人的医嘱执行。（需要将当日出院的病人也显示在病人类别中，并标识）
+	================= Classichu 2017/10/11 16:12
+	2.修改查询条件，去掉出院判别条件
+	-->
+	<select id="getPatientForScan" resultType="SickPersonVo" flushCache="true">
+		SELECT ZYH,ZYHM,BRBQ,BRXM,BRXB,CSNY,BRCH,HLJB
+		FROM V_MOB_HIS_BRRY
+		WHERE   ZYH = #{ZYH} AND JGID = #{JGID} ORDER BY BRCH
+	</select>
+	<!-- =============================================================== end -->
+
+    <select id="getSimplePatientsForDept" resultType="Patient" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT ZYH,ZYHM,BRBQ,BRKS,BRCH,BRXM
+            FROM V_MOB_HIS_BRRY
+            WHERE BRBQ=#{BRBQ} AND (CYPB = 0 or CYRQ >= #{systime} ) AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT ZYH,ZYHM,BRBQ,BRKS,BRCH,BRXM
+            FROM V_MOB_HIS_BRRY
+            WHERE BRBQ=#{BRBQ} AND (CYPB = 0 or CYRQ >= to_date(#{systime},'yyyy-mm-dd hh24:mi:ss') ) AND JGID = #{JGID}
+        </if>
+
+    </select>
+	<select id="getPatientYSMC" resultType="String" flushCache="true">
+			SELECT YZMC FROM EMR_YZB
+			WHERE ZYH=#{ZYH} AND YDYZLB =207 AND  YZZT =5
+	</select>
+	<!-- 升级编号【56010045】============================================= start
+	当日出院病人查看详情返回错误
+	================= Classichu 2017/10/11 17:28
+	-->
+	<select id="getPatientDetail" resultType="SickPersonDetailVo" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT ZYH,ZYHM,BRXM,BRXB,CSNY,BRCH,HLJB,BRKS,ZZYS,BRXZ,JLLX,CONVERT(VARCHAR(19),RYRQ,20) RYRQ,BRBQ,YSDM,LXDH,BRXX
+			FROM V_MOB_HIS_BRRY
+			WHERE ZYH=#{ZYH}   AND JGID =#{JGID}
+		</if>
+		<if test="dbtype == 'oracle'">
+			SELECT ZYH,ZYHM,BRXM,BRXB,CSNY,BRCH,HLJB,BRKS,ZZYS,BRXZ,JLLX,TO_CHAR(RYRQ,'yyyy-mm-dd hh24:mi:ss') RYRQ,BRBQ,YSDM,LXDH,BRXX
+			FROM V_MOB_HIS_BRRY
+			WHERE ZYH=#{ZYH} AND JGID =#{JGID}
+		</if>
+	</select>
+<!-- =============================================================== end -->
+    <select id="getPatientPayMoney" resultType="ExpenseTotal" flushCache="true">
+		SELECT SUM(ZJJE) AS ZJJE,SUM(ZFJE) AS ZFJE
+		FROM V_MOB_HIS_FYMX
+		WHERE ZYH = #{ZYH} AND JGID=#{JGID}
+	</select>
+
+    <select id="getPatientAdvancePayMoney" resultType="ExpenseTotal" flushCache="true">
+		SELECT SUM(JKJE) JKJE
+		FROM  V_MOB_HIS_TBKK
+		WHERE ZYH = #{ZYH} AND ZFPB=0 AND JGID=#{JGID}
+	</select>
+
+    <select id="getPatientDiagnose" resultType="string" flushCache="true">
+		SELECT RYZD AS ZDMC
+		FROM V_MOB_EMR_JZJL
+		WHERE JZHM = #{ZYH} AND JLLX = #{JLLX} AND JGID =#{JGID}
+	</select>
+
+	<select id="getPatientDiagnoseFromRYZD" resultType="PatientDiagonosis" flushCache="true">
+		SELECT * FROM V_MOB_HIS_RYZD WHERE ZYH = #{ZYH}
+	</select>
+	<select id="getPatientDiagnoseFromRYZDList" resultType="PatientDiagonosis" flushCache="true">
+		SELECT * FROM V_MOB_HIS_RYZD WHERE  ZYH IN
+		<foreach collection="ZYHLIST" item="item" index="index" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+    <select id="getPatientAllergicDrugs" resultType="AllergicDrug" flushCache="true">
+		SELECT YPMC,GMZZ
+	    FROM V_MOB_HIS_GMYP
+	    WHERE ZYH = #{ZYH} AND JGID=#{JGID}
+	</select>
+
+    <select id="getPatientStates" resultType="State" flushCache="true">
+		SELECT IEMR_BRZT.*,IEMR_ZTDY.ZTMC,IEMR_ZTDY.ZTTB
+		FROM IEMR_BRZT,IEMR_ZTDY
+		WHERE IEMR_BRZT.ZTBS = IEMR_ZTDY.ZTBS AND
+				IEMR_BRZT.ZYH=#{ZYH} AND
+				IEMR_BRZT.JGID = #{JGID}
+	</select>
+
+    <select id="getMyPatientHIS" resultType="SickPersonVo" flushCache="true">
+		SELECT ZYH, ZYHM, BRBQ, JGID
+		FROM V_MOB_HIS_BRRY
+		WHERE BRBQ = #{BRBQ} AND ZRHS = #{ZRHS} AND JGID = #{JGID}
+	</select>
+
+    <select id="getMyPatientMOB" resultType="SickPersonVo" flushCache="true">
+		SELECT ZYH, ZYHM, BRBQ, BQCH BRCH, JGID
+		FROM IENR_WDBR
+		WHERE ZXBZ = 0 AND BRBQ = #{BRBQ} AND HSGH = #{HSGH} AND JGID = #{JGID}
+	</select>
+
+	<!-- 升级编号【56010014】============================================= start
+	今日出院的病人，系统会提早出院，但是该病人当天的药品需要执行完，目前PDA无法处理该类病人的医嘱执行。（需要将当日出院的病人也显示在病人类别中，并标识）
+	================= Classichu 2017/10/11 16:18
+	3.修改查询条件，考虑当日出院病人情况
+	-->
+	<select id="getPatientByBrchHIS" resultType="SickPersonVo" flushCache="true">
+		<if test="dbtype == 'oracle'">
+			SELECT ZYH,BRBQ, ZYHM
+			FROM V_MOB_HIS_BRRY
+			WHERE BRBQ = #{BRBQ} AND BRCH = #{BRCH} AND ( CYPB = 0 OR ( CYPB = 1 AND
+			CYRQ  >=
+			to_date(trunc(sysdate+0))
+			AND
+			CYRQ <![CDATA[ < ]]>
+			to_date(trunc(sysdate+1))
+			) ) AND JGID = #{JGID}
+		</if>
+
+		<if test="dbtype == 'sqlserver'">
+			SELECT ZYH,BRBQ, ZYHM
+			FROM V_MOB_HIS_BRRY
+			WHERE BRBQ = #{BRBQ} AND BRCH = #{BRCH} AND ( CYPB = 0 OR ( CYPB = 1 AND CYRQ  >= dateadd(day,0,convert(varchar(10),getdate(),120))
+			AND CYRQ <![CDATA[ < ]]>  dateadd(day,1,convert(varchar(10),getdate(),120)) ) ) AND JGID = #{JGID}
+		</if>
+	</select>
+	<!-- =============================================================== end -->
+    <select id="getRFID" resultType="String" flushCache="true">
+		SELECT WDTM
+		FROM BQ_BRWD
+		WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND WDZT = 0 AND SBLX = 2
+	</select>
+
+    <select id="getDeviceStatus" resultType="String" flushCache="true">
+		SELECT SBZT FROM IENR_SBLB WHERE SBID = #{SBID} AND LXXH = #{LXXH}
+	</select>
+
+    <insert id="addDeviceInfo">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_SBLB(SBXH,LXXH,SBID,SBMS,SBZT,SSKS,LRSJ,BZ)
+            VALUES(#{SBXH}, #{LXXH}, #{SBID}, #{SBMS}, #{SBZT}, #{SSKS}, #{LRSJ}, #{BZ})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_SBLB(SBXH,LXXH,SBID,SBMS,SBZT,SSKS,LRSJ,BZ)
+            VALUES(#{SBXH}, #{LXXH}, #{SBID}, #{SBMS}, #{SBZT}, #{SSKS}, to_date(#{LRSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+            #{BZ})
+        </if>
+    </insert>
+
+    <update id="editDeviceInfo">
+        UPDATE IENR_SBLB
+        SET SBZT = #{SBZT}
+        WHERE SBID = #{SBID}
+    </update>
+
+    <insert id="addBRWDInfo">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO BQ_BRWD(WDHM,ZYH,WDZT,YEPB,WDTM,CSSJ,CSGH,SBLX,JGID)
+            VALUES (#{WDHM},#{ZYH},#{WDZT},#{YEPB},#{WDTM},#{CSSJ},#{CSGH},#{SBLX},#{JGID})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO BQ_BRWD(WDHM,ZYH,WDZT,YEPB,WDTM,CSSJ,CSGH,SBLX,JGID)
+            VALUES (#{WDHM},#{ZYH},#{WDZT},#{YEPB},#{WDTM},to_date(#{CSSJ}, 'yyyy-mm-dd
+            hh24:mi:ss'),#{CSGH},#{SBLX},#{JGID})
+        </if>
+    </insert>
+
+	<update id="editBRWDInfo">
+		UPDATE BQ_BRWD
+		SET WDZT = 1
+		WHERE WDTM = #{WDTM}
+	</update>
+</mapper>

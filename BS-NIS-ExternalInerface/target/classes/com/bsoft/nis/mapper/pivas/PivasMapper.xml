@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.pivas.PivasMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getPIVAS" resultType="java.lang.Integer" flushCache="true">
+		SELECT COUNT (1) FROM ENR_SYD WHERE TMBH = #{TMBH}
+	</select>
+
+    <insert id="addSYD" parameterType="PivasTransform">
+		INSERT INTO ENR_SYD (SYDH,ZYH,BRBQ,BRCH,TMBH,YPYF,YZZH,SYSJ,SJBH,SJMC,SYSD,PYBZ,PYSJ,PYGH,PYLY,LYBS,DYCS,DYSJ,DYGH,SYRQ,JGID)
+		 VALUES
+		 (#{SYDH},#{patientid},#{patientareaid},#{patientbedid},#{barcodeno},#{medusage},#{advicegrpno},#{plantime},#{timeno},#{timedesc},0,#{makeflag},#{maketime},#{makeuserno},#{sourcefrom},#{sourcefromid},#{printnum},#{printtime},#{printuserno},#{plandate},#{jgid})
+	</insert>
+
+	<insert id="addSYMX" parameterType="PivasTransDetail" >
+		INSERT INTO ENR_SYMX (SYMX,SYDH,YZXH,YPXH,YZZX,YCJL,JLDW,YCSL,SLDW)
+		VALUES(#{SYMX},#{SYDH},#{adviceid},#{medid},#{advicemainflag},#{doseage},#{doseunit},#{quantity},#{quantityunit})
+	</insert>
+</mapper>

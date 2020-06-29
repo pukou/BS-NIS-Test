@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.nurseplan.NursePlanMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getPlanList" resultType="Plan" flushCache="true">
+        SELECT GLXH XH, 2 GLLX,LXBH , GLMS MS, WTLX
+        FROM IENR_HLWTGL
+        WHERE ZFBZ = 0 AND WTLX = 1 AND GLXH IN (SELECT GLXH FROM IENR_JHBQDZ WHERE BQDM = #{BQID} AND JGID = #{JGID} AND GLLX = 2 AND ZFBZ = 0)
+        UNION ALL
+        SELECT WTXH XH, 1 GLLX, 0 LXBH , WTMS MS, WTLX
+        FROM IENR_HLJHWT
+        WHERE ZFBZ = 0 AND WTLX = 1 AND WTXH IN (SELECT GLXH FROM IENR_JHBQDZ WHERE BQDM = #{BQID} AND JGID = #{JGID} AND GLLX = 1 AND ZFBZ = 0)
+        ORDER BY WTLX
+    </select>
+
+    <select id="getFocusList" resultType="Plan" flushCache="true">
+        SELECT GLXH XH, 2 GLLX,LXBH , GLMS MS, WTLX
+        FROM IENR_HLWTGL
+        WHERE ZFBZ = 0 AND WTLX = 2 AND GLXH IN (SELECT GLXH FROM IENR_JHBQDZ WHERE BQDM = #{BQID} AND JGID = #{JGID} AND GLLX = 2 AND ZFBZ = 0)
+        UNION ALL
+        SELECT WTXH XH, 1 GLLX, 0 LXBH , WTMS MS, WTLX
+        FROM IENR_HLJHWT
+        WHERE ZFBZ = 0 AND WTLX = 2 AND WTXH IN (SELECT GLXH FROM IENR_JHBQDZ WHERE BQDM = #{BQID} AND JGID = #{JGID} AND GLLX = 1 AND ZFBZ = 0)
+        ORDER BY WTLX
+    </select>
+
+    <select id="getFocusRelevanceList" resultType="FocusRelevanceBean" flushCache="true">
+        SELECT DMLB,DMSB,PZBH,DMMC,SRDM,CPLB,BZXX FROM MOB_XTPZ WHERE DMLB = 456 AND DMSB <![CDATA[<>]]> 0 ORDER BY PZBH
+    </select>
+
+    <select id="getJYXM_PATIENTINFO_List" resultType="JYXM_PATIENTINFO_Bean" flushCache="true">
+      SELECT
+V_MOB_LIS_REQUEST.SHSJ,
+V_MOB_LIS_REQUEST.XMMC,
+V_MOB_LIS_REPORT.YCBZ,
+V_MOB_LIS_REPORT.XMID,
+V_MOB_LIS_REPORT.HYJG,
+V_MOB_LIS_REPORT.DW,
+V_MOB_LIS_REPORT.ZWMC,
+V_MOB_LIS_REPORT.YBHM,
+V_MOB_LIS_REPORT.CKXX,
+V_MOB_LIS_REPORT.CKSX,
+V_MOB_LIS_REPORT.JGTS,
+V_MOB_LIS_REPORT.JGID
+FROM V_MOB_LIS_REQUEST,
+V_MOB_LIS_REPORT
+WHERE V_MOB_LIS_REQUEST.YBHM = V_MOB_LIS_REPORT.YBHM
+AND V_MOB_LIS_REQUEST.JGID = V_MOB_LIS_REPORT.JGID
+AND V_MOB_LIS_REQUEST.JGID = #{JGID}
+AND V_MOB_LIS_REQUEST.ZYHM = #{BRID}
+AND V_MOB_LIS_REQUEST.JGZT <![CDATA[>=]]> 4
+AND V_MOB_LIS_REPORT.XMID = #{XMID}
+AND V_MOB_LIS_REPORT.JGTS = #{JGTS}
+    </select>
+
+    <select id="getJD_GL_JYXM_List" resultType="JD_GL_JYXM_Bean" flushCache="true">
+        SELECT
+A.GLXH,
+2 GLLX,
+A.LXBH,
+A.GLMS,
+C.WTMS,
+C.WTXH,
+B.PLSX,
+A.PLSX GLPX,
+C.DYGLLX,
+C.DYGLDX,
+C.DXQZXX,
+C.DXQZSX,
+D.XMID,
+D.PDQZ
+FROM IENR_HLWTGL A,IENR_WTGLMX B,IENR_HLJHWT C,IENR_WTJYGL D
+WHERE A.ZFBZ=0 AND B.ZFBZ = 0 AND C.ZFBZ = 0 AND C.QYBZ = 1 AND A.GLXH = B.GLXH AND B.WTXH = C.WTXH
+  AND A.GLXH IN (SELECT GLXH FROM IENR_JHBQDZ WHERE  BQDM = #{BQDM} AND JGID=  #{JGID} AND  GLLX = 2 AND ZFBZ=0)
+  AND A.WTLX = 2 AND C.DYGLLX = 4 AND D.WTXH = C.WTXH
+    </select>
+    <select id="getHLJDJL" resultType="HL_JD_JL_BEAN" flushCache="true">
+        SELECT JLJD,
+JDXH,
+GLXH,
+GLLX,
+WTMS,
+JHWTXH,
+JLGLLX,
+GLJL
+ FROM IENR_HLJDJL  WHERE ZYH = #{ZYH} AND JGID = #{JGID}  AND ZFBZ = 0  AND JLGLLX IS NOT NULL AND GLJL IS NOT NULL
+    </select>
+
+
+    <select id="getJD_GL_SMTZ_List" resultType="JD_GL_SMTZ_Bean" flushCache="true">
+       SELECT  TZ.CJH,TZ.XMH,XM.XMMC,TZ.CJSJ,TZ.TZNR,TZ.XMXB  FROM V_MOB_HIS_SMTZ TZ,V_MOB_HIS_TZXM XM
+        WHERE TZ.ZYH = #{ZYH} AND TZ.JGID = #{JGID} AND TZ.ZFBZ = 0 AND TZ.JHBZ=1 AND TZ.XMH= #{XMH} AND TZ.XMH=XM.XMH
+        AND TZ.TZNR <![CDATA[>=]]> #{DXQZXX}
+        AND TZ.TZNR <![CDATA[<=]]> #{DXQZSX}
+        ORDER BY TZ.CJSJ DESC
+    </select>
+    <select id="getJD_GL_TZXM_List" resultType="JD_GL_TZXM_Bean" flushCache="true">
+      SELECT
+A.GLXH,
+2 GLLX,
+A.LXBH,
+A.GLMS,
+C.WTMS,
+C.WTXH,
+B.PLSX,
+A.PLSX GLPX,
+C.DYGLLX,
+C.DYGLDX,
+C.DXQZXX,
+C.DXQZSX
+FROM IENR_HLWTGL A,IENR_WTGLMX B,IENR_HLJHWT C
+WHERE A.ZFBZ=0 AND B.ZFBZ = 0 AND C.ZFBZ = 0 AND C.QYBZ = 1 AND A.GLXH = B.GLXH AND B.WTXH = C.WTXH
+  AND A.GLXH IN (SELECT GLXH FROM IENR_JHBQDZ WHERE  BQDM = #{BQDM} AND JGID=  #{JGID} AND GLLX = 2 AND ZFBZ=0)
+  AND A.WTLX = 2 AND C.DYGLLX = 3
+    </select>
+
+
+    <select id="getZDMS_List" resultType="ZDMS_Bean" flushCache="true">
+        SELECT ZDXH,ZDMS  FROM IENR_JHZDJL
+        WHERE JLWT= #{JLWT}
+    </select>
+
+    <select id="getCSMS_List" resultType="CSMS_Bean" flushCache="true">
+        SELECT
+          JLCS,
+     JLWT,
+      CSXH,
+      CSMS,
+     KSSJ,
+     KSGH,
+     ZDYBZ,
+     XJBZ,
+     JSSJ,
+     JSGH,
+     CSZH
+    FROM IENR_JHCSJL
+        WHERE JLWT= #{JLWT}
+    </select>
+
+    <select id="getHLJHJLList" resultType="HLJHJLBean" flushCache="true">
+     SELECT JLWT,WTXH,GLXH,GLLX,XGYS,WTMS,JHWTXH,KSSJ  FROM IENR_JHWTJL
+     WHERE ZYH= #{ZYH}  AND JGID= #{JGID} AND ZFBZ=0 ORDER BY CJSJ DESC
+    </select>
+
+
+    <select id="getJD_GL_List_BY_PGLX" resultType="PGLX_JD_GL_FXPG_Bean" flushCache="true">
+       SELECT
+A.GLXH,
+2 GLLX,
+A.LXBH,
+A.GLMS,
+C.WTMS,
+C.WTXH,
+B.PLSX,
+A.PLSX GLPX,
+C.DYGLLX,
+C.DYGLDX,
+C.DXQZXX,
+C.DXQZSX
+FROM IENR_HLWTGL A,
+IENR_WTGLMX B,
+IENR_HLJHWT C
+WHERE A.ZFBZ=0 AND B.ZFBZ = 0 AND C.ZFBZ = 0 AND C.QYBZ = 1 AND A.GLXH = B.GLXH AND B.WTXH = C.WTXH
+  AND A.GLXH IN (SELECT GLXH FROM IENR_JHBQDZ WHERE JGID= #{JGID} AND BQDM = #{BQDM} AND GLLX = 2 AND ZFBZ=0)
+  AND A.WTLX = 2 AND C.DYGLLX = 1 AND C.DYGLDX = #{PGLX}
+    </select>
+    <!--获取风险评估记录 2017年5月5日11:40:57 add-->
+    <select id="getFXPGJLList" resultType="FXPGJLBean" flushCache="true">
+        SELECT PGD.PGDH,PGD.PGLX,PGD.PGDMC,JL.PGXH,JL.PGZF,JL.PGSJ FROM IENR_FXPGD PGD,IENR_FXPGJL JL
+        WHERE PGD.PGDH = JL.PGDH
+        AND JL.ZYH= #{ZYH}
+        AND JL.JGID = #{JGID} AND JL.ZTBZ = 1
+        AND JL.PGZF <![CDATA[>=]]> PGD.TBFZXX
+        AND JL.PGZF <![CDATA[<=]]> PGD.TBFZSX
+        AND PGD.PGLX IN (
+        SELECT
+C.DYGLDX
+FROM IENR_HLWTGL A,
+IENR_WTGLMX B,
+IENR_HLJHWT C
+WHERE A.ZFBZ=0 AND B.ZFBZ = 0 AND C.ZFBZ = 0 AND C.QYBZ = 1 AND A.GLXH = B.GLXH AND B.WTXH = C.WTXH
+  AND A.GLXH IN (SELECT GLXH FROM IENR_JHBQDZ WHERE JGID= #{JGID} AND BQDM = #{BQDM} AND GLLX = 2 AND ZFBZ=0)
+  AND A.WTLX = 2 AND C.DYGLLX = 1
+  )
+        ORDER BY PGSJ DESC
+    </select>
+
+
+    <select id="getPlanSimpleRecordListForWtxh" resultType="SimpleRecord" flushCache="true">
+        SELECT WT.WTXH XH, WT.WTMS MS, WT.WTLX WTLX, COUNT(JL.JLWT) UMBER
+        FROM IENR_HLJHWT WT LEFT JOIN IENR_JHWTJL JL ON JL.WTXH = WT.WTXH AND JL.ZYH = #{ZYH} AND JL.GLLX = 1 AND JL.GLXH = 0 AND JL.ZFBZ = 0
+        WHERE WT.ZFBZ = 0 AND WT.WTXH = #{XH}
+        GROUP BY WT.WTXH, WT.WTMS, WT.WTLX
+    </select>
+
+    <select id="getFocusSimpleRecordListForWtxh" resultType="SimpleRecord" flushCache="true">
+        SELECT WT.WTXH XH, WT.WTMS MS, WT.WTLX WTLX, COUNT(JL.JLJD) UMBER
+        FROM IENR_HLJHWT WT LEFT JOIN IENR_HLJDJL JL ON JL.JDXH = WT.WTXH AND JL.ZYH = #{ZYH} AND JL.GLLX = 1 AND JL.GLXH = 0 AND JL.ZFBZ = 0
+        WHERE WT.ZFBZ = 0 AND WT.WTXH = #{XH}
+        GROUP BY WT.WTXH, WT.WTMS, WT.WTLX
+    </select>
+
+    <select id="getPlanSimpleRecordListForGlxh" resultType="SimpleRecord" flushCache="true">
+        SELECT WT.WTXH XH, WT.WTMS MS, WT.WTLX WTLX, COUNT(JL.JLWT) UMBER
+        FROM IENR_HLJHWT WT LEFT JOIN IENR_JHWTJL JL ON JL.WTXH = WT.WTXH AND JL.ZYH = #{ZYH} AND JL.GLLX = 2 AND JL.GLXH = #{XH} AND JL.ZFBZ = 0
+        WHERE WT.ZFBZ = 0 AND WT.WTXH IN (SELECT WTXH FROM IENR_WTGLMX WHERE GLXH = #{XH} AND ZFBZ = 0)
+        GROUP BY WT.WTXH, WT.WTMS, WT.WTLX
+    </select>
+
+    <select id="getFocusSimpleRecordListForGlxh" resultType="SimpleRecord" flushCache="true">
+        SELECT WT.WTXH XH, WT.WTMS MS, WT.WTLX WTLX, COUNT(JL.JLJD) UMBER
+        FROM IENR_HLJHWT WT LEFT JOIN IENR_HLJDJL JL ON JL.JDXH = WT.WTXH AND JL.ZYH = #{ZYH} AND JL.GLLX = 2 AND JL.GLXH = #{XH} AND JL.ZFBZ = 0
+        WHERE WT.ZFBZ = 0 AND WT.WTXH IN (SELECT WTXH FROM IENR_WTGLMX WHERE GLXH = #{XH} AND ZFBZ = 0)
+        GROUP BY WT.WTXH, WT.WTMS, WT.WTLX
+    </select>
+
+    <select id="getProblem" resultType="Problem" flushCache="true">
+        SELECT WTXH, WTMS, XGYS, YSWS, WTLX FROM IENR_HLJHWT WHERE WTXH = #{WTXH}
+    </select>
+
+    <select id="getGoalList" resultType="Goal" flushCache="true">
+        SELECT MBXH, MBMS FROM IENR_HLJHMB WHERE WTXH = #{WTXH} ORDER BY PLSX
+    </select>
+
+    <select id="getMeasureList" resultType="Measure" flushCache="true">
+        SELECT CSXH, CSMS, XJBZ FROM IENR_HLJHCS WHERE WTXH = #{WTXH} ORDER BY PLSX
+    </select>
+
+    <select id="getDiagnosticBasisList" resultType="DiagnosticBasis" flushCache="true">
+        SELECT ZDXH, ZDMS, 0 ZDYBZ FROM IENR_HLJHZD WHERE WTXH = #{WTXH} ORDER BY PLSX
+    </select>
+
+    <select id="getRelevantFactorList" resultType="RelevantFactor" flushCache="true">
+        SELECT YSXH, YSMS, 0 ZDYBZ FROM IENR_HLJHYS WHERE WTXH = #{WTXH}
+    </select>
+
+    <insert id="addNursePlanProblem" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_JHWTJL(JLWT ,WTXH ,XGYS ,CJSJ ,CJGH ,KSSJ ,KSGH ,PJZT ,GLXH ,GLLX ,JGID ,ZYH ,ZFBZ ,BRBQ,
+            JHWTXH, WTMS)
+            VALUES (#{JLWT}, #{WTXH}, #{XGYS}, #{CJSJ}, #{CJGH}, #{KSSJ} , #{KSGH}, 0, #{GLXH} , #{GLLX} , #{JGID} ,
+            #{ZYH} ,0 , #{BQID}, #{JHWTXH}, #{WTMS})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_JHWTJL(JLWT ,WTXH ,XGYS ,CJSJ ,CJGH ,KSSJ ,KSGH ,PJZT ,GLXH ,GLLX ,JGID ,ZYH ,ZFBZ ,BRBQ,
+            JHWTXH, WTMS)
+            VALUES (#{JLWT}, #{WTXH}, #{XGYS}, to_date(#{CJSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{CJGH}, to_date(#{KSSJ},
+            'yyyy-mm-dd hh24:mi:ss'), #{KSGH}, 0, #{GLXH} , #{GLLX} , #{JGID} , #{ZYH} ,0 , #{BQID}, #{JHWTXH}, #{WTMS})
+        </if>
+    </insert>
+
+    <insert id="addNurseFocusProblem" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_HLJDJL(JLJD ,JDXH ,CJSJ ,CJGH ,KSSJ ,KSGH ,PJZT ,GLXH ,GLLX ,JGID ,ZYH ,ZFBZ ,BRBQ,
+            JHWTXH, WTMS,JLGLLX,GLJL)
+            VALUES (#{JLJD}, #{JDXH}, #{CJSJ}, #{CJGH}, #{KSSJ} , #{KSGH}, 0, #{GLXH} , #{GLLX} , #{JGID} ,
+            #{ZYH} ,0 , #{BQID}, #{JHWTXH}, #{WTMS}, #{JLGLLX}, #{GLJL})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_HLJDJL(JLJD ,JDXH ,CJSJ ,CJGH ,KSSJ ,KSGH ,PJZT ,GLXH ,GLLX ,JGID ,ZYH ,ZFBZ ,BRBQ,
+            JHWTXH, WTMS,JLGLLX,GLJL)
+            VALUES (#{JLJD}, #{JDXH}, to_date(#{CJSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{CJGH}, to_date(#{KSSJ},
+            'yyyy-mm-dd hh24:mi:ss'), #{KSGH}, 0, #{GLXH} , #{GLLX} , #{JGID} , #{ZYH} ,0 , #{BQID}, #{JHWTXH}, #{WTMS}, #{JLGLLX}, #{GLJL})
+        </if>
+    </insert>
+
+    <update id="editNursePlanProblem" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_JHWTJL SET XGYS = #{XGYS}, WTMS = #{WTMS}, KSSJ = #{KSSJ} WHERE JLWT = #{JLWT}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_JHWTJL SET XGYS = #{XGYS}, WTMS = #{WTMS}, KSSJ = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE JLWT = #{JLWT}
+        </if>
+    </update>
+
+    <update id="editNurseFocusProblem" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_HLJDJL SET WTMS = #{WTMS}, KSSJ = #{KSSJ} WHERE JLJD = #{JLJD}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_HLJDJL SET WTMS = #{WTMS}, KSSJ = to_date(substr(#{KSSJ},1,19), 'yyyy-mm-dd hh24:mi:ss')
+            WHERE JLJD = #{JLJD}
+        </if>
+    </update>
+
+    <update id="deleteNursePlanProblem" flushCache="true">
+        UPDATE IENR_JHWTJL SET ZFBZ=1 WHERE JLWT = #{JLWT}
+    </update>
+
+    <update id="deleteNurseFocusProblem" flushCache="true">
+        UPDATE IENR_HLJDJL SET ZFBZ=1 WHERE JLJD = #{JLJD}
+    </update>
+
+    <update id="terminateNursePlanProblem" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_JHWTJL SET TZSJ = #{TZSJ}, TZGH = #{TZGH} ,PJZT = 2 WHERE JLWT = #{JLWT}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_JHWTJL SET TZSJ = to_date(substr(#{TZSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'), TZGH = #{TZGH} ,PJZT = 2
+            WHERE JLWT = #{JLWT}
+        </if>
+    </update>
+
+    <update id="terminateNurseFocusProblem" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_HLJDJL SET TZSJ = #{TZSJ}, TZGH = #{TZGH} ,PJZT = 2 WHERE JLJD = #{JLJD}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_HLJDJL SET TZSJ = to_date(substr(#{TZSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'), TZGH = #{TZGH} ,PJZT = 2
+            WHERE JLJD = #{JLJD}
+        </if>
+    </update>
+
+    <insert id="addNursePlanMeasure" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_JHCSJL (JLCS, JLWT, CSMS, CSXH, ZDYBZ, XJBZ, KSSJ, KSGH, JSSJ, JSGH, CSZH)
+            VALUES (#{JLCS}, #{JLWT}, #{CSMS}, #{CSXH}, #{ZDYBZ}, #{XJBZ}, #{KSSJ}, #{KSGH}, #{JSSJ}, #{JSGH}, #{CSZH})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_JHCSJL (JLCS, JLWT, CSMS, CSXH, ZDYBZ, XJBZ, KSSJ, KSGH, JSSJ, JSGH, CSZH)
+            VALUES (#{JLCS}, #{JLWT}, #{CSMS}, #{CSXH}, #{ZDYBZ}, #{XJBZ}, to_date(substr(#{KSSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'),
+            #{KSGH}, to_date(substr(#{JSSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'), #{JSGH}, #{CSZH})
+        </if>
+    </insert>
+
+    <update id="editNursePlanMeasure" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_JHCSJL SET CSMS = #{CSMS}, XJBZ = #{XJBZ}, KSSJ = #{KSSJ}, JSSJ = #{JSSJ} WHERE JLCS = #{JLCS}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_JHCSJL SET CSMS = #{CSMS}, XJBZ = #{XJBZ}, KSSJ = to_date(substr(#{KSSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'),
+            JSSJ = to_date(substr(#{JSSJ},1,19), 'yyyy-mm-dd hh24:mi:ss') WHERE JLCS = #{JLCS}
+        </if>
+    </update>
+
+    <delete id="deleteNursePlanMeasure" flushCache="true">
+        DELETE FROM IENR_JHCSJL WHERE JLCS = #{JLCS}
+    </delete>
+
+    <insert id="addNurseFocusMeasure" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_JDCSJL (JLCS, JLJD, CSMS, CSXH, ZDYBZ, XJBZ, KSSJ, KSGH, JSSJ, JSGH, CSZH)
+            VALUES (#{JLCS}, #{JLJD}, #{CSMS}, #{CSXH}, #{ZDYBZ}, #{XJBZ}, #{KSSJ}, #{KSGH}, #{JSSJ}, #{JSGH}, #{CSZH})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_JDCSJL (JLCS, JLJD, CSMS, CSXH, ZDYBZ, XJBZ, KSSJ, KSGH, JSSJ, JSGH, CSZH)
+            VALUES (#{JLCS}, #{JLJD}, #{CSMS}, #{CSXH}, #{ZDYBZ}, #{XJBZ}, to_date(substr(#{KSSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'),
+            #{KSGH}, to_date(substr(#{JSSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'), #{JSGH}, #{CSZH})
+        </if>
+    </insert>
+
+    <update id="editNurseFocusMeasure" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_JDCSJL SET CSMS = #{CSMS}, XJBZ = #{XJBZ}, KSSJ = #{KSSJ}, JSSJ = #{JSSJ} WHERE JLCS = #{JLCS}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_JDCSJL SET CSMS = #{CSMS}, XJBZ = #{XJBZ}, KSSJ = to_date(substr(#{KSSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'),
+            JSSJ = to_date(substr(#{JSSJ},1,19), 'yyyy-mm-dd hh24:mi:ss') WHERE JLCS = #{JLCS}
+        </if>
+    </update>
+
+    <delete id="deleteNurseFocusMeasure" flushCache="true">
+        DELETE FROM IENR_JDCSJL WHERE JLCS = #{JLCS}
+    </delete>
+
+    <insert id="addNursePlanGoal" flushCache="true">
+        INSERT INTO IENR_JHMBJL(JLMB, JLWT, MBXH, MBMS, ZDYMB)
+        VALUES (#{JLMB}, #{JLWT}, #{MBXH}, #{MBMS}, #{ZDYMB})
+    </insert>
+
+    <update id="editNursePlanGoal" flushCache="true">
+        UPDATE IENR_JHMBJL SET MBMS = #{MBMS} WHERE JLMB = #{JLMB}
+    </update>
+
+    <delete id="deleteNursePlanGoal" flushCache="true">
+        DELETE FROM IENR_JHMBJL WHERE JLMB = #{JLMB}
+    </delete>
+
+    <insert id="addNursePlanDiagnosticBasis" flushCache="true">
+        INSERT INTO IENR_JHZDJL(JLZD, JLWT, ZDXH, ZDMS, ZDYBZ)
+        VALUES (#{JLZD}, #{JLWT}, #{ZDXH}, #{ZDMS}, #{ZDYBZ})
+    </insert>
+
+    <update id="editNursePlanDiagnosticBasis" flushCache="true">
+        UPDATE IENR_JHZDJL SET ZDMS = #{ZDMS} WHERE JLZD = #{JLZD}
+    </update>
+
+    <delete id="deleteNursePlanDiagnosticBasis" flushCache="true">
+        DELETE FROM IENR_JHZDJL WHERE JLZD = #{JLZD}
+    </delete>
+
+    <insert id="addNurseFocusDiagnosticBasis" flushCache="true">
+        INSERT INTO IENR_JDZDJL(JLZD, JLJD, ZDXH, ZDMS, ZDYBZ)
+        VALUES (#{JLZD}, #{JLJD}, #{ZDXH}, #{ZDMS}, #{ZDYBZ})
+    </insert>
+
+    <update id="editNurseFocusDiagnosticBasis" flushCache="true">
+        UPDATE IENR_JDZDJL SET ZDMS = #{ZDMS} WHERE JLZD = #{JLZD}
+    </update>
+
+    <delete id="deleteNurseFocusDiagnosticBasis" flushCache="true">
+        DELETE FROM IENR_JDZDJL WHERE JLZD = #{JLZD}
+    </delete>
+
+    <insert id="addNursePlanRelevantFactor" flushCache="true">
+        INSERT INTO IENR_JHYSJL(JLYS, JLWT, YSXH, YSMS)
+        VALUES (#{JLYS}, #{JLWT}, #{YSXH}, #{YSMS})
+    </insert>
+
+    <update id="editNursePlanRelevantFactor" flushCache="true">
+        UPDATE IENR_JHYSJL SET YSMS = #{YSMS} WHERE JLYS = #{JLYS}
+    </update>
+
+    <delete id="deleteNursePlanRelevantFactor" flushCache="true">
+        DELETE FROM IENR_JHYSJL WHERE JLYS = #{JLYS}
+    </delete>
+
+    <select id="getPlanProblemHistoryList" resultType="Problem" flushCache="true">
+        SELECT JL.JLWT, JL.WTXH, JL.GLXH, JL.WTMS, WT.YSWS, JL.XGYS, JL.KSSJ, JL.PJZT, WT.WTLX
+        FROM IENR_JHWTJL JL, IENR_HLJHWT WT
+        WHERE JL.WTXH = WT.WTXH AND JL.ZFBZ = 0 AND JL.WTXH = #{WTXH} AND JL.GLXH = #{GLXH} AND JL.ZYH = #{ZYH} AND JL.JGID = #{JGID}
+        ORDER BY JL.KSSJ DESC
+    </select>
+
+    <select id="getFocusProblemHistoryList" resultType="Problem" flushCache="true">
+        SELECT JL.JLJD JLWT, JL.JDXH WTXH, JL.GLXH, JL.WTMS, WT.YSWS, JL.KSSJ, JL.PJZT, WT.WTLX
+        FROM IENR_HLJDJL JL, IENR_HLJHWT WT
+        WHERE JL.JDXH = WT.WTXH AND JL.ZFBZ = 0 AND JL.JDXH = #{WTXH} AND JL.GLXH = #{GLXH} AND JL.ZYH = #{ZYH} AND JL.JGID = #{JGID}
+        ORDER BY JL.KSSJ DESC
+    </select>
+
+    <select id="getGoalHistoryList" resultType="Goal" flushCache="true">
+        SELECT JLMB, MBMS, MBXH, ZDYMB ZDYBZ
+        FROM IENR_JHMBJL
+        WHERE JLWT = #{JLWT}
+        UNION ALL
+        SELECT NULL JLMB, MBMS, MBXH, 0 ZDYBZ
+        FROM IENR_HLJHMB
+        WHERE WTXH = #{WTXH} AND MBXH NOT IN (SELECT MBXH FROM IENR_JHMBJL WHERE JLWT = #{JLWT})
+    </select>
+
+    <select id="getPlanMeasureHistoryList" resultType="Measure" flushCache="true">
+        SELECT JLCS, CSXH, CSMS, ZDYBZ, XJBZ, KSSJ, KSGH, JSSJ, JSGH, CSZH
+        FROM IENR_JHCSJL
+        WHERE JLWT = #{JLWT}
+    </select>
+
+    <select id="getFocusMeasureHistoryList" resultType="Measure" flushCache="true">
+        SELECT JLCS, CSXH, CSMS, ZDYBZ, XJBZ, KSSJ, KSGH, JSSJ, JSGH, CSZH
+        FROM IENR_JDCSJL
+        WHERE JLJD = #{JLWT}
+    </select>
+
+    <select id="getPlanDiagnosticBasisHistoryList" resultType="DiagnosticBasis" flushCache="true">
+        SELECT JLZD, ZDXH, ZDMS, ZDYBZ
+        FROM IENR_JHZDJL
+        WHERE JLWT = #{JLWT}
+        UNION ALL
+        SELECT NULL JLZD, ZDXH, ZDMS, 0 ZDYBZ
+        FROM IENR_HLJHZD
+        WHERE WTXH = #{WTXH} AND ZDXH NOT IN (SELECT ZDXH FROM IENR_JHZDJL WHERE JLWT = #{JLWT})
+    </select>
+
+    <select id="getFocusDiagnosticBasisHistoryList" resultType="DiagnosticBasis" flushCache="true">
+        SELECT JLZD, ZDXH, ZDMS, ZDYBZ
+        FROM IENR_JDZDJL
+        WHERE JLJD = #{JLWT}
+        UNION ALL
+        SELECT NULL JLZD, ZDXH, ZDMS, 0 ZDYBZ
+        FROM IENR_HLJHZD
+        WHERE WTXH = #{WTXH} AND ZDXH NOT IN (SELECT ZDXH FROM IENR_JDZDJL WHERE JLJD = #{JLWT})
+    </select>
+
+    <select id="getRelevantFactorHistoryList" resultType="RelevantFactor" flushCache="true">
+        SELECT JLYS, YSXH, YSMS, 0 ZDYBZ
+        FROM IENR_JHYSJL
+        WHERE JLWT = #{JLWT}
+        UNION ALL
+        SELECT NULL JLYS, YSXH, YSMS, 0 ZDYBZ
+        FROM IENR_HLJHYS
+        WHERE WTXH = #{WTXH} AND YSXH NOT IN (SELECT YSXH FROM IENR_JHYSJL WHERE JLWT = #{JLWT})
+    </select>
+
+    <select id="getPlanEvaluateHistoryList" resultType="Evaluate" flushCache="true">
+        SELECT JLPJ, PJMS, PJXH, PJGH, PJSJ, PJZH
+        FROM IENR_JHPJJL WHERE JLWT = #{JLWT} ORDER BY PJSJ DESC
+    </select>
+
+    <select id="getFocusEvaluateHistoryList" resultType="Evaluate" flushCache="true">
+        SELECT JLPJ, PJMS, PJXH, PJGH, PJSJ, PJZH
+        FROM IENR_JDPJJL WHERE JLJD = #{JLWT} ORDER BY PJSJ DESC
+    </select>
+
+    <select id="getEvaluateTemplateList" resultType="Evaluate" flushCache="true">
+        SELECT PJXH, PJMS, PJWS, '' PJSJ
+        FROM IENR_HLJHPJ
+        WHERE WTXH = #{WTXH}
+        ORDER BY PLSX
+    </select>
+
+    <insert id="addPlanProblemEvaluate" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_JHPJJL(JLPJ, JLWT, PJXH, PJMS, PJSJ, PJGH, PJZH)
+            VALUES(#{JLPJ}, #{JLWT}, #{PJXH}, #{PJMS}, #{PJSJ}, #{PJGH}, #{PJZH})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_JHPJJL(JLPJ, JLWT, PJXH, PJMS, PJSJ, PJGH, PJZH)
+            VALUES(#{JLPJ}, #{JLWT}, #{PJXH}, #{PJMS}, to_date(substr(#{PJSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'), #{PJGH}, #{PJZH})
+        </if>
+    </insert>
+
+    <insert id="addFocusProblemEvaluate" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_JDPJJL(JLPJ, JLJD, PJXH, PJMS, PJSJ, PJGH, PJZH)
+            VALUES(#{JLPJ}, #{JLJD}, #{PJXH}, #{PJMS}, #{PJSJ}, #{PJGH}, #{PJZH})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_JDPJJL(JLPJ, JLJD, PJXH, PJMS, PJSJ, PJGH, PJZH)
+            VALUES(#{JLPJ}, #{JLJD}, #{PJXH}, #{PJMS}, to_date(substr(#{PJSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'), #{PJGH}, #{PJZH})
+        </if>
+    </insert>
+
+    <update id="editPlanProblemEvaluateStatus" flushCache="true">
+        UPDATE IENR_JHWTJL SET PJZT = 1 WHERE JLWT = #{JLWT}
+    </update>
+
+    <update id="editFocusProblemEvaluateStatus" flushCache="true">
+        UPDATE IENR_HLJDJL SET PJZT = 1 WHERE JLJD = #{JLWT}
+    </update>
+
+    <delete id="deletePlanProblemEvaluate" flushCache="true">
+        DELETE FROM IENR_JHPJJL WHERE JLPJ = #{JLPJ}
+    </delete>
+
+    <delete id="deleteFocusProblemEvaluate" flushCache="true">
+        DELETE FROM IENR_JDPJJL WHERE JLPJ = #{JLPJ}
+    </delete>
+
+    <select id="getPlanListForSync" resultType="Plan" flushCache="true">
+        SELECT WT.WTMS MS, WT.WTXH XH, WT.WTLX
+        FROM IENR_JHWTJL JL, IENR_HLJHWT WT
+        WHERE JL.WTXH = WT.WTXH AND JL.JLWT = #{JLWT}
+    </select>
+
+    <select id="getFocusListForSync" resultType="Plan" flushCache="true">
+        SELECT WT.WTMS MS, WT.WTXH XH, WT.WTLX
+        FROM IENR_HLJDJL JL, IENR_HLJHWT WT
+        WHERE JL.JDXH = WT.WTXH AND JL.JLJD = #{JLJD}
+    </select>
+
+	<select id="getPlanEvaluatePjzhByJlpj" resultType="java.lang.String" flushCache="true">
+		SELECT PJZH FROM IENR_JHPJJL WHERE JLPJ = #{JLPJ}
+	</select>
+
+	<select id="getFocusEvaluatePjzhByJlpj" resultType="java.lang.String" flushCache="true">
+		SELECT PJZH FROM IENR_JDPJJL WHERE JLPJ = #{JLPJ}
+	</select>
+</mapper>

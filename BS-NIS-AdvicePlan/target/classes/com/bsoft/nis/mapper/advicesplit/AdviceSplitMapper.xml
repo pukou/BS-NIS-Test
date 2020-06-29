@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.advicesplit.AdviceSplitMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <select id="getDeptPlanTypeByDept" resultMap="deptTypesMap" flushCache="false">
+        SELECT JHLX.LXH,
+               JHLX.GSLX,
+               JHLX.LXMC,
+               KSJH.KSDM,
+               KSJH.SRGZ,
+               KSJH.TZJZ,
+               KSJH.ZQQS,
+               KSJH.ZQJS
+          FROM ENR_JHLX JHLX, ENR_KSJH KSJH
+         WHERE
+                KSJH.LXH = JHLX.LXH
+           AND JHLX.ZXBZ = 0
+           AND KSJH.KSDM = #{BQDM}
+           AND JHLX.JGID = KSJH.JGID
+           AND JHLX.JGID = #{JGID}
+    </select>
+    <resultMap id="deptTypesMap" type="DeptPlanTypes">
+        <id column="LXH" property="LXH"/>
+        <association property="planDetails" select="selectPlanDetail" column="LXH" javaType="list"/>
+    </resultMap>
+    <select id="selectPlanDetail" flushCache="false" resultType="PlanTypeDetail">
+        SELECT
+            MXH,
+            LXH,
+            MXLX,
+            MXXH
+        FROM
+            ENR_JHMX
+        WHERE LXH = #{LXH}
+    </select>
+
+    <select id="getDeptExcuteRate" resultMap="excuteRateMap" flushCache="false">
+        SELECT PCBS,
+                GLLB,
+                GLBS,
+                PCBM,
+                KSDM,
+                JGID,
+                PCZQ
+        FROM ENR_ZXPC
+        WHERE KSDM = #{BQDM} AND
+              JGID = #{JGID}
+    </select>
+    <resultMap id="excuteRateMap" type="ExcuteRate">
+        <id column="PCBS" property="PCBS"/>
+        <association property="excuteTimes" select="selectExcuteTimes" column="PCBS" javaType="list"/>
+    </resultMap>
+    <select id="selectExcuteTimes" flushCache="false" resultType="ExcuteTime">
+        SELECT
+           SJBS,
+           PCBS,
+           ZXZQ,
+           SJBH,
+           SJMC,
+           KSSJ,
+           JSSJ,
+           ZXRC
+        FROM ENR_ZXSJ
+        WHERE PCBS = #{PCBS}
+    </select>
+
+    <select id="getPatientAdvices" flushCache="true" resultType="AdviceCom">
+        <if test="dbtype == 'sqlserver'">
+            SELECT A.JLXH,A.ZYH,A.YZMC,A.YPXH, A.XMLX,A.YPLX,
+            A.YCJL, A.YCSL, A.KZSJ, A.QRSJ, A.TZSJ,
+            A.YPYF,A.KZYS, A.TZYS,A.FHGH, A.SYBZ,A.YZZX,
+            A.YZZH,
+            (Case
+            When A.SYPC is null or A.SYPC = '' Then
+            'st'
+            Else
+            A.SYPC
+            End) SYPC,
+            A.FYSX,A.YEPB,A.YFSB,A.LSYZ,A.LSBZ, A.BZXX,
+            A.FYFS,A.YSBZ, A.YSTJ,A.YZPX,A.YSYZBH,
+            A.YEWYH, A.FHSJ,A.TZFHSJ,A.SRCS,
+            '0' ZFBZ, JGID, SRHDBZ,
+            (Case
+            When A.YPLX = 0 Then
+            (Select FYGB
+            From V_MOB_HIS_YLSF
+            Where FYXH = YPXH
+            AND JGID = #{JGID})
+            Else
+            0
+            End) FYGB,
+            A.JFBZ, A.BRBQ
+            FROM V_MOB_HIS_BQYZ A
+            WHERE A.ZYH = #{ZYH}
+            AND A.FHBZ = 1
+            AND (A.TZSJ IS NULL OR A.TZSJ > #{KSRQ})
+            AND A.JGID = #{JGID} AND A.ZFBZ = 0
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT A.JLXH,A.ZYH,A.YZMC,A.YPXH, A.XMLX,A.YPLX,
+            A.YCJL, A.YCSL, A.KZSJ, A.QRSJ, A.TZSJ,
+            A.YPYF,A.KZYS, A.TZYS,A.FHGH, A.SYBZ,A.YZZX,
+            A.YZZH,
+            (Case
+            When A.SYPC is null or A.SYPC = '' Then
+            'st'
+            Else
+            A.SYPC
+            End) SYPC,
+            A.FYSX,A.YEPB,A.YFSB,A.LSYZ,A.LSBZ, A.BZXX,
+            A.FYFS,A.YSBZ, A.YSTJ,A.YZPX,A.YSYZBH,
+            A.YEWYH, A.FHSJ,A.TZFHSJ,A.SRCS,
+            '0' ZFBZ, JGID, SRHDBZ,
+            (Case
+            When A.YPLX = 0 Then
+            (Select FYGB
+            From V_MOB_HIS_YLSF
+            Where FYXH = YPXH
+            AND JGID = #{JGID})
+            Else
+            0
+            End) FYGB,
+            A.JFBZ, A.BRBQ
+            FROM V_MOB_HIS_BQYZ A
+            WHERE A.ZYH = #{ZYH}
+            AND A.FHBZ = 1
+            AND (A.TZSJ IS NULL OR A.TZSJ > to_date(#{KSRQ},'yyyy-mm-dd hh24:mi:ss'))
+            AND A.JGID = #{JGID} And A.ZFBZ = 0
+        </if>
+    </select>
+
+    <!--去除时间的判断，保证获取的监控医嘱全，
+    问题描述：确定医嘱赋空操作，停嘱赋空之后会导致我们的医嘱无法拆分且导致监控表插入重复数据的主索引冲突问题
+    解决方案：比较符合医嘱和病区医嘱的停医嘱时间，若医嘱停医嘱时间为空，复核医嘱停嘱时间不为空，将复核医嘱停嘱时间置空
+        AND (TZFHSJ > to_date(#{KSRQ},'yyyy-mm-dd hh24:mi:ss') OR TZFHSJ IS NULL)
+    -->
+    <select id="getMonitoreAdvices" flushCache="true" resultType="MonitoreAdvice">
+        <if test="dbtype == 'sqlserver'">
+            SELECT B.ZYH, B.YZXH, B.FHSJ, B.TZFHSJ, B.JZSJ
+            from IENR_FHYZ B
+            WHERE B.ZYH = #{ZYH}
+            AND ZFBZ = 0
+            AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT B.ZYH, B.YZXH, B.FHSJ, B.TZFHSJ, B.JZSJ
+            from IENR_FHYZ B
+            WHERE B.ZYH = #{ZYH}
+            AND ZFBZ = 0
+            AND JGID = #{JGID}
+        </if>
+    </select>
+
+    <select id="getDoubleCheckMedicals" flushCache="false" resultType="DoubleCheckMedical">
+        SELECT
+            YPXH,
+            SQBZ
+        FROM V_MOB_HIS_SQPD
+        WHERE SQBZ = 1
+    </select>
+
+    <select id="getPatientAdvicePlans" flushCache="true" resultType="AdvicePlan">
+        <if test="dbtype == 'sqlserver'">
+            SELECT JHH,GSLX, LXH, ZYH,
+            BRBQ, YZZH,YSYZBH,YZXH,XMLX,
+            XMXH,YZZX,YZMC, YPYF,SYPC,YCJL,
+            JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,
+            CSSJ, ZFBZ, QRBZ,QRDH,ZXZT, KSSJ,
+            KSGH,JSSJ,JSGH,SJBH,SJMC,JGID
+            FROM ENR_YZJH
+            WHERE ZYH = #{ZYH}
+            AND JHSJ >= #{KSRQ} AND JHSJ <![CDATA[<]]> #{JSRQ} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT JHH,GSLX, LXH, ZYH,
+            BRBQ, YZZH,YSYZBH,YZXH,XMLX,
+            XMXH,YZZX,YZMC, YPYF,SYPC,YCJL,
+            JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,
+            CSSJ, ZFBZ, QRBZ,QRDH,ZXZT, KSSJ,
+            KSGH,JSSJ,JSGH,SJBH,SJMC,JGID
+            FROM ENR_YZJH
+            WHERE ZYH = #{ZYH}
+            AND JHSJ >= to_date(#{KSRQ},'yyyy-mm-dd hh24:mi:ss') AND JHSJ <![CDATA[<]]> to_date(#{JSRQ},'yyyy-mm-dd hh24:mi:ss') AND JGID = #{JGID}
+        </if>
+    </select>
+
+    <select id="getHISUsingRate" flushCache="false" resultType="UsingRate">
+      SELECT PCBM,PCMC, MRCS, ZXZQ PCZQ, ATFY,BZXX FROM V_MOB_HIS_SYPC WHERE ZFBZ=0
+    </select>
+
+    <insert id="addAdvicePlans" parameterType="java.util.Map" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            <foreach collection="plans" item="plan" index="index"
+                     separator=";">
+                INSERT INTO
+                ENR_YZJH(JHH,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,ZFBZ,QRBZ,ZXZT,LSYZ,SJBH,SJMC,ZQRQ,JGID,SRHDBZ)
+                VALUES (#{plan.JHH},#{plan.GSLX},#{plan.LXH},#{plan.ZYH},#{plan.BRBQ},#{plan.YZZH},#{plan.YSYZBH},#{plan.YZXH},#{plan.XMLX},#{plan.XMXH},#{plan.YZZX},#{plan.YZMC},#{plan.YPYF},#{plan.SYPC},#{plan.YCJL},
+                #{plan.JLDW},#{plan.YCSL},#{plan.SLDW},#{plan.JHRQ},#{plan.JHSJ},#{plan.JHSD},#{plan.CSSJ},0,0,0,#{plan.LSYZ},#{plan.SJBH},#{plan.SJMC},#{plan.ZQRQ},#{plan.JGID},#{plan.SRHDBZ})
+            </foreach>
+        </if>
+        <if test="dbtype == 'oracle'">
+            BEGIN
+            <foreach collection="plans" item="plan" index="index"
+                     separator=";">
+                INSERT INTO
+                ENR_YZJH(JHH,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,ZFBZ,QRBZ,ZXZT,LSYZ,SJBH,SJMC,ZQRQ,JGID,SRHDBZ)
+                VALUES (#{plan.JHH},#{plan.GSLX},#{plan.LXH},#{plan.ZYH},#{plan.BRBQ},#{plan.YZZH},#{plan.YSYZBH},#{plan.YZXH},#{plan.XMLX},#{plan.XMXH},#{plan.YZZX},#{plan.YZMC},#{plan.YPYF},#{plan.SYPC},#{plan.YCJL},
+                #{plan.JLDW},#{plan.YCSL},#{plan.SLDW},to_date(#{plan.JHRQ},'yyyy-mm-dd'),to_date(#{plan.JHSJ},'yyyy-mm-dd hh24:mi:ss'),#{plan.JHSD},to_date(#{plan.CSSJ},'yyyy-mm-dd hh24:mi:ss') ,0,0,0,#{plan.LSYZ},#{plan.SJBH},#{plan.SJMC},to_date(#{plan.ZQRQ},'yyyy-mm-dd hh24:mi:ss'),#{plan.JGID},#{plan.SRHDBZ})
+            </foreach>
+            ;END;
+        </if>
+        <!--<foreach collection="list" item="item" index="index"
+                 separator=";">
+            <if test="dbtype == 'sqlserver'">
+                INSERT INTO
+                ENR_YZJH(JHH,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,ZFBZ,QRBZ,ZXZT,LSYZ,SJBH,SJMC,ZQRQ,JGID,SRHDBZ)
+                VALUES (#{JHH},#{GSLX},#{LXH},#{ZYH},#{BRBQ},#{YZZH},#{YSYZBH},#{YZXH},#{XMLX},#{XMXH},#{YZZX},#{YZMC},#{YPYF},#{SYPC},#{YCJL},
+                        #{JLDW},#{YCSL},#{SLDW},#{JHRQ},#{JHSJ},#{JHSD},#{CSSJ},0,0,0,#{LSYZ},#{SJBH},#{SJMC},#{ZQRQ},#{JGID},#{SRHDBZ})
+            </if>
+            <if test="dbtype == 'oracle'">
+                INSERT INTO
+                ENR_YZJH(JHH,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,ZFBZ,QRBZ,ZXZT,LSYZ,SJBH,SJMC,ZQRQ,JGID,SRHDBZ)
+                VALUES ({JHH},{GSLX},{LXH},{ZYH},{BRBQ},{YZZH},{YSYZBH},{YZXH},{XMLX},{XMXH},{YZZX},{YZMC},{YPYF},{SYPC},{YCJL},{JLDW},{YCSL},{SLDW},to_date({JHRQ},'yyyy-mm-dd hh24:mi:ss'),to_date({JHSJ},'yyyy-mm-dd hh24:mi:ss'),{JHSD},to_date({CSSJ},'yyyy-mm-dd hh24:mi:ss') ,0,0,0,{LSYZ},{SJBH},{SJMC},{ZQRQ},{JGID},{SRHDBZ})
+            </if>
+        </foreach>-->
+    </insert>
+
+    <!--
+        56010005 医嘱拆分相关BUG修复
+        已打印的计划同样需要删除，存在护士前一天的打印后一天的计划，去除QRBZ = 0
+        修改时替换SQL语句
+    -->
+    <delete id="deleteAdvicePlans" parameterType="java.util.Map" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+           <foreach collection="plans" item="plan" index="index"
+                    separator=";">
+               DELETE FROM ENR_YZJH WHERE  ZXZT = 0 AND JGID = #{plan.JGID} AND JHH = #{plan.JHH}
+           </foreach>
+        </if>
+        <if test="dbtype == 'oracle'">
+            BEGIN
+            <foreach collection="plans" item="plan" index="index"
+                     separator=";">
+                DELETE FROM ENR_YZJH WHERE  ZXZT = 0 AND JGID = #{plan.JGID} AND JHH = #{plan.JHH}
+            </foreach>
+            ;END;
+        </if>
+    </delete>
+
+    <!--
+        56010005 医嘱拆分相关BUG修复
+        已打印的计划同样需要删除，存在护士前一天的打印后一天的计划，去除QRBZ = 0
+        修改时替换SQL语句
+    -->
+    <delete id="deleteAdvicePlansByYzxh" parameterType="java.util.Map" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            <foreach collection="plans" item="plan" index="index"
+                     separator=";">
+                DELETE FROM ENR_YZJH WHERE YZXH = #{plan.YZXH} AND JHSJ >= #{plan.JHSJ} AND ZXZT = 0  AND JGID =#{plan.JGID}
+            </foreach>
+
+        </if>
+        <if test="dbtype == 'oracle'">
+            BEGIN
+            <foreach collection="plans" item="plan" index="index"
+                     separator=";">
+                DELETE FROM ENR_YZJH WHERE YZXH = #{plan.YZXH} AND JHSJ >= to_date(#{plan.JHSJ},'yyyy-mm-dd hh24:mi:ss') AND ZXZT = 0 AND JGID =#{plan.JGID}
+            </foreach>
+            ;END;
+        </if>
+    </delete>
+
+    <insert id="addMonitorAdvice" parameterType="java.util.Map" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            <foreach collection="monitors" item="monitor" index="index"
+                     separator=";">
+                INSERT INTO IENR_FHYZ (ZYH,YZXH,BRBQ,FHSJ,TZFHSJ,CZGH,CZSJ,JZSJ,ZFBZ,JGID)
+                VALUES (#{monitor.ZYH},#{monitor.YZXH},#{monitor.BRBQ},#{monitor.FHSJ},#{monitor.TZFHSJ},#{monitor.CZGH},#{monitor.CZSJ},#{monitor.JZSJ},0,#{monitor.JGID})
+            </foreach>
+
+        </if>
+        <if test="dbtype == 'oracle'">
+            BEGIN
+            <foreach collection="monitors" item="monitor" index="index"
+                     separator=";">
+                <if test="monitor.TZFHSJ == null">
+                    INSERT INTO IENR_FHYZ (ZYH,YZXH,BRBQ,FHSJ,CZGH,CZSJ,JZSJ,ZFBZ,JGID)
+                    VALUES (#{monitor.ZYH},#{monitor.YZXH},#{monitor.BRBQ},#{monitor.FHSJ},#{monitor.CZGH},to_date(#{monitor.CZSJ},'yyyy-mm-dd hh24:mi:ss'),#{monitor.JZSJ},0,#{monitor.JGID})
+                </if>
+                <if test="monitor.TZFHSJ != null">
+                    INSERT INTO IENR_FHYZ (ZYH,YZXH,BRBQ,FHSJ,TZFHSJ,CZGH,CZSJ,JZSJ,ZFBZ,JGID)
+                    VALUES (#{monitor.ZYH},#{monitor.YZXH},#{monitor.BRBQ},#{monitor.FHSJ},#{monitor.TZFHSJ},#{monitor.CZGH},to_date(#{monitor.CZSJ},'yyyy-mm-dd hh24:mi:ss'),#{monitor.JZSJ},0,#{monitor.JGID})
+                </if>
+            </foreach>
+            ;END;
+        </if>
+
+    </insert>
+
+    <update id="updateMonitorAdvice" parameterType="java.util.Map" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            <foreach collection="monitors" item="monitor" index="index"
+                     separator=";">
+                UPDATE IENR_FHYZ SET FHSJ = #{monitor.FHSJ}, TZFHSJ=#{monitor.TZFHSJ}, CZGH=#{monitor.CZGH}, CZSJ=#{monitor.CZSJ}, ZFBZ =#{monitor.ZFBZ}, JZSJ=#{monitor.JZSJ} WHERE YZXH =#{monitor.YZXH} AND JGID =#{monitor.JGID}
+            </foreach>
+        </if>
+        <if test="dbtype == 'oracle'">
+            BEGIN
+            <foreach collection="monitors" item="monitor" index="index"
+                     separator=";">
+                <if test="monitor.TZFHSJ == null">
+                    UPDATE IENR_FHYZ SET FHSJ = #{monitor.FHSJ}, TZFHSJ=#{monitor.TZFHSJ}, CZGH=#{monitor.CZGH}, CZSJ=to_date(#{monitor.CZSJ},'yyyy-mm-dd hh24:mi:ss'), ZFBZ =#{monitor.ZFBZ}, JZSJ=#{monitor.JZSJ} WHERE YZXH =#{monitor.YZXH} AND JGID =#{monitor.JGID}
+                </if>
+                <if test="monitor.TZFHSJ != null">
+                    UPDATE IENR_FHYZ SET FHSJ = #{monitor.FHSJ},  CZGH=#{monitor.CZGH}, CZSJ=to_date(#{monitor.CZSJ},'yyyy-mm-dd hh24:mi:ss'), ZFBZ =#{monitor.ZFBZ}, JZSJ=#{monitor.JZSJ} WHERE YZXH =#{monitor.YZXH} AND JGID =#{monitor.JGID}
+                </if>
+            </foreach>
+            ;END;
+        </if>
+    </update>
+
+    <!--56010004 临时医嘱 医嘱计划重复产生
+        根据医嘱编号和计划时间点获取医嘱计划
+    -->
+    <select id="getAdvicePlanByAdviceAndPlanTime" resultType="AdvicePlan" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT JHH FROM ENR_YZJH WHERE ZYH = #{ZYH} AND YZXH = #{YZXH} AND JHSJ = #{SJD} AND ZFBZ = 0
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT JHH FROM ENR_YZJH WHERE ZYH = #{ZYH} AND YZXH = #{YZXH} AND JHSJ = to_date(#{SJD},'yyyy-mm-dd hh24:mi:ss') AND ZFBZ = 0
+        </if>
+    </select>
+
+    <!--
+        问题描述：确定医嘱赋空操作，停嘱赋空之后会导致我们的医嘱无法拆分且导致监控表插入重复数据的主索引冲突问题
+        解决方案：比较符合医嘱和病区医嘱的停医嘱时间，若医嘱停医嘱时间为空，复核医嘱停嘱时间不为空，将复核医嘱停嘱时间置空
+    -->
+    <update id="updateMonitorAdviceStopTime" flushCache="true">
+        UPDATE IENR_FHYZ SET TZFHSJ=NULL WHERE YZXH =#{YZXH} AND ZYH =#{ZYH}
+    </update>
+</mapper>

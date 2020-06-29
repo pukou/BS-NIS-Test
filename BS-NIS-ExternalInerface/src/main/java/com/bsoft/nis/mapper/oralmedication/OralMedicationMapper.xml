@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.oralmedication.OralMedicationMapper">
+
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+	<insert id="addOMSTitle">
+		<if test="dbtype == 'oracle'">
+			INSERT INTO ENR_KFD (KFDH,ZYH,BRBQ,BRCH,KFRQ,KFSJ,KFSD,BYBS,BYSJ,BYLY,LYBS, JGID)
+			VALUES  (#{omsTitle.KFDH},#{omsTitle.patientid},#{omsTitle.areaid},#{omsTitle.bedid},trunc(to_date(#{omsTitle.plantime},'yyyy-MM-dd HH24:MI:SS')),to_date(#{omsTitle.plantime},'yyyy-MM-dd HH24:MI:SS'),0,#{omsTitle.packnum},to_date(#{omsTitle.plantime},'yyyy-MM-dd HH24:MI:SS'),2,#{omsTitle.autoid}, 1)
+		</if>
+
+		<if test="dbtype == 'sqlserver'">
+			INSERT INTO ENR_KFD (KFDH,ZYH,BRBQ,BRCH,KFRQ,KFSJ,KFSD,BYBS,BYSJ,BYLY,LYBS, JGID)
+			VALUES  (#{omsTitle.KFDH},#{omsTitle.patientid},#{omsTitle.areaid},#{omsTitle.bedid},Cast(Left(#{omsTitle.plantime}, 10) As DATETIME),#{omsTitle.plantime},0,#{omsTitle.packnum},#{omsTitle.plantime},2,#{omsTitle.autoid}, 1)
+		</if>
+	</insert>
+
+	<insert id="addOMSPackage" parameterType="OMSPackage">
+		INSERT INTO ENR_KFBZ (KFMX,KFDH,TMBH,ZFBZ,LYBS,KFZT,YDMS)
+		VALUES  (#{KFMX},#{KFDH},#{packagecode},0,#{packageid},0,#{packageindex})
+	</insert>
+
+	<insert id="addOMSTablet" parameterType="OMSTablet">
+		INSERT INTO ENR_BZMX (BZMX,KFMX,KFDH,YZXH,YPXH,BZJL,JLDW,BZSL,SLDW,SJBH,SJMC)
+		VALUES  (#{BZMX},#{KFMX},#{KFDH},#{adviceid},#{medid},#{doseage},#{doseunit},#{quantity},#{quantityunit},#{timeid},#{timename})
+	</insert>
+
+	<select id="getOMSCntByTmbh" resultType="int">
+		Select Count(1) From ENR_KFBZ WHERE TMBH = #{TMBH}
+	</select>
+
+
+	<insert id="addXTJCJL">
+		<if test="dbtype == 'oracle'">
+			INSERT INTO IENR_XTCLJL(JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, CLSD, CLZ, SYBZ, JLZT, JGID, PTHC)
+				VALUES (#{JLXH}, #{ZYH},#{BRBQ}, #{BRCH}, SYSDATE, #{CJGH}, to_date(#{CJSJ},'yyyy-MM-dd HH24:mi:ss'), #{CJGH}, #{CLSD}, #{CLZ}, 0, 0, 1, #{PTHC})
+		</if>
+
+		<if test="dbtype == 'sqlserver'">
+			INSERT INTO IENR_XTCLJL(JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, CLSD, CLZ, SYBZ, JLZT, JGID, PTHC)
+			VALUES (#{JLXH}, #{ZYH},#{BRBQ}, #{BRCH}, GetDate(), #{CJGH}, #{CJSJ}, #{CJGH}, #{CLSD}, #{CLZ}, 0, 0, 1, #{PTHC})
+		</if>
+
+	</insert>
+</mapper>

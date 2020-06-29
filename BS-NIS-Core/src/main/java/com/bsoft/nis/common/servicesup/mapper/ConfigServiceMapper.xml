@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.common.servicesup.mapper.ConfigServiceMapper">
+
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+
+	<select id="getConfig" resultType="SystemConfig">
+		<!-- 根据代码类别与代码识别号获取字典项(MOB库) -->
+		SELECT DMLB,DMSB,DMMC
+		FROM MOB_XTPZ
+		WHERE DMSB=#{DMSB} AND DMLB=#{DMLB}
+	</select>
+
+	<select id="getConfigsByDmlb" resultType="SystemConfig">
+		<!-- 根据代码类别，获取系统配制列表(mob库) -->
+		SELECT DMLB,DMSB,DMMC
+		FROM MOB_XTPZ
+		WHERE DMSB !=0 AND DMLB=#{DMLB}
+	</select>
+
+</mapper>

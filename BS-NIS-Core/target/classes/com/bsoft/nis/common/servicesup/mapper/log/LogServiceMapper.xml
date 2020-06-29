@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.common.servicesup.mapper.log.LogServiceMapper">
+
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+
+	<select id="getSpecimenCollectLogs" flushCache="true" resultType="OperLog">
+		SELECT JLBH,CZNR,CZLB,CZLX,ZYH,GLBH,CZGH,BQDM,CZZT,SBXX,CZSJ,BZXX,JGID
+		FROM IENR_CZJL T WHERE T.JGID=#{JGID} AND T.ZYH=#{ZYH} AND T.CZLX=5
+		AND T.ZFBZ=0 AND NOT EXISTS (SELECT T1.JLBH FROM IENR_CZJL T1 WHERE T1.GLBH=T.GLBH AND T1.JGID=T.JGID AND T.CZLX=6 AND T1.CZLB=T.CZLB AND T1.ZFBZ=0)
+	</select>
+
+	<select id="getLogByPrimary" resultType="OperLog" flushCache="true">
+		SELECT *
+		FROM
+			IENR_CZJL
+		WHERE JLBH = #{JLBH}
+	</select>
+
+	<insert id="addLog" parameterType="OperLog" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+		INSERT INTO IENR_CZJL(JLBH,ZYH,CZNR,CZLB,CZLX,GLBH,CZGH,BQDM,CZZT,SBXX,CZSJ,BZXX,JGID,ZFBZ)
+		VALUES (#{JLBH},#{ZYH},#{CZNR},#{CZLB},#{CZLX},#{GLBH},#{CZGH},#{BQDM},#{CZZT},#{SBXX,jdbcType = VARCHAR},#{CZSJ},#{BZXX},#{JGID},#{ZFBZ})
+		</if>
+		<if test="dbtype == 'oracle'">
+		INSERT INTO IENR_CZJL(JLBH,ZYH,CZNR,CZLB,CZLX,GLBH,CZGH,BQDM,CZZT,SBXX,CZSJ,BZXX,JGID,ZFBZ)
+		VALUES (#{JLBH},#{ZYH},#{CZNR},#{CZLB},#{CZLX},#{GLBH},#{CZGH},#{BQDM},#{CZZT},#{SBXX,jdbcType = VARCHAR},to_date(#{CZSJ},'yyyy-MM-dd hh24:mi:ss'),#{BZXX},#{JGID},#{ZFBZ})
+		</if>
+
+	</insert>
+
+	<update id="deleteLog" flushCache="true">
+		UPDATE IENR_CZJL
+		SET ZFBZ = 1
+		WHERE JLBH = #{JLBH} AND
+		       ZFBZ = 0
+	</update>
+	
+	<update id="deleteLogMuch" parameterType="map" flushCache="true">
+		UPDATE IENR_CZJL
+		SET ZFBZ = 1
+		WHERE ZYH = #{ZYH} AND
+			  GLBH = #{GLBH} AND
+			  JGID = #{JGID} AND
+			  CZLB = #{CZLB} AND
+			  ZFBZ = 0 AND
+			  CZLX IN
+			 <foreach item="item" index="index" collection="CZLXS" open="(" separator="," close=")">
+				 #{item}
+			 </foreach>
+	</update>
+</mapper>

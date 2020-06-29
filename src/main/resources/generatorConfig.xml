@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE generatorConfiguration  
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"  
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<context id="dbcreate" targetRuntime="MyBatis3">
+		<commentGenerator>
+			<property name="suppressAllComments" value="true" />
+			<property name="prefix" value="cn.tank" />
+			<!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+		<!--数据库链接URL，用户名、密码 -->
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://localhost:3306/irsystem" userId="root"
+			password="111111">
+		</jdbcConnection>
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+		<!-- 生成模型的包名和位置 -->
+		<javaModelGenerator targetPackage="com.tank.model"
+			targetProject="src/main/java">
+			<property name="enableSubPackages" value="true" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+		<!-- 生成映射文件的包名和位置 -->
+		<sqlMapGenerator targetPackage="mybatis"
+			targetProject="src/main/resources">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+		<!-- 生成DAO的包名和位置 -->
+		<javaClientGenerator targetPackage="com.tank.mapper"
+			targetProject="src/main/java" type="XMLMAPPER">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+		<!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名 -->
+
+		<!--<table tableName="business_apply"></table>-->
+		<!--<table tableName="bas_ad_item"></table>-->
+
+		<!--<table tableName="business_collect"></table>-->
+		<!--<table tableName="dynamic_reply"></table>-->
+		<!--<table tableName="user"></table>-->
+		<!--<table tableName="bas_app_version"></table>-->
+		<!--<table tableName="bas_business"></table>-->
+		<!--<table tableName="business_reply"></table>-->
+		<!--<table tableName="news"></table>-->
+		<!--<table tableName="activity"></table>-->
+		<!--<table tableName="activity_signup"></table>-->
+		<!--<table tableName="admin"></table>-->
+		<!--<table tableName="sys_dictionary"></table>-->
+		<!--<table tableName="bas_department"></table>-->
+		<!--<table tableName="account"></table>-->
+		<!--<table tableName="account_info"></table>-->
+		<!--<table tableName="resident"></table>-->
+		<!--<table tableName="bas_organization"></table>-->
+		<!--<table tableName="bas_doctor"></table>-->
+		<!--<table tableName="sign_record"></table>-->
+		<!--<table tableName="service_item"></table>-->
+	</context>
+</generatorConfiguration>  

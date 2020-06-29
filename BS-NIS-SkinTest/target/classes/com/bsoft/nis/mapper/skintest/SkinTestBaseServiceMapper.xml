@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.skintest.SkinTestBaseServiceMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <select id="getAllSkinTest" flushCache="true" resultType="SickerPersonSkinTest">
+        SELECT YZXH,
+        ZYH,
+        BRCH,
+        BRBQ,
+        BRXM,
+        YZMC,
+        DYCS,
+        PSTM,
+        PSLB,
+        PSSC,
+        PSZT,
+        KSGH,
+        KSSJ,
+        JSGH,
+        JSSJ,
+        PSJG,
+        YYSJ,
+        CSSJ,
+        YYPS,
+        YSYZBH,
+        JGID,
+        BZ FROM IENR_PSJL
+        WHERE BRBQ = #{BRBQ}
+        <if test="ZYH !=null">
+            AND ZYH = #{ZYH}
+        </if>
+    </select>
+
+    <select id="getNeedSkinTest" flushCache="true" resultType="SickerPersonSkinTest">
+        SELECT YZXH,
+        ZYH,
+        BRCH,
+        BRBQ,
+        BRXM,
+        YZMC,
+        DYCS,
+        PSTM,
+        PSLB,
+        PSSC,
+        PSZT,
+        KSGH,
+        KSSJ,
+        JSGH,
+        JSSJ,
+        PSJG,
+        YYSJ,
+        CSSJ,
+        YYPS,
+        YSYZBH,
+        JGID,
+        BZ FROM IENR_PSJL
+        WHERE BRBQ = #{BRBQ}
+        AND   ( PSZT IS NULL OR PSZT = 0 OR PSZT = 2)
+        <if test="ZYH !=null">
+            AND ZYH = #{ZYH}
+        </if>
+    </select>
+
+
+    <update id="updateSkinTest" parameterType="SickerPersonSkinTest" flushCache="true">
+        <if test="dbtype=='sqlserver'">
+            UPDATE IENR_PSJL SET
+            DYCS = #{DYCS},
+            PSSC = #{PSSC},
+            PSZT = #{PSZT},
+            KSGH = #{KSGH},
+            KSSJ = #{KSSJ},
+            JSGH = #{JSGH},
+            JSSJ = #{JSSJ},
+            PSJG = #{PSJG},
+            YYSJ = #{YYSJ},
+            CSSJ = #{CSSJ},
+            YYPS = #{YYPS},
+            YSYZBH = #{YSYZBH},
+            BZ = #{BZ} WHERE
+            YZXH = #{YZXH}
+        </if>
+
+        <if test="dbtype=='oracle'">
+            UPDATE IENR_PSJL SET
+            DYCS = #{DYCS},
+            PSSC = #{PSSC},
+            PSZT = #{PSZT},
+            KSGH = #{KSGH},
+            KSSJ = = to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+            JSGH = #{JSGH},
+            JSSJ = = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+            PSJG = #{PSJG},
+            YYSJ = = to_date(#{YYSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+            CSSJ = = to_date(#{CSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+            YYPS = #{YYPS},
+            YSYZBH = #{YSYZBH},
+            BZ = #{BZ} WHERE
+            YZXH = #{YZXH}
+        </if>
+
+    </update>
+
+    <parameterMap id="ExecuteMap" type="java.util.Map">
+        <!-- IN -->
+        <parameter property="VN_YZXH" jdbcType="NUMERIC" mode="IN"/>
+        <parameter property="VN_PSJG" jdbcType="NUMERIC" mode="IN"/>
+        <parameter property="VN_YSYZBH" jdbcType="NUMERIC" mode="IN"/>
+        <!-- OUT -->
+        <parameter property="VN_RET" jdbcType="NUMERIC" mode="OUT"/>
+        <parameter property="VV_RETMSG" jdbcType="VARCHAR" mode="OUT"/>
+    </parameterMap>
+
+    <select id="update_ZYBQYZ_PSJG" parameterMap="ExecuteMap" statementType="CALLABLE" useCache="false"
+            flushCache="true">
+      { call SP_MOB_HIS_UPDATE_PSJG(?,?,?,?,?)}
+    </select>
+</mapper>

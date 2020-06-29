@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.common.servicesup.mapper.DictCachedMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+
+    <select id="getCachedConfigByName" flushCache="false" resultType="CachedConfig" useCache="true">
+        SELECT * FROM MH_ZDHC WHERE ZDMC = #{dictname}
+    </select>
+
+    <select id="getDictDatasBySql" parameterType="SqlStr" flushCache="false" resultType="Map" statementType="STATEMENT" useCache="true">
+        ${sql}
+    </select>
+</mapper>

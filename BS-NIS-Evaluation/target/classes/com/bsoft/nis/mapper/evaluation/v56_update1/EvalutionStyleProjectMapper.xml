@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bsoft.nis.mapper.evaluation.v56_update1.EvalutionStyleProjectMapper" >
+  <resultMap id="BaseResultMap" type="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleProject" >
+    <id column="XMXH" property="XMXH" jdbcType="NUMERIC" />
+    <id column="BBH" property="BBH" jdbcType="NUMERIC" />
+    <result column="YSXH" property="YSXH" jdbcType="NUMERIC" />
+    <result column="PLSX" property="PLSX" jdbcType="NUMERIC" />
+    <result column="GLXM" property="GLXM" jdbcType="NUMERIC" />
+    <result column="XMMC" property="XMMC" jdbcType="VARCHAR" />
+    <result column="PYDM" property="PYDM" jdbcType="VARCHAR" />
+    <result column="WBDM" property="WBDM" jdbcType="VARCHAR" />
+    <result column="QZWB" property="QZWB" jdbcType="VARCHAR" />
+    <result column="HZWB" property="HZWB" jdbcType="VARCHAR" />
+    <result column="XSCD" property="XSCD" jdbcType="NUMERIC" />
+    <result column="XMLB" property="XMLB" jdbcType="NUMERIC" />
+    <result column="XJKJLX" property="XJKJLX" jdbcType="NUMERIC" />
+    <result column="SJLX" property="SJLX" jdbcType="NUMERIC" />
+    <result column="SJGS" property="SJGS" jdbcType="VARCHAR" />
+    <result column="SJXX" property="SJXX" jdbcType="NUMERIC" />
+    <result column="SJSX" property="SJSX" jdbcType="NUMERIC" />
+    <result column="XMZH" property="XMZH" jdbcType="NUMERIC" />
+    <result column="HHBZ" property="HHBZ" jdbcType="NUMERIC" />
+    <result column="SJXM" property="SJXM" jdbcType="NUMERIC" />
+    <result column="XMJB" property="XMJB" jdbcType="NUMERIC" />
+    <result column="XJZK" property="XJZK" jdbcType="NUMERIC" />
+    <result column="XJHC" property="XJHC" jdbcType="NUMERIC" />
+    <result column="XMBM" property="XMBM" jdbcType="VARCHAR" />
+    <result column="PDAXS" property="PDAXS" jdbcType="NUMERIC" />
+    <result column="XGBZ" property="XGBZ" jdbcType="NUMERIC" />
+    <result column="ZDXM" property="ZDXM" jdbcType="NUMERIC" />
+    <result column="BTXM" property="BTXM" jdbcType="NUMERIC" />
+    <result column="ZXBZ" property="ZXBZ" jdbcType="NUMERIC" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleProject" extends="BaseResultMap" >
+    <!--<result column="XMKZ" property="XMKZ" jdbcType="LONGVARCHAR" />-->
+    <result column="XMKZ" property="XMKZ" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    XMXH, BBH, YSXH, PLSX, GLXM, XMMC, PYDM, WBDM, QZWB, HZWB, XSCD, XMLB, XJKJLX, SJLX, 
+    SJGS, SJXX, SJSX, XMZH, HHBZ, SJXM, XMJB, XJZK, XJHC, XMBM, PDAXS, XGBZ, ZDXM, BTXM, 
+    ZXBZ
+  </sql>
+  <sql id="Blob_Column_List" >
+    XMKZ
+  </sql>
+
+  <select id="selectRootChildProjectsByStyleKey" resultMap="ResultMapWithBLOBs" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleKey">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from IENR_HLPGXM
+    where YSXH = #{YSXH,jdbcType=NUMERIC}
+    and BBH = #{BBH,jdbcType=NUMERIC}
+    and (SJXM > 0)
+    ORDER BY SJXM ASC ,XMXH ASC
+  </select>
+  <select id="selectRootProjectsByStyleKey" resultMap="ResultMapWithBLOBs" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleKey">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from IENR_HLPGXM
+    where YSXH = #{YSXH,jdbcType=NUMERIC}
+    and BBH = #{BBH,jdbcType=NUMERIC}
+    and (SJXM = 0 or SJXM is null)
+    ORDER BY SJXM ASC , XMXH ASC
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleProjectKey" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from IENR_HLPGXM
+    where XMXH = #{XMXH,jdbcType=NUMERIC}
+      and BBH = #{BBH,jdbcType=NUMERIC}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleProjectKey" >
+    delete from IENR_HLPGXM
+    where XMXH = #{XMXH,jdbcType=NUMERIC}
+      and BBH = #{BBH,jdbcType=NUMERIC}
+  </delete>
+  <insert id="insert" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleProject" >
+    insert into IENR_HLPGXM (XMXH, BBH, YSXH, 
+      PLSX, GLXM, XMMC, PYDM, 
+      WBDM, QZWB, HZWB, XSCD, 
+      XMLB, XJKJLX, SJLX, 
+      SJGS, SJXX, SJSX, XMZH, 
+      HHBZ, SJXM, XMJB, XJZK, 
+      XJHC, XMBM, PDAXS, 
+      XGBZ, ZDXM, BTXM, ZXBZ, 
+      XMKZ)
+    values (#{XMXH,jdbcType=NUMERIC}, #{BBH,jdbcType=NUMERIC}, #{YSXH,jdbcType=NUMERIC}, 
+      #{PLSX,jdbcType=NUMERIC}, #{GLXM,jdbcType=NUMERIC}, #{XMMC,jdbcType=VARCHAR}, #{PYDM,jdbcType=VARCHAR}, 
+      #{WBDM,jdbcType=VARCHAR}, #{QZWB,jdbcType=VARCHAR}, #{HZWB,jdbcType=VARCHAR}, #{XSCD,jdbcType=NUMERIC}, 
+      #{XMLB,jdbcType=NUMERIC}, #{XJKJLX,jdbcType=NUMERIC}, #{SJLX,jdbcType=NUMERIC}, 
+      #{SJGS,jdbcType=VARCHAR}, #{SJXX,jdbcType=NUMERIC}, #{SJSX,jdbcType=NUMERIC}, #{XMZH,jdbcType=NUMERIC}, 
+      #{HHBZ,jdbcType=NUMERIC}, #{SJXM,jdbcType=NUMERIC}, #{XMJB,jdbcType=NUMERIC}, #{XJZK,jdbcType=NUMERIC}, 
+      #{XJHC,jdbcType=NUMERIC}, #{XMBM,jdbcType=VARCHAR}, #{PDAXS,jdbcType=NUMERIC}, 
+      #{XGBZ,jdbcType=NUMERIC}, #{ZDXM,jdbcType=NUMERIC}, #{BTXM,jdbcType=NUMERIC}, #{ZXBZ,jdbcType=NUMERIC}, 
+      #{XMKZ,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleProject" >
+    insert into IENR_HLPGXM
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="XMXH != null" >
+        XMXH,
+      </if>
+      <if test="BBH != null" >
+        BBH,
+      </if>
+      <if test="YSXH != null" >
+        YSXH,
+      </if>
+      <if test="PLSX != null" >
+        PLSX,
+      </if>
+      <if test="GLXM != null" >
+        GLXM,
+      </if>
+      <if test="XMMC != null" >
+        XMMC,
+      </if>
+      <if test="PYDM != null" >
+        PYDM,
+      </if>
+      <if test="WBDM != null" >
+        WBDM,
+      </if>
+      <if test="QZWB != null" >
+        QZWB,
+      </if>
+      <if test="HZWB != null" >
+        HZWB,
+      </if>
+      <if test="XSCD != null" >
+        XSCD,
+      </if>
+      <if test="XMLB != null" >
+        XMLB,
+      </if>
+      <if test="XJKJLX != null" >
+        XJKJLX,
+      </if>
+      <if test="SJLX != null" >
+        SJLX,
+      </if>
+      <if test="SJGS != null" >
+        SJGS,
+      </if>
+      <if test="SJXX != null" >
+        SJXX,
+      </if>
+      <if test="SJSX != null" >
+        SJSX,
+      </if>
+      <if test="XMZH != null" >
+        XMZH,
+      </if>
+      <if test="HHBZ != null" >
+        HHBZ,
+      </if>
+      <if test="SJXM != null" >
+        SJXM,
+      </if>
+      <if test="XMJB != null" >
+        XMJB,
+      </if>
+      <if test="XJZK != null" >
+        XJZK,
+      </if>
+      <if test="XJHC != null" >
+        XJHC,
+      </if>
+      <if test="XMBM != null" >
+        XMBM,
+      </if>
+      <if test="PDAXS != null" >
+        PDAXS,
+      </if>
+      <if test="XGBZ != null" >
+        XGBZ,
+      </if>
+      <if test="ZDXM != null" >
+        ZDXM,
+      </if>
+      <if test="BTXM != null" >
+        BTXM,
+      </if>
+      <if test="ZXBZ != null" >
+        ZXBZ,
+      </if>
+      <if test="XMKZ != null" >
+        XMKZ,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="XMXH != null" >
+        #{XMXH,jdbcType=NUMERIC},
+      </if>
+      <if test="BBH != null" >
+        #{BBH,jdbcType=NUMERIC},
+      </if>
+      <if test="YSXH != null" >
+        #{YSXH,jdbcType=NUMERIC},
+      </if>
+      <if test="PLSX != null" >
+        #{PLSX,jdbcType=NUMERIC},
+      </if>
+      <if test="GLXM != null" >
+        #{GLXM,jdbcType=NUMERIC},
+      </if>
+      <if test="XMMC != null" >
+        #{XMMC,jdbcType=VARCHAR},
+      </if>
+      <if test="PYDM != null" >
+        #{PYDM,jdbcType=VARCHAR},
+      </if>
+      <if test="WBDM != null" >
+        #{WBDM,jdbcType=VARCHAR},
+      </if>
+      <if test="QZWB != null" >
+        #{QZWB,jdbcType=VARCHAR},
+      </if>
+      <if test="HZWB != null" >
+        #{HZWB,jdbcType=VARCHAR},
+      </if>
+      <if test="XSCD != null" >
+        #{XSCD,jdbcType=NUMERIC},
+      </if>
+      <if test="XMLB != null" >
+        #{XMLB,jdbcType=NUMERIC},
+      </if>
+      <if test="XJKJLX != null" >
+        #{XJKJLX,jdbcType=NUMERIC},
+      </if>
+      <if test="SJLX != null" >
+        #{SJLX,jdbcType=NUMERIC},
+      </if>
+      <if test="SJGS != null" >
+        #{SJGS,jdbcType=VARCHAR},
+      </if>
+      <if test="SJXX != null" >
+        #{SJXX,jdbcType=NUMERIC},
+      </if>
+      <if test="SJSX != null" >
+        #{SJSX,jdbcType=NUMERIC},
+      </if>
+      <if test="XMZH != null" >
+        #{XMZH,jdbcType=NUMERIC},
+      </if>
+      <if test="HHBZ != null" >
+        #{HHBZ,jdbcType=NUMERIC},
+      </if>
+      <if test="SJXM != null" >
+        #{SJXM,jdbcType=NUMERIC},
+      </if>
+      <if test="XMJB != null" >
+        #{XMJB,jdbcType=NUMERIC},
+      </if>
+      <if test="XJZK != null" >
+        #{XJZK,jdbcType=NUMERIC},
+      </if>
+      <if test="XJHC != null" >
+        #{XJHC,jdbcType=NUMERIC},
+      </if>
+      <if test="XMBM != null" >
+        #{XMBM,jdbcType=VARCHAR},
+      </if>
+      <if test="PDAXS != null" >
+        #{PDAXS,jdbcType=NUMERIC},
+      </if>
+      <if test="XGBZ != null" >
+        #{XGBZ,jdbcType=NUMERIC},
+      </if>
+      <if test="ZDXM != null" >
+        #{ZDXM,jdbcType=NUMERIC},
+      </if>
+      <if test="BTXM != null" >
+        #{BTXM,jdbcType=NUMERIC},
+      </if>
+      <if test="ZXBZ != null" >
+        #{ZXBZ,jdbcType=NUMERIC},
+      </if>
+      <if test="XMKZ != null" >
+        #{XMKZ,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleProject" >
+    update IENR_HLPGXM
+    <set >
+      <if test="YSXH != null" >
+        YSXH = #{YSXH,jdbcType=NUMERIC},
+      </if>
+      <if test="PLSX != null" >
+        PLSX = #{PLSX,jdbcType=NUMERIC},
+      </if>
+      <if test="GLXM != null" >
+        GLXM = #{GLXM,jdbcType=NUMERIC},
+      </if>
+      <if test="XMMC != null" >
+        XMMC = #{XMMC,jdbcType=VARCHAR},
+      </if>
+      <if test="PYDM != null" >
+        PYDM = #{PYDM,jdbcType=VARCHAR},
+      </if>
+      <if test="WBDM != null" >
+        WBDM = #{WBDM,jdbcType=VARCHAR},
+      </if>
+      <if test="QZWB != null" >
+        QZWB = #{QZWB,jdbcType=VARCHAR},
+      </if>
+      <if test="HZWB != null" >
+        HZWB = #{HZWB,jdbcType=VARCHAR},
+      </if>
+      <if test="XSCD != null" >
+        XSCD = #{XSCD,jdbcType=NUMERIC},
+      </if>
+      <if test="XMLB != null" >
+        XMLB = #{XMLB,jdbcType=NUMERIC},
+      </if>
+      <if test="XJKJLX != null" >
+        XJKJLX = #{XJKJLX,jdbcType=NUMERIC},
+      </if>
+      <if test="SJLX != null" >
+        SJLX = #{SJLX,jdbcType=NUMERIC},
+      </if>
+      <if test="SJGS != null" >
+        SJGS = #{SJGS,jdbcType=VARCHAR},
+      </if>
+      <if test="SJXX != null" >
+        SJXX = #{SJXX,jdbcType=NUMERIC},
+      </if>
+      <if test="SJSX != null" >
+        SJSX = #{SJSX,jdbcType=NUMERIC},
+      </if>
+      <if test="XMZH != null" >
+        XMZH = #{XMZH,jdbcType=NUMERIC},
+      </if>
+      <if test="HHBZ != null" >
+        HHBZ = #{HHBZ,jdbcType=NUMERIC},
+      </if>
+      <if test="SJXM != null" >
+        SJXM = #{SJXM,jdbcType=NUMERIC},
+      </if>
+      <if test="XMJB != null" >
+        XMJB = #{XMJB,jdbcType=NUMERIC},
+      </if>
+      <if test="XJZK != null" >
+        XJZK = #{XJZK,jdbcType=NUMERIC},
+      </if>
+      <if test="XJHC != null" >
+        XJHC = #{XJHC,jdbcType=NUMERIC},
+      </if>
+      <if test="XMBM != null" >
+        XMBM = #{XMBM,jdbcType=VARCHAR},
+      </if>
+      <if test="PDAXS != null" >
+        PDAXS = #{PDAXS,jdbcType=NUMERIC},
+      </if>
+      <if test="XGBZ != null" >
+        XGBZ = #{XGBZ,jdbcType=NUMERIC},
+      </if>
+      <if test="ZDXM != null" >
+        ZDXM = #{ZDXM,jdbcType=NUMERIC},
+      </if>
+      <if test="BTXM != null" >
+        BTXM = #{BTXM,jdbcType=NUMERIC},
+      </if>
+      <if test="ZXBZ != null" >
+        ZXBZ = #{ZXBZ,jdbcType=NUMERIC},
+      </if>
+      <if test="XMKZ != null" >
+        XMKZ = #{XMKZ,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where XMXH = #{XMXH,jdbcType=NUMERIC}
+      and BBH = #{BBH,jdbcType=NUMERIC}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleProject" >
+    update IENR_HLPGXM
+    set YSXH = #{YSXH,jdbcType=NUMERIC},
+      PLSX = #{PLSX,jdbcType=NUMERIC},
+      GLXM = #{GLXM,jdbcType=NUMERIC},
+      XMMC = #{XMMC,jdbcType=VARCHAR},
+      PYDM = #{PYDM,jdbcType=VARCHAR},
+      WBDM = #{WBDM,jdbcType=VARCHAR},
+      QZWB = #{QZWB,jdbcType=VARCHAR},
+      HZWB = #{HZWB,jdbcType=VARCHAR},
+      XSCD = #{XSCD,jdbcType=NUMERIC},
+      XMLB = #{XMLB,jdbcType=NUMERIC},
+      XJKJLX = #{XJKJLX,jdbcType=NUMERIC},
+      SJLX = #{SJLX,jdbcType=NUMERIC},
+      SJGS = #{SJGS,jdbcType=VARCHAR},
+      SJXX = #{SJXX,jdbcType=NUMERIC},
+      SJSX = #{SJSX,jdbcType=NUMERIC},
+      XMZH = #{XMZH,jdbcType=NUMERIC},
+      HHBZ = #{HHBZ,jdbcType=NUMERIC},
+      SJXM = #{SJXM,jdbcType=NUMERIC},
+      XMJB = #{XMJB,jdbcType=NUMERIC},
+      XJZK = #{XJZK,jdbcType=NUMERIC},
+      XJHC = #{XJHC,jdbcType=NUMERIC},
+      XMBM = #{XMBM,jdbcType=VARCHAR},
+      PDAXS = #{PDAXS,jdbcType=NUMERIC},
+      XGBZ = #{XGBZ,jdbcType=NUMERIC},
+      ZDXM = #{ZDXM,jdbcType=NUMERIC},
+      BTXM = #{BTXM,jdbcType=NUMERIC},
+      ZXBZ = #{ZXBZ,jdbcType=NUMERIC},
+      XMKZ = #{XMKZ,jdbcType=LONGVARCHAR}
+    where XMXH = #{XMXH,jdbcType=NUMERIC}
+      and BBH = #{BBH,jdbcType=NUMERIC}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleProject" >
+    update IENR_HLPGXM
+    set YSXH = #{YSXH,jdbcType=NUMERIC},
+      PLSX = #{PLSX,jdbcType=NUMERIC},
+      GLXM = #{GLXM,jdbcType=NUMERIC},
+      XMMC = #{XMMC,jdbcType=VARCHAR},
+      PYDM = #{PYDM,jdbcType=VARCHAR},
+      WBDM = #{WBDM,jdbcType=VARCHAR},
+      QZWB = #{QZWB,jdbcType=VARCHAR},
+      HZWB = #{HZWB,jdbcType=VARCHAR},
+      XSCD = #{XSCD,jdbcType=NUMERIC},
+      XMLB = #{XMLB,jdbcType=NUMERIC},
+      XJKJLX = #{XJKJLX,jdbcType=NUMERIC},
+      SJLX = #{SJLX,jdbcType=NUMERIC},
+      SJGS = #{SJGS,jdbcType=VARCHAR},
+      SJXX = #{SJXX,jdbcType=NUMERIC},
+      SJSX = #{SJSX,jdbcType=NUMERIC},
+      XMZH = #{XMZH,jdbcType=NUMERIC},
+      HHBZ = #{HHBZ,jdbcType=NUMERIC},
+      SJXM = #{SJXM,jdbcType=NUMERIC},
+      XMJB = #{XMJB,jdbcType=NUMERIC},
+      XJZK = #{XJZK,jdbcType=NUMERIC},
+      XJHC = #{XJHC,jdbcType=NUMERIC},
+      XMBM = #{XMBM,jdbcType=VARCHAR},
+      PDAXS = #{PDAXS,jdbcType=NUMERIC},
+      XGBZ = #{XGBZ,jdbcType=NUMERIC},
+      ZDXM = #{ZDXM,jdbcType=NUMERIC},
+      BTXM = #{BTXM,jdbcType=NUMERIC},
+      ZXBZ = #{ZXBZ,jdbcType=NUMERIC}
+    where XMXH = #{XMXH,jdbcType=NUMERIC}
+      and BBH = #{BBH,jdbcType=NUMERIC}
+  </update>
+</mapper>

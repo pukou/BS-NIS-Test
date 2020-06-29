@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.outcontrol.OutControlBaseServiceMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <select id="getOutPatientByZyh" flushCache="true" resultType="OutControl">
+        SELECT JLXH,WCDJSJ,WCDJHS,YJHCSJ,PZYS,HCDJSJ,HCDJHS,PTRY, WCYY
+        FROM IENR_WCGL
+        WHERE ZYH = #{ZYH} AND
+               BRBQ = #{BRBQ} AND
+               JGID = #{JGID}
+        ORDER BY WCSJ DESC
+    </select>
+
+    <select id="getPatientStatus" flushCache="true" resultType="OutControl">
+        SELECT JLXH, WCDJSJ,WCDJHS,YJHCSJ,PZYS,HCDJSJ,HCDJHS,PTRY, WCYY
+        FROM IENR_WCGL
+        WHERE ZYH = #{ZYH} AND
+               BRBQ = #{BRBQ} AND
+               JGID = #{JGID} AND
+               HCDJSJ IS NULL
+        ORDER BY WCSJ DESC
+    </select>
+<!-- 升级编号【56010038】============================================= start
+                         外出管理PDA上只有登记功能，查询需要找到具体的人再查询，不太方便，最好能有一个查询整个病区外出病人的列表
+            ================= classichu 2018/3/7 20:02
+            -->
+	<select id="getAllOurPatients" flushCache="true" resultType="OutControl">
+		SELECT JLXH, WCDJSJ,WCDJHS,YJHCSJ,PZYS,HCDJSJ,HCDJHS,PTRY, WCYY,ZYH
+		FROM IENR_WCGL
+		WHERE
+		BRBQ = #{BRBQ} AND
+		JGID = #{JGID} AND
+		HCDJSJ IS NULL
+		ORDER BY WCSJ DESC
+	</select>
+<!-- =============================================================== end -->
+
+    <insert id="registerOutPatient">
+		<if test="dbtype == 'sqlserver'">
+	        INSERT INTO IENR_WCGL
+	        (JLXH,WCDJSJ,WCSJ,WCDJHS,YJHCSJ,PZYS,PTRY,ZYH,BRBQ,JGID, WCYY)
+	        VALUES
+	        (#{JLXH},#{WCDJSJ},#{WCSJ},#{WCDJHS},#{YJHCSJ},#{PZYS},#{PTRY},#{ZYH},#{BRBQ},#{JGID}, #{WCYY})
+	    </if>
+	    <if test="dbtype == 'oracle'">
+	        INSERT INTO IENR_WCGL
+	        (JLXH,WCDJSJ,WCSJ,WCDJHS,YJHCSJ,PZYS,PTRY,ZYH,BRBQ,JGID, WCYY)
+	        VALUES
+	        (#{JLXH},to_date(#{WCDJSJ}, 'yyyy-mm-dd hh24:mi:ss'),to_date(#{WCSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+		     #{WCDJHS},to_date(#{YJHCSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+		     #{PZYS},#{PTRY},#{ZYH},#{BRBQ},#{JGID}, #{WCYY})
+	    </if>
+    </insert>
+
+    <update id="registerBackToBed">
+		<if test="dbtype == 'sqlserver'">
+	        UPDATE IENR_WCGL
+	        SET HCDJHS = #{HCDJHS},
+	            HCSJ = #{HCSJ},
+	            HCDJSJ = #{HCDJSJ}
+	        WHERE JLXH = #{JLXH} AND JGID = #{JGID}
+	    </if>
+	    <if test="dbtype == 'oracle'">
+	        UPDATE IENR_WCGL
+	        SET HCDJHS = #{HCDJHS},
+	            HCSJ = to_date(#{HCSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+	            HCDJSJ = to_date(#{HCDJSJ}, 'yyyy-mm-dd hh24:mi:ss')
+	        WHERE JLXH = #{JLXH} AND JGID = #{JGID}
+	    </if>
+    </update>
+
+</mapper>

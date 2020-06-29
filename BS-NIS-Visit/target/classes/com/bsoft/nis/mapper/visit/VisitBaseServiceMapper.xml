@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.visit.VisitBaseServiceMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <select id="getPatrol" flushCache="true" resultType="VisitPerson">
+        SELECT ZYH,BRXM,BRCH,HLJB
+        FROM V_MOB_HIS_BRRY
+        WHERE CYPB = 0 AND
+               BRBQ = #{KSDM} AND
+               JGID = #{JGID}
+        ORDER BY BRCH ASC
+    </select>
+
+    <select id="getPatrolZyh" flushCache="true" resultType="String" >
+        <if test="dbtype == 'sqlserver'">
+            SELECT DISTINCT ZYH
+            FROM ENR_BRXS
+            WHERE XSGH = #{XSGH} AND
+            XSSJ > #{XSSJ} AND
+            JGID = #{JGID} AND
+            ZYH in
+            <foreach collection="ZYH" item="item" index="index"
+                     open="(" separator="," close=")">#{item}
+            </foreach>
+            And ZFBZ = 0
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT DISTINCT ZYH
+            FROM ENR_BRXS
+            WHERE XSGH = #{XSGH} AND
+            XSSJ > to_date(#{XSSJ},'yyyy-mm-dd') AND
+            JGID = #{JGID} AND
+            ZYH in
+            <foreach collection="ZYH" item="item" index="index"
+                     open="(" separator="," close=")">#{item}
+            </foreach>
+            And ZFBZ = 0
+        </if>
+    </select>
+
+    <select id="getPatrolPatitent" flushCache="true" resultType="String">
+        <if test="dbtype == 'sqlserver'">
+            SELECT ZYH
+            FROM ENR_BRXS
+            WHERE ZYH = #{ZYH} AND
+            JGID = #{JGID} AND
+            XSSJ > #{STARTXSSJ} AND
+            XSSJ &lt;= #{ENDXSSJ} And ZFBZ = 0
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT ZYH
+            FROM ENR_BRXS
+            WHERE ZYH = #{ZYH} AND
+            JGID = #{JGID} AND
+            XSSJ > to_date(#{STARTXSSJ},'yyyy-mm-dd hh24:mi:ss') AND
+            XSSJ &lt;= to_date(#{ENDXSSJ},'yyyy-mm-dd hh24:mi:ss') AND ZFBZ = 0
+        </if>
+    </select>
+
+    <select id="getPatrolTypeInfo" flushCache="true" resultType="CheckState" >
+        SELECT DYXH,DYMS,ZFBZ
+        FROM IENR_CYDY
+        WHERE DYLB = 4 AND
+               JGID = #{JGID}
+        ORDER BY PLSX
+    </select>
+
+
+    <update id="updatePatrol">
+        UPDATE ENR_BRXS SET ZFBZ = 1, ZFGH = #{ZFGH}, ZFSJ = #{ZFSJ} WHERE XSBS =#{XSBS}
+    </update>
+
+    <select id="getPatrolHistory" flushCache="true" resultType="VisitHistory" >
+        <if test="dbtype == 'sqlserver'">
+            SELECT T1.XSBS, T1.XSSJ,T2.DYMS
+            FROM ENR_BRXS T1,IENR_CYDY T2
+            WHERE T1.ZYH = #{ZYH} AND
+            T1.XSSJ > #{XSSJ} AND
+            T1.XSQK = T2.DYXH AND
+            DYLB =4 AND
+            T1.JGID= T2.JGID AND
+            T1.JGID = #{JGID}
+            And T1.ZFBZ = 0
+            ORDER BY XSSJ DESC
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT T1.XSBS, T1.XSSJ,T2.DYMS
+            FROM ENR_BRXS T1,IENR_CYDY T2
+            WHERE T1.ZYH = #{ZYH} AND
+            T1.XSSJ >to_date(#{XSSJ},'yyyy-mm-dd hh24:mi:ss')AND
+            T1.XSQK = T2.DYXH AND
+            DYLB =4 AND
+            T1.JGID= T2.JGID AND
+            T1.JGID = #{JGID}
+            And T1.ZFBZ = 0
+            ORDER BY XSSJ DESC
+        </if>
+    </select>
+
+    <insert id="savePatrol">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO ENR_BRXS(XSBS,ZYH,XSGH,XSSJ,JLSJ,XSQK,SMBZ,BRBQ,JGID)
+            VALUES(#{XSBS},#{ZYH},#{XSGH},#{XSSJ},#{JLSJ},#{XSQK},#{SMBZ},#{BRBQ},#{JGID})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO ENR_BRXS(XSBS,ZYH,XSGH,XSSJ,JLSJ,XSQK,SMBZ,BRBQ,JGID)
+            VALUES(#{XSBS},#{ZYH},#{XSGH},to_date(#{XSSJ},'yyyy-mm-dd hh24:mi:ss'),to_date(#{JLSJ},'yyyy-mm-dd hh24:mi:ss'),#{XSQK},#{SMBZ},#{BRBQ},#{JGID})
+        </if>
+    </insert>
+    <!-- 升级编号【56010027】============================================= start
+                              处理房间条码、获取房间病人处理
+                ================= classichu 2018/3/22 10:41
+                -->
+    <select id="getRoomPatientList" resultType="String" flushCache="true">
+        SELECT ZYH FROM V_MOB_HIS_CWSZ where FJHM = #{FJHM} AND  JGID = #{JGID}
+    </select>
+    <!-- =============================================================== end -->
+
+    <select id="getPatrol2" flushCache="true" resultType="VisitPerson" >
+        SELECT BRCH,BRXM,ZYH
+        FROM V_MOB_HIS_BRRY
+        WHERE ZYH = #{ZYH} AND
+               JGID = #{JGID}
+    </select>
+
+    <select id="getPatrolDetail" flushCache="true" resultType="VisitPerson" >
+        SELECT XSBS,XSSJ,XSQK,ZYH
+        FROM ENR_BRXS
+        WHERE XSBS = #{XSBS} AND
+               ZYH = #{ZYH} AND
+               JGID = #{JGID} And
+               ZFBZ = 0
+    </select>
+
+
+</mapper>

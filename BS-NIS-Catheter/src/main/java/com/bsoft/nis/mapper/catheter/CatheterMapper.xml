@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.catheter.CatheterMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getSpinnerData" resultType="CatheterSpinnerData" flushCache="true">
+        SELECT GL.GLXM, GL.XMMC, GL.MRBZ
+        FROM IENR_XMDZ DZ, IENR_DZXMGL GL
+        WHERE DZ.DZLX = 2 AND DZ.DZXH = GL.DZXH AND DZ.XMXH = #{YPXH}
+    </select>
+
+    <select id="getDZXM" resultType="java.lang.String" flushCache="true">
+        SELECT XMXH
+        FROM IENR_XMDZ
+        WHERE DZLX = 2
+    </select>
+
+	<select id="getXmlxByXmxh" resultType="java.lang.String" flushCache="true">
+		SELECT DISTINCT XMLX
+		FROM V_MOB_HIS_YLSF
+		WHERE FYXH IN
+			  <foreach collection="XMXHS" item="item" index="index" open="(" separator="," close=")">
+		          #{item}
+	          </foreach>
+	</select>
+
+    <select id="getpationtList" resultType="SickPersonVo" flushCache="true">
+        <if test="dbtype == 'oracle'">
+            SELECT DISTINCT YZ.ZYH, BRXM, BRCH
+	        FROM V_MOB_HIS_BQYZ YZ, V_MOB_HIS_BRRY BR
+	        WHERE YZ.ZYH = BR.ZYH AND YZ.YPLX = 0 AND YZ.SRKS = #{BRBQ} AND YZ.JGID = #{JGID} AND
+	              ((LSYZ = 1 AND KZSJ >= to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss') AND
+	                KZSJ <![CDATA[<]]> to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss')) OR
+	               (LSYZ = 0 AND TZSJ IS NULL OR TZSJ >= to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss')))
+		<if test="XMXHS != null and XMXHS != '' and XMXHS.size() > 0">
+			AND YZ.YPXH IN
+	              <foreach collection="XMXHS" item="item" index="index" open="(" separator="," close=")">
+		              #{item}
+	              </foreach>
+		</if>
+		<if test="XMLXS != null and XMLXS != '' and XMLXS.size() > 0">
+			AND YZ.XMLX IN
+			<foreach collection="XMLXS" item="item" index="index" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</if>
+        <if test="dbtype == 'sqlserver'">
+            SELECT DISTINCT YZ.ZYH, BRXM, BRCH
+	        FROM V_MOB_HIS_BQYZ YZ, V_MOB_HIS_BRRY BR
+	        WHERE YZ.ZYH = BR.ZYH AND YZ.YPLX = 0 AND YZ.SRKS = #{BRBQ} AND YZ.JGID = #{JGID} AND
+	              ((LSYZ = 1 AND KZSJ >= #{KSSJ} AND KZSJ <![CDATA[<]]> #{JSSJ}) OR
+	               (LSYZ = 0 AND TZSJ IS NULL OR TZSJ >= #{JSSJ})) AND
+	              YZ.YPXH IN
+	              <foreach collection="XMXHS" item="item" index="index" open="(" separator="," close=")">
+		              #{item}
+	              </foreach>
+	              AND YZ.XMLX IN
+	              <foreach collection="XMLXS" item="item" index="index" open="(" separator="," close=")">
+		              #{item}
+	              </foreach>
+        </if>
+    </select>
+
+    <select id="getMeasurData" resultType="CatheterMeasurData" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT JLXH YZXH, YZMC, YPXH
+	        FROM V_MOB_HIS_BQYZ
+	        WHERE YPLX = 0 AND ZYH = #{ZYH} AND SRKS = #{BRBQ} AND JGID = #{JGID} AND
+	              ((LSYZ = 1 AND KZSJ >= #{KSSJ} AND KZSJ <![CDATA[<]]> #{JSSJ}) OR
+	               (LSYZ = 0 AND TZSJ IS NULL OR TZSJ >= #{JSSJ})) AND
+	              YPXH IN
+	              <foreach collection="XMXHS" item="item" index="index" open="(" separator="," close=")">
+		              #{item}
+	              </foreach>
+	              AND XMLX IN
+	              <foreach collection="XMLXS" item="item" index="index" open="(" separator="," close=")">
+		              #{item}
+	              </foreach>
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT JLXH YZXH, YZMC, YPXH
+	        FROM V_MOB_HIS_BQYZ
+	        WHERE YPLX = 0 AND ZYH = #{ZYH} AND SRKS = #{BRBQ} AND JGID = #{JGID} AND
+	              ((LSYZ = 1 AND KZSJ >= to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss') AND
+	                KZSJ <![CDATA[<]]> to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss')) OR
+	               (LSYZ = 0 AND TZSJ IS NULL OR TZSJ >= to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'))) AND
+	              YPXH IN
+	              <foreach collection="XMXHS" item="item" index="index" open="(" separator="," close=")">
+		              #{item}
+	              </foreach>
+	              AND XMLX IN
+	              <foreach collection="XMLXS" item="item" index="index" open="(" separator="," close=")">
+		              #{item}
+	              </foreach>
+        </if>
+    </select>
+
+    <select id="getYLGJL" resultType="CatheterYLGJLvo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT * FROM IENR_YLGJL WHERE ZYH = #{ZYH} AND BRBQ = #{BRBQ} AND JGID = #{JGID} AND JLRQ = #{JLRQ}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT * FROM IENR_YLGJL WHERE ZYH = #{ZYH} AND BRBQ = #{BRBQ} AND JGID = #{JGID} AND JLRQ =
+            to_date(#{JLRQ},'yyyy-mm-dd')
+        </if>
+    </select>
+
+    <insert id="saveCatheter" parameterType="CatheterYLGJLvo">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_YLGJL (JLXH,YZXH,ZYH,BRBQ,YLGXH,YLGMC,YLL,JLRQ,JLSJ,JLGH,JGID,TZCJH)
+            VALUES (#{JLXH},#{YZXH},#{ZYH},#{BRBQ},#{YLGXH},#{YLGMC},#{YLL},#{JLRQ},#{JLSJ},#{JLGH},#{JGID},#{CJH})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_YLGJL (JLXH,YZXH,ZYH,BRBQ,YLGXH,YLGMC,YLL,JLRQ,JLSJ,JLGH,JGID,TZCJH)
+            VALUES
+            (#{JLXH},#{YZXH},#{ZYH},#{BRBQ},#{YLGXH},#{YLGMC},#{YLL},to_date(#{JLRQ}, 'yyyy-mm-dd'),
+	        to_date(#{JLSJ}, 'yyyy-mm-dd hh24:mi:ss'),#{JLGH},#{JGID},#{CJH})
+        </if>
+    </insert>
+
+    <delete id="cancelCatheter">
+        DELETE IENR_YLGJL WHERE JLXH = #{JLXH} AND JGID = #{JGID}
+    </delete>
+
+	<select id="getLifeSignTwdxsByXmh" resultType="String">
+		SELECT TWDXS FROM BQ_TZXM WHERE XMH = #{XMH}
+	</select>
+
+	<insert id="saveLifeSign" parameterType="LifeSignRealSaveDataItem">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO BQ_SMTZ (CJH, ZYH, JHBZ, CJSJ, XMH, TZNR, CJZH, BRKS, BRBQ, BRCH, JLSJ, JLGH, YCBZ, FCBZ,
+            JGID, ZFBZ, TWDXS)
+            VALUES(#{item.CJH}, #{item.ZYH}, #{item.JHBZ}, #{item.CJSJ}, #{item.XMH}, #{item.TZNR}, #{item.CJZH},
+            #{item.BRKS}, #{item.BRBQ}, #{item.BRCH}, #{item.JLSJ}, #{item.JLGH}, #{item.YCBZ}, #{item.FCBZ},
+            #{item.JGID}, #{item.ZFBZ}, #{item.TWDXS})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO BQ_SMTZ (CJH, ZYH, JHBZ, CJSJ, XMH, TZNR, CJZH, BRKS, BRBQ, BRCH, JLSJ, JLGH, YCBZ, FCBZ,
+            JGID, ZFBZ, TWDXS)
+            VALUES(#{item.CJH}, #{item.ZYH}, #{item.JHBZ}, to_date(#{item.CJSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{item.XMH},
+            #{item.TZNR}, #{item.CJZH}, #{item.BRKS}, #{item.BRBQ}, #{item.BRCH}, to_date(#{item.JLSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+            #{item.JLGH}, #{item.YCBZ}, #{item.FCBZ}, #{item.JGID}, #{item.ZFBZ}, #{item.TWDXS})
+        </if>
+    </insert>
+
+	<delete id="deleteSmtzFromCatheter">
+		DELETE BQ_SMTZ WHERE CJH = #{CJH} AND JGID = #{JGID}
+	</delete>
+
+	<select id="getTzcjhByJlxh" resultType="String" flushCache="true">
+		SELECT TZCJH
+		FROM IENR_YLGJL
+		WHERE JLXH = #{JLXH} AND JGID = #{JGID}
+	</select>
+</mapper>

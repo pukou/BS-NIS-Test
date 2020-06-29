@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.evaluation.EvaluationMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <select id="getRcordFromEMR" resultType="EvaluateRecordItem" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+        SELECT JLXH, YSXH, YSLX, TXSJ, YSMS, TXGH,'1' LYBS
+        FROM  V_MOB_ENR_PGJL WHERE ZYH = #{ZYH}
+        <if test="KSSJ != null ">
+                AND TXSJ <![CDATA[>=]]> #{KSSJ}
+        </if>
+        <if test="JSSJ != null ">
+                AND TXSJ <![CDATA[<=]]> #{JSSJ}
+        </if>
+          ORDER BY TXSJ
+        </if>
+        <if test="dbtype == 'oracle'">
+        SELECT JLXH, YSXH, YSLX, TXSJ, YSMS, TXGH,'1' LYBS
+        FROM  V_MOB_ENR_PGJL WHERE ZYH = #{ZYH}
+        <if test="KSSJ != null ">
+                AND TXSJ <![CDATA[>=]]> to_date(#{KSSJ},'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="JSSJ != null ">
+                AND TXSJ <![CDATA[<=]]> to_date(#{JSSJ},'yyyy-MM-dd hh24:mi:ss')
+        </if>
+          ORDER BY TXSJ
+        </if>
+    </select>
+
+    <select id="getRcordFromMOB" resultType="EvaluateRecordItem" flushCache="true">
+        <if test="dbtype == 'oracle'">
+            SELECT JL.JLXH, JL.YSXH, JL.YSLX, JL.TXSJ, YS.YSMS, JL.TXGH,'0' LYBS
+            FROM IENR_BDJL JL ,IENR_BDYS YS
+            WHERE JL.YSXH = YS.YSXH AND JL.ZYH = #{ZYH}
+            <if test="KSSJ != null ">
+                AND JL.TXSJ <![CDATA[>=]]> to_date(#{KSSJ},'yyyy-mm-dd')
+            </if>
+            <if test="JSSJ != null ">
+                AND JL.TXSJ <![CDATA[<=]]> to_date(#{JSSJ},'yyyy-mm-dd')
+            </if>
+            AND JL.ZFBZ = 0 ORDER BY JL.TXSJ
+        </if>
+        <if test="dbtype == 'sqlserver'">
+            SELECT JL.JLXH, JL.YSXH, JL.YSLX, JL.TXSJ, YS.YSMS, JL.TXGH,'0' LYBS
+            FROM IENR_BDJL JL ,IENR_BDYS YS
+            WHERE JL.YSXH = YS.YSXH AND JL.ZYH = #{ZYH}
+            <if test="KSSJ != null ">
+                AND JL.TXSJ <![CDATA[>=]]> #{KSSJ}
+            </if>
+            <if test="JSSJ != null ">
+                AND JL.TXSJ <![CDATA[<=]]>  #{JSSJ}
+            </if>
+            AND JL.ZFBZ = 0 ORDER BY JL.TXSJ
+        </if>
+    </select>
+
+    <select id="GetNewEvaluationList" resultType="EvaluateRecordItem" flushCache="true">
+        SELECT  BDYS.YSXH,BDYS.YSMS,BDYS.YSLX,BZXX FROM IENR_BDYS BDYS,IENR_BDDZ BDDZ
+        WHERE BDYS.QYBZ = 1 AND BDYS.YSLX <![CDATA[<]]> 90 AND BDDZ.YSXH =BDYS.YSXH
+        AND BDDZ.BQDM = #{BQDM} AND BDDZ.ZFBZ = 0 AND BDDZ.JGID = #{JGID}
+    </select>
+
+    <select id="GetNewEvaluationListForYslx" resultType="EvaluateRecordItem" flushCache="true">
+       SELECT  BDYS.YSXH,BDYS.YSMS,BDYS.YSLX,BZXX
+       FROM IENR_BDYS BDYS,IENR_BDDZ BDDZ
+       WHERE BDYS.QYBZ = 1 AND BDYS.YSLX = #{YSLX} AND BDDZ.YSXH =BDYS.YSXH
+       AND BDDZ.BQDM = #{BQDM} AND BDDZ.ZFBZ = 0 AND BDDZ.JGID = #{JGID}
+    </select>
+
+    <select id="getSJHQFS" resultType="String" flushCache="true">
+        SELECT HQFS
+        FROM IENR_SJHQFS WHERE YSLX = #{YSLX}
+    </select>
+
+    <select id="getBDJL" resultType="EvaluateBDJLVo" flushCache="true">
+        SELECT JLXH, ZYH, BRBQ, YSXH, YSLX, TXSJ, TXGH, JGDJ, CSDJ, JLSJ, BZXX, QMGH,SYZT,SYGH
+        FROM IENR_BDJL WHERE JLXH = #{JLXH}
+    </select>
+
+    <select id="getBDJLXM" resultType="EvaluateBDJLXMVo" flushCache="true">
+        SELECT * FROM IENR_BDJLXM
+        WHERE JLXH = #{JLXH}
+        <if test="YSXM != null ">
+            AND YSXM = #{YSXM}
+        </if>
+    </select>
+
+    <select id="getBDJLXX" resultType="EvaluateBDJLXXVo" flushCache="true">
+        SELECT * FROM IENR_BDJLXX
+        <if test="YSXM != null">
+            ,IENR_BDJLXM
+        </if>
+        WHERE IENR_BDJLXX.JLXH = #{JLXH}
+        <if test="YSXM != null ">
+            AND IENR_BDJLXM.JLXM = IENR_BDJLXX.JLXM
+            AND YSXM = #{YSXM}
+            AND YSXX = #{YSXX}
+        </if>
+    </select>
+
+    <select id="getBDYS" resultType="Form" flushCache="true">
+        SELECT YSXH,YSLX,ZDJF IsScored, YSMS NText, PLSX, XSFL, BZXX,GLBM DZBD
+        FROM IENR_BDYS WHERE (QYBZ = 1)  AND YSXH = #{YSXH} AND JGID = #{JGID} ORDER BY PLSX
+    </select>
+
+    <select id="getYSFL" resultType="Classification" flushCache="true">
+        <if test="JLXH != null">
+            SELECT IBDYSFL.YSFL ID, IBDYSFL.YSXH, IBDYSFL.FLDM, IBDYSFL.FLMC
+            NText,IBDYSFL.DLBZ,IBDYSFL.QMBZ,BDJLFL.HSQM1,BDJLFL.HSQM2,
+            (CASE WHEN BDJLFL.FLLX IS NULL THEN 0 ELSE BDJLFL.FLLX END) FLLX,
+            (CASE WHEN IBDYSFL.GLCOL IS NULL THEN 0 ELSE 1 END) XSFLLX
+            FROM IENR_BDYSFL IBDYSFL
+            LEFT JOIN IENR_BDJLFL BDJLFL ON IBDYSFL.YSFL = BDJLFL.YSFL AND BDJLFL.JLXH =#{JLXH}
+            WHERE IBDYSFL.YSXH = #{YSXH} AND IBDYSFL.XSBZ =1
+            ORDER BY IBDYSFL.PLSX
+        </if>
+        <if test="JLXH == null">
+            SELECT YSFL ID, YSXH, FLDM, FLMC,DLBZ,QMBZ,'' HSQM1,'' HSQM2
+            FROM IENR_BDYSFL WHERE YSXH = #{YSXH} AND XSBZ=1 ORDER BY PLSX
+        </if>
+    </select>
+
+    <!--
+    <select id="getFLXM" flushCache="true" resultType="EvaluateBDYSXMVo">
+        SELECT *
+        FROM IENR_BDYSXM WHERE YSXH = #{YSXH}
+        <if test="DZLX != null">
+            AND DZLX = #{DZLX}
+        </if>
+        ORDER BY YSFL,PLSX
+    </select>
+    -->
+    <select id="getFLXM" flushCache="true" resultType="EvaluateBDYSXMVo">
+        SELECT *
+        FROM IENR_BDYSXM a WHERE YSXH = #{YSXH}
+        <if test="DZLX != null">
+            AND (DZLX = #{DZLX} OR EXISTS(SELECT 1 FROM IENR_BDYSXX b WHERE b.YSXH = a.YSXH AND b.YSXM = a.YSXM AND b.DZLX = #{DZLX}))
+        </if>
+        ORDER BY YSFL,PLSX
+    </select>
+
+    <!--
+    <select id="getFLXX" flushCache="true" resultType="EvaluateBDYSXXVo">
+        SELECT *
+        FROM IENR_BDYSXX WHERE YSXH = #{YSXH}
+        <if test="DZLX != null">
+            AND DZLX = #{DZLX}
+        </if>
+        ORDER BY YSXM,PLSX
+    </select>
+    -->
+
+    <select id="getFLXX" flushCache="true" resultType="EvaluateBDYSXXVo">
+        SELECT *
+        FROM IENR_BDYSXX a WHERE YSXH = #{YSXH}
+        <if test="DZLX != null">
+            AND (DZLX = #{DZLX} OR EXISTS(SELECT 1 FROM IENR_BDYSXX b WHERE b.YSXH = a.YSXH AND b.FJXX > 0 AND b.FJXX = a.YSXX AND b.DZLX = #{DZLX}))
+        </if>
+        ORDER BY YSXM,PLSX
+    </select>
+
+    <select id="getSMTZ" flushCache="true" resultType="LifeSignHistoryDataItem">
+        SELECT XMH,TZNR,CJSJ,CJH FROM V_MOB_HIS_SMTZ
+        WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND ZFBZ = 0 AND JHBZ=1
+        ORDER BY CJSJ
+    </select>
+
+    <select id="getSMTZByGroupId" flushCache="true" resultType="LifeSignHistoryDataItem">
+        SELECT XMH,TZNR,CJSJ,CJH FROM V_MOB_HIS_SMTZ
+        WHERE CJZH = #{CJZH} AND ZFBZ = 0 AND JHBZ=1
+        ORDER BY CJSJ
+    </select>
+
+    <select id="getFXPG" flushCache="true" resultType="DERecord">
+        SELECT PGLX,PGDH,PGZF,PGSJ,PGXH FROM IENR_FXPGJL
+        WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND ZTBZ &lt;> 0
+        ORDER BY PGSJ
+    </select>
+
+    <select id="getFXPGByPrimaryKey" flushCache="true" resultType="DERecord">
+        SELECT PGLX,PGDH,PGZF,PGSJ,PGXH FROM IENR_FXPGJL
+        WHERE PGXH = #{PGXH}
+        ORDER BY PGSJ
+    </select>
+
+    <select id="getJKXJ" flushCache="true" resultType="HealthGuidData">
+        SELECT XM.XMNR,XM.XMXH XH,JL.GLLX,JL.GLXH, JL.JLSJ
+        FROM IENR_JKXJJL JL,IENR_XJJLXM XM
+        WHERE XM.JLXH = JL.JLXH AND JL.ZYH = #{ZYH} AND JL.JGID = #{JGID}
+    </select>
+
+    <select id="getBTBZ" flushCache="true" resultType="java.lang.Integer">
+        SELECT  COUNT(1) FROM IENR_BTKZ WHERE YSXH = #{YSXH} AND XMXH = #{YSXM} AND BQDM = #{BQDM} AND JGID = #{JGID}
+    </select>
+
+    <select id="getDropListBySql" flushCache="true" resultType="SqlDropData">
+        ${SQL}
+    </select>
+
+    <insert id="addBDJL" parameterType="EvaluateBDJLVo">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_BDJL(JLXH, ZYH, BRBQ, YSXH, YSLX, TXSJ, TXGH, JGDJ, JLSJ,SYZT,JGID)
+            Values(#{JLXH},#{ZYH},#{BRBQ},#{YSXH},#{YSLX},#{TXSJ},#{TXGH},#{JGDJ},#{JLSJ},0,#{JGID})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_BDJL(JLXH, ZYH, BRBQ, YSXH, YSLX, TXSJ, TXGH, JGDJ, JLSJ,SYZT,JGID)
+            Values(#{JLXH},#{ZYH},#{BRBQ},#{YSXH},#{YSLX},to_date(#{TXSJ},'yyyy-mm-dd hh24:mi:ss'),
+              #{TXGH},#{JGDJ},to_date(#{JLSJ},'yyyy-mm-dd hh24:mi:ss'),0,#{JGID})
+        </if>
+    </insert>
+
+    <select id="getBDYSFL" flushCache="true" resultType="EvaluateBDYSFLVo">
+        SELECT * FROM IENR_BDYSFL WHERE YSXH = #{YSXH} ORDER BY PLSX
+    </select>
+
+    <insert id="addBDJLFL" parameterType="EvaluateBDJLFLVo">
+       INSERT INTO IENR_BDJLFL(JLFL, JLXH, YSFL, FLDJ,FLLX)
+       Values(#{JLFL},#{JLXH},#{YSFL},#{FLDJ},#{FLLX})
+    </insert>
+
+    <select id="getBDJLCount" flushCache="true" resultType="java.lang.Integer">
+       SELECT COUNT(1) FROM IENR_BDJL
+       WHERE YSXH = #{YSXH} AND ZYH = #{ZYH} AND JGID = #{JGID} AND  ZFBZ = 0
+    </select>
+
+    <update id="updateBDJL" parameterType="EvaluateBDJLVo">
+        <if test="dbtype == 'sqlserver'">
+            <if test="type == 1">
+                UPDATE IENR_BDJL SET JGDJ = #{JGDJ},TXSJ = #{TXSJ} WHERE JLXH = #{JLXH}
+            </if>
+            <if test="type == 2">
+                UPDATE IENR_BDJL SET QMGH = #{QMGH},QMSJ = #{QMSJ} WHERE JLXH = #{JLXH}
+            </if>
+            <if test="type == 3">
+                UPDATE IENR_BDJL SET SYGH = #{SYGH}, SYSJ = #{SYSJ},SYZT = #{SYZT} WHERE JLXH = #{JLXH}
+            </if>
+            <if test="type == 4">
+                UPDATE IENR_BDJL SET ZTBZ = 1 WHERE JLXH = #{JLXH} AND JGID = #{JGID}
+            </if>
+        </if>
+        <if test="dbtype == 'oracle'">
+            <if test="type == 1">
+                UPDATE IENR_BDJL SET JGDJ = #{JGID}, TXSJ = to_date(#{TXSJ},'yyyy-mm-dd hh24:mi:ss') WHERE JLXH =
+                #{JLXH}
+            </if>
+            <if test="type == 2">
+                UPDATE IENR_BDJL SET QMGH = #{QMGH}, QMSJ = to_date(#{QMSJ},'yyyy-mm-dd hh24:mi:ss') WHERE JLXH =
+                #{JLXH}
+            </if>
+            <if test="type == 3">
+                UPDATE IENR_BDJL SET SYGH = #{SYGH}, SYSJ = to_date(#{SYSJ},'yyyy-mm-dd hh24:mi:ss'),SYZT = #{SYZT}
+                WHERE
+                JLXH = #{JLXH}
+            </if>
+            <if test="type == 4">
+                UPDATE IENR_BDJL SET ZTBZ = 1 WHERE JLXH = #{JLXH} AND JGID = #{JGID}
+            </if>
+        </if>
+    </update>
+
+
+    <update id="updateBDJLXM" parameterType="EvaluateBDJLXMVo">
+        UPDATE IENR_BDJLXM SET XMDJ = #{XMDJ},DZLX=#{DZLX},DZBDJL=#{DZBDJL} WHERE YSXM= #{YSXM} AND JLXH= #{JLXH}
+    </update>
+
+    <update id="updateBDJLXX" parameterType="EvaluateBDJLXXVo">
+        UPDATE IENR_BDJLXX SET XXNR = #{XXNR} WHERE JLXX = #{JLXX}
+    </update>
+
+    <insert id="addBDJLXM" parameterType="EvaluateBDJLXMVo">
+        INSERT INTO IENR_BDJLXM(JLXM, JLXH, YSXM, XMDJ,DZLX,DZBDJL)
+        VALUES(#{JLXM},#{JLXH},#{YSXM},#{XMDJ},#{DZLX},#{DZBDJL})
+    </insert>
+
+    <insert id="addBDJLXX" parameterType="EvaluateBDJLXXVo">
+        INSERT INTO IENR_BDJLXX(JLXX, JLXM, JLXH, YSXX, XXNR)
+        VALUES(#{JLXX},#{JLXM},#{JLXH},#{YSXX},#{XXNR})
+    </insert>
+
+    <!--
+    <delete id="deleteBDJLXX">
+        DELETE IENR_BDJLXX WHERE YSXX = #{YSXX}
+    </delete>
+    -->
+    <delete id="deleteBDJLXX">
+        DELETE FROM IENR_BDJLXX WHERE JLXX = #{YSXX}
+    </delete>
+
+    <select id="getBDJLFL" flushCache="true" resultType="EvaluateBDJLFLVo">
+        SELECT * FROM IENR_BDJLFL WHERE JLXH = #{JLXH}
+        <if test="YSFL != null">
+            AND YSFL = #{YSFL}
+        </if>
+    </select>
+
+    <select id="getSingle" flushCache="true" resultType="SingleCharacter">
+        SELECT  BDYS.DYWD,BDDZ.ZFBZ FROM IENR_BDYS BDYS,IENR_BDDZ BDDZ
+        WHERE BDYS.QYBZ = 1  AND BDDZ.YSXH =BDYS.YSXH
+        AND BDDZ.BQDM = #{BQDM} AND BDDZ.ZFBZ = 0 AND BDDZ.JGID=#{JGID}
+        AND BDDZ.YSXH = #{YSXH}
+    </select>
+
+    <update id="updateBDJLFL" parameterType="EvaluateBDJLFLVo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_BDJLFL SET HSQM1 = #{HSQM1} , QMSJ1= #{QMSJ1}
+            <if test="type == '2'">
+                ,HSQM2 = #{HSQM2} , QMSJ2= #{QMSJ2}
+            </if>
+            WHERE JLXH = #{JLXH} AND YSFL = #{YSFL}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_BDJLFL SET HSQM1 = #{HSQM1} , QMSJ1= to_date(#{QMSJ1},'yyyy-mm-dd hh24:mi:ss')
+            <if test="type == '2'">
+                ,HSQM2 = #{HSQM2} , QMSJ2= to_date(#{QMSJ2},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            WHERE JLXH = #{JLXH} AND YSFL = #{YSFL}
+        </if>
+    </update>
+
+    <select id="getBDQMXX" flushCache="true" resultType="EvaluateBDJLVo">
+        SELECT  HSQM1 , HSQM2 , QMGH, DLBZ, BDJL.ZFBZ
+        FROM IENR_BDJLFL BDJLFL , IENR_BDJL BDJL , IENR_BDYSFL BDYSFL
+        WHERE BDYSFL.YSXH = BDJL.YSXH AND BDYSFL.YSFL = BDJLFL.YSFL
+        AND BDJLFL.JLXH = BDJL.JLXH
+        AND BDJL.JLXH = #{JLXH}
+        AND XSBZ = 1
+    </select>
+
+    <update id="updateBDJLFLPGNR">
+        UPDATE IENR_BDJLFL SET PGNR = #{PGNR} WHERE JLXH = #{JLXH} AND JLFL = #{JLFL}
+    </update>
+
+    <update id="updatteBDJLPGNR">
+        UPDATE IENR_BDJL SET PGNR = #{PGNR} WHERE JLXH = #{JLXH}
+    </update>
+
+    <update id="updateBDJLFLFLLX">
+      UPDATE IENR_BDJLFL SET FLLX = #{FLLX} WHERE JLFL = #{JLFL}
+    </update>
+    <update id="updateBDJLFLFLLXNew">
+      UPDATE IENR_BDJLFL SET FLLX = #{FLLX} WHERE JLXH = #{JLXH} AND  YSFL = #{YSFL}
+    </update>
+
+    <select id="getEvalFljl" flushCache="true" resultType="EvalFljlVo">
+    SELECT a.JLFL, a.JLXH, a.YSFL, b.YSXH, b.FLMC, b.PLSX, b.GLCOL
+    FROM IENR_BDJLFL a, IENR_BDYSFL b
+    WHERE a.JLXH = #{JLXH} AND a.YSFL = b.YSFL AND b.GLCOL IS NOT NULL AND b.ZFBZ = 0
+    ORDER BY b.PLSX ASC
+</select>
+
+    <select id="getEvalYsxm" flushCache="true" resultType="EvalXmxxVo">
+    SELECT  YSXM, YSFL, PLSX, XMMC, SRLX CZLX, SJLX, QZWB, HZWB, GLCOL FROM IENR_BDYSXM WHERE YSXH = #{YSXH}
+</select>
+
+    <select id="getEvalYsxx" flushCache="true" resultType="EvalXmxxVo">
+    SELECT YSXX, FJXX, YSXM, YSFL, PLSX, XXNR XMMC, CZLX, SJLX, QZWB, HZWB, GLCOL FROM IENR_BDYSXX WHERE YSXH = #{YSXH}
+</select>
+
+    <select id="getEvalJlxm" flushCache="true" resultType="EvalJlxmVo">
+    SELECT  JLXM, JLXH, YSXM, XMDJ, '' XMNR, DZLX, DZBDJL FROM IENR_BDJLXM WHERE JLXH = #{JLXH}
+</select>
+
+    <select id="getEvalJlxx" flushCache="true" resultType="EvalJlxmVo">
+    SELECT JLXX, JLXM, JLXH, YSXX, XXNR XMNR, DZLX, DZBDJL FROM IENR_BDJLXX WHERE JLXH = #{JLXH}
+</select>
+
+</mapper>

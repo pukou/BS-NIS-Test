@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.traditional.TraditionalNursingBaseServiceMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <select id="getZY_ZZJL" flushCache="true" resultType="Traditional_ZZJL">
+        SELECT IENR_ZY_ZZJL.FAJL,ZZJL,IENR_ZY_FAJL.ZYH,IENR_ZY_FAJL.ZYHM,IENR_ZY_ZYZZ.ZZBH,
+        (SELECT FAMC FROM IENR_ZY_HLFA WHERE  FABH=IENR_ZY_FAJL.FABH AND ZTBZ <![CDATA[<>]]> 9) AS FAMC,
+        IENR_ZY_FAJL.JLZT,
+        (SELECT MOB_XTPZ.DMMC FROM MOB_XTPZ WHERE  MOB_XTPZ.DMLB='476' AND MOB_XTPZ.PZBH=IENR_ZY_FAJL.JLZT AND MOB_XTPZ.DMSB <![CDATA[>]]> 0) AS JLZTMC,
+        IENR_ZY_FAJL.FAPJ,
+        (SELECT MOB_XTPZ.DMMC FROM MOB_XTPZ WHERE  MOB_XTPZ.DMLB='475' AND MOB_XTPZ.PZBH=IENR_ZY_FAJL.FAPJ AND MOB_XTPZ.DMSB <![CDATA[>]]> 0) AS FAPJMC,
+        IENR_ZY_ZYZZ.ZZMC,SSQPF,SSQFJ,SSQSJ,SSQJL , SSHPF,SSHFJ,SSHSJ ,SSHJL,HLXG,
+        (SELECT MOB_XTPZ.DMMC FROM MOB_XTPZ WHERE  MOB_XTPZ.DMLB='472' AND MOB_XTPZ.PZBH=IENR_ZY_ZZJL.HLXG AND MOB_XTPZ.DMSB <![CDATA[>]]> 0) AS HLXGMC,
+        KSSJ,JSSJ,
+        (SELECT FJMC FROM IENR_ZY_ZZFJ WHERE  FJBH=SSQFJ AND ZFBZ=0) AS SSQFJMC,
+        (SELECT FJMC FROM IENR_ZY_ZZFJ WHERE  FJBH=SSHFJ AND ZFBZ=0) AS SSHFJMC
+        FROM IENR_ZY_ZZJL
+  LEFT OUTER JOIN IENR_ZY_FAJL ON IENR_ZY_ZZJL.FAJL = IENR_ZY_FAJL.FAJL
+  LEFT OUTER JOIN IENR_ZY_ZYZZ ON IENR_ZY_ZZJL.ZZBH =IENR_ZY_ZYZZ.ZZBH AND IENR_ZY_ZYZZ.ZFBZ=0
+WHERE   ZYH = #{ZYH} AND  BRBQ = #{BRBQ} AND IENR_ZY_ZZJL.JGID = #{JGID}
+        ORDER BY IENR_ZY_ZYZZ.ZZBH
+    </select>
+
+    <select id="getZY_ZZFJ" flushCache="true" resultType="Traditional_ZZFJ">
+       SELECT ZZBH,FJBH,FJMC,FJFZ,BZXX  FROM IENR_ZY_ZZFJ WHERE ZFBZ=0  AND ZZBH=#{ZZBH} ORDER BY  PLSX,FJBH
+    </select>
+
+    <select id="getZY_JSJL" flushCache="true" resultType="JSJL">
+        SELECT
+        FAJL.FAJL,
+        ZZJL.ZZJL,
+        ZZJL.ZZBH ,
+        (SELECT  ZYZZ.ZZMC FROM IENR_ZY_ZYZZ ZYZZ WHERE ZZJL.ZZBH= ZYZZ.ZZBH) AS ZZMC ,
+        JSJL.JSJL,
+        JSJL.FFMC,
+        JSJL.XMLB,
+        CASE JSJL.XMLB WHEN '1' THEN '施护方法' WHEN '2' THEN '护理技术' END AS XMLBMC,
+        JSJL.ZXZT,
+        CASE JSJL.ZXZT WHEN '1' THEN '已执行' WHEN '2' THEN '拒绝执行' END AS ZXZTMC,
+        JSJL.CZSJ,
+        JSJL.CZGH,
+        JSJL.GLLX,
+        JSJL.GLJL,
+        JSJL.ZDYBZ,
+        JSJL.JCXMH,
+        JSJL.CZRQ,
+        JSJL.JSBH
+        FROM IENR_ZY_JSJL JSJL
+        LEFT OUTER JOIN IENR_ZY_ZZJL ZZJL ON ZZJL.ZZJL =JSJL.ZZJL AND ZZJL.ZZZT=0
+        LEFT OUTER JOIN IENR_ZY_FAJL FAJL ON FAJL.FAJL=ZZJL.FAJL
+        WHERE JSJL.ZXZT  <![CDATA[<>]]> 9 AND FAJL.ZYH=#{ZYH}   AND FAJL.JGID=#{JGID} ORDER BY JSJL.CZSJ DESC
+      </select>
+
+    <select id="getZY_HLFA" flushCache="true" resultType="Traditional_HLFA">
+        SELECT FABH,FAMC,ZTBZ FROM IENR_ZY_HLFA WHERE JGID=#{JGID}  ORDER BY PLSX
+    </select>
+
+    <select id="getZY_ZYZZ" flushCache="true" resultType="Traditional_ZYZZ">
+       SELECT  ZZBH,ZZMC
+FROM IENR_ZY_ZYZZ
+WHERE FABH =#{FABH} AND  ZFBZ=0
+ORDER BY  PLSX
+    </select>
+
+    <select id="getZY_SHJS" flushCache="true" resultType="Traditional_SHJS">
+       SELECT JSBH,FFMC,XMLB,XGBZ,BZXX,JCXMH
+FROM IENR_ZY_SHJS
+WHERE ZZBH =#{ZZBH} AND  ZFBZ=0
+ORDER BY  PLSX
+    </select>
+
+
+    <!-- ZZJL zzbh 为条件 -->
+    <!--医嘱计划YZJH  xmxh = 中医基础项目JCXM glxm & 中医基础项目JCXM xmbh = 施护技术SHJS JCXMH & 施护技术SHJS zzbh = 主要症状ZYZZ zzbh -->
+    <select id="getZY_YZJHbyZZBH" flushCache="true" resultType="_HLJS">
+        SELECT
+        JH.JHH,
+        JH.LXH,
+        JH.ZYH,
+        JH.YZZH,
+        JH.YZXH,
+        JH.YZZX,
+        JH.YZMC,
+        JH.YPYF,
+        JH.SYPC,
+        JH.YCSL,
+        JH.SLDW,
+        JH.JHRQ,
+        JH.JHSJ,
+        JH.XMXH,
+        XM.XMBH,XM.GLLX,XM.GLXM,
+        JS.FFMC,JS.BZXX,JS.JSBH,JS.XMLB,JS.JCXMH,JS.ZZBH,JS.XGBZ
+        FROM ENR_YZJH JH ,
+        IENR_ZY_JCXM XM,
+        IENR_ZY_SHJS JS
+        WHERE JH.ZYH = #{ZYH} AND JH.JGID =#{JGID}
+        AND JH.ZFBZ = 0 AND JH.ZXZT = 0 AND JH.GSLX = 1 AND JH.XMLX = 1
+        AND JH.XMXH = XM.GLXM AND XM.ZFBZ = 0 AND XM.XMLB=2
+        AND XM.XMBH=JS.JCXMH AND JS.ZFBZ = 0
+        AND JS.ZZBH=#{ZZBH}
+        <if test="JHRQ != null">
+            AND JHRQ=#{JHRQ}
+        </if>
+        ORDER BY JHH,JHSJ
+    </select>
+
+    <select id="getZY_RYZD" flushCache="true" resultType="String">
+        SELECT JBMC   FROM V_MOB_HIS_RYZD WHERE ZXLB = 2 AND ZYH = #{ZYH}
+</select>
+    <select id="getZY_XGBZ" flushCache="true" resultType="Traditional_XGBZ">
+        SELECT ZZBH,XGDM,BZMC,FZSX,FZXX,BZXX FROM IENR_ZY_XGBZ WHERE ZZBH=#{ZZBH} AND #{FSCZ} <![CDATA[>=]]> FZXX  AND  #{FSCZ} <![CDATA[<=]]> FZSX
+    </select>
+    <insert id="insertZY_ZZFJJL" parameterType="Traditional_ZZFJJL" flushCache="true">
+      INSERT INTO IENR_ZY_ZZFJJL (JLXH,ZZJL,ZZFJ,FJPF,PFGH,ZFBZ,PFSJ) VALUES (#{JLXH},#{ZZJL},#{ZZFJ},#{FJPF},#{PFGH},0,#{PFSJ})
+    </insert>
+    <insert id="insertZY_JSJL" parameterType="JSJL" flushCache="true">
+        INSERT INTO IENR_ZY_JSJL (FAJL,ZZJL,
+ JSJL,
+ JSBH,
+ FFMC,
+ ZDYBZ,
+ CZSJ,
+ CZGH,
+ XMLB,
+ JCXMH,
+ GLLX,
+ GLJL,
+ ZXZT,
+ CZRQ)
+        VALUES ( #{FAJL},#{ZZJL},
+ #{JSJL},
+ #{JSBH},
+ #{FFMC},
+ #{ZDYBZ},
+ #{CZSJ},
+ #{CZGH},
+ #{XMLB},
+ #{JCXMH},
+ #{GLLX},
+ #{GLJL},
+ #{ZXZT},#{CZRQ})
+    </insert>
+
+
+    <update id="updateZY_ZZJL_PF" flushCache="true">
+      UPDATE IENR_ZY_ZZJL SET SSHJL=#{SSHJL} ,SSHFJ=#{SSHFJ},SSHPF=#{SSHPF},SSHSJ=#{SSHSJ},HLXG=#{HLXG} WHERE ZZBH=#{ZZBH} AND  FAJL=#{FAJL}
+    </update>
+</mapper>

@@ -1,0 +1,31 @@
+.theme-header-layout {
+	background: url(../images/main/headerbg.gif) left center repeat;
+}
+
+.theme-navigate .left .img {
+	width: 35rem;
+	height: 51px;
+}
+
+.theme-navigate .left .img .login_logo {
+	width: 45px;
+	height: 50px;
+	border-width: 0;
+}
+
+.theme-navigate .left .img .login_name {
+	color: White;
+	font-size: 17pt;
+	font-family: '微软雅黑', serif;
+	font-weight: bold;
+	padding-left: 5pt;
+}
+
+.theme-left-layout .accordion .accordion-header {
+	background: #e0e9f0;
+	border-color: #cfdae6;
+}
+
+.theme-left-normal .accordion-expand{
+	background-color: #cfdae6;
+}

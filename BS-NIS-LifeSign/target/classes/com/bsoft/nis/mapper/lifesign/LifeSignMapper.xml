@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.lifesign.LifeSignMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getLifeSignTypeItemList" resultType="LifeSignTypeItem" flushCache="true">
+        SELECT BQ_TZDZ.LBH, LBMC
+        FROM BQ_XMGL INNER JOIN BQ_TZDZ ON BQ_TZDZ.LBH = BQ_XMGL.LBH
+        WHERE BQ_TZDZ.BQDM = #{BQID}
+        ORDER BY LBSX ASC
+    </select>
+
+    <select id="getLifeSignInputItemList" resultType="LifeSignInputItem" flushCache="true">
+		SELECT SRXH, SRXM, LBH, SRSH, XSBZ, HHBZ
+		FROM BQ_TZSR
+		WHERE LBH = #{LBH} AND XSBZ=1
+		ORDER BY SRSH ASC
+	</select>
+    <select id="getAllLifeSignInputItemList" resultType="LifeSignInputItem" flushCache="true">
+        SELECT SRXH, SRXM, LBH, SRSH, XSBZ, HHBZ
+        FROM BQ_TZSR
+        WHERE  XSBZ=1
+        ORDER BY SRSH ASC
+    </select>
+
+    <select id="getLifeSignInputItem" resultType="LifeSignInputItem" flushCache="true">
+		SELECT SRXH, SRXM, LBH, SRSH, XSBZ, HHBZ
+		FROM BQ_TZSR
+		WHERE SRXH = #{SRXH} AND XSBZ=1
+		ORDER BY SRSH ASC
+	</select>
+<!-- V_MOB_HIS_EMRDMZD标准版在HIS库里。
+  , (SELECT DMMC FROM V_MOB_HIS_EMRDMZD WHERE DMLB='601' AND  DMSB = (SELECT BQ_TZXM.XMDW FROM BQ_TZXM WHERE BQ_TZXM.XMH=BQ_TZKJ.TZXM)) XMDW -->
+    <select id="getLifeSignControlItemList" resultType="LifeSignControlItem" flushCache="true">
+		SELECT  KJH, SRXH, KJLX, KJCD, KJNR, SZSR, QTSR, ZCXX, ZCSX, JKXX, JKSX, FFXX, FFSX, SXH, XSLB, TZXM, KJSM, TSBZ,
+		 (SELECT BQ_TZXM.XMMC FROM BQ_TZXM WHERE BQ_TZXM.XMH=BQ_TZKJ.TZXM) XMMC
+
+		FROM BQ_TZKJ
+		WHERE SRXH = #{SRXH} ORDER BY SXH ASC
+	</select>
+    <!-- V_MOB_HIS_EMRDMZD标准版在HIS库里 。
+      , (SELECT DMMC FROM V_MOB_HIS_EMRDMZD WHERE DMLB='601' AND  DMSB = (SELECT BQ_TZXM.XMDW FROM BQ_TZXM WHERE BQ_TZXM.XMH=BQ_TZKJ.TZXM)) XMDW -->
+    <select id="getAllLifeSignControlItemList" resultType="LifeSignControlItem" flushCache="true">
+        SELECT  KJH, SRXH, KJLX, KJCD, KJNR, SZSR, QTSR, ZCXX, ZCSX, JKXX, JKSX, FFXX, FFSX, SXH, XSLB, TZXM, KJSM, TSBZ,
+        (SELECT BQ_TZXM.XMMC FROM BQ_TZXM WHERE BQ_TZXM.XMH=BQ_TZKJ.TZXM) XMMC
+
+        FROM BQ_TZKJ ORDER BY SXH ASC
+    </select>
+
+    <select id="getLifeSignOptionItemList" resultType="LifeSignOptionItem" flushCache="true">
+        SELECT KJH,XZH, XZNR, TSYS
+        FROM BQ_TZXZ
+        WHERE KJH = #{KJH}
+    </select>
+
+    <select id="getAllLifeSignOptionItemList" resultType="LifeSignOptionItem" flushCache="true">
+        SELECT KJH,XZH, XZNR, TSYS
+        FROM BQ_TZXZ
+    </select>
+
+    <select id="getLifeSignSpecialOptionItemList" resultType="LifeSignOptionItem" flushCache="true">
+        SELECT XXQZ XZH, XXMC XZNR, '' TSYS
+        FROM BQ_TSXX
+        WHERE TSBS = (SELECT TSBZ FROM BQ_TZKJ WHERE KJH = #{KJH})
+    </select>
+
+    <select id="getLifeSignKjlxByTsbs" resultType="String" flushCache="true">
+        SELECT XSLX
+        FROM BQ_TSXM
+        WHERE TSBS = #{TSBS}
+    </select>
+
+    <select id="getQualityInfoList" resultType="LifeSignQualityInfo" flushCache="true">
+        SELECT BRLX, TZXM, NLXX, NLSX, ZCSX, ZCXX, FFXX, FFSX
+        FROM BQ_TZSXX
+    </select>
+
+    <delete id="deleteSmtzForCjzh">
+        DELETE FROM BQ_SMTZ WHERE CJZH = #{CJZH}
+    </delete>
+
+    <select id="getLifeSignLbbzByTsbs" resultType="String" flushCache="true">
+        SELECT LBBZ
+        FROM BQ_TSXM
+        WHERE TSBS = #{TSBS}
+    </select>
+
+    <select id="getLifeSignTwdxsByXmh" resultType="String" flushCache="true">
+		SELECT TWDXS FROM BQ_TZXM WHERE XMH = #{XMH}
+	</select>
+
+    <insert id="addLifeSignDataBatch" parameterType="java.util.List" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            <foreach collection="list" item="item" index="index" separator=";">
+                INSERT INTO BQ_SMTZ (CJH, ZYH, JHBZ, CJSJ, XMH, TZNR, CJZH, BRKS, BRBQ, BRCH, JLSJ, JLGH, YCBZ, FCBZ,
+                FCGL, BZXX, XMXB, ZFBZ, TWDXS,JGID)
+                VALUES(#{item.CJH}, #{item.ZYH}, #{item.JHBZ}, #{item.CJSJ}, #{item.XMH}, #{item.TZNR}, #{item.CJZH},
+                #{item.BRKS}, #{item.BRBQ}, #{item.BRCH}, #{item.JLSJ}, #{item.JLGH}, #{item.YCBZ}, #{item.FCBZ},
+                #{item.FCGL}, #{item.BZXX}, #{item.XMXB}, 0, #{item.TWDXS}, #{item.JGID})
+            </foreach>
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO BQ_SMTZ (CJH, ZYH, JHBZ, CJSJ, XMH, TZNR, CJZH, BRKS, BRBQ, BRCH, JLSJ, JLGH, YCBZ, FCBZ, FCGL,
+            BZXX, XMXB, ZFBZ, TWDXS,JGID)
+            <foreach collection="list" item="item" index="index" close=")" open="(" separator="union all">
+                SELECT #{item.CJH}, #{item.ZYH}, #{item.JHBZ}, to_date(#{item.CJSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{item.XMH},
+                #{item.TZNR},#{item.CJZH},#{item.BRKS}, #{item.BRBQ}, #{item.BRCH}, to_date(#{item.JLSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+                #{item.JLGH}, #{item.YCBZ},#{item.FCBZ},#{item.FCGL}, #{item.BZXX}, #{item.XMXB}, 0, #{item.TWDXS}, #{item.JGID}
+                FROM DUAL
+            </foreach>
+        </if>
+    </insert>
+
+    <select id="getLifeSignHistoryDataItem" resultType="LifeSignHistoryDataItem" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT BQ_SMTZ.XMH, BQ_SMTZ.CJH, BQ_TZXM.XMMC, BQ_SMTZ.TZNR, BQ_TZXM.XMDW, BQ_SMTZ.CJSJ, BQ_SMTZ.YCBZ,
+            BQ_SMTZ.XMXB,BQ_SMTZ.FCBZ
+            FROM BQ_SMTZ, BQ_TZXM
+            WHERE BQ_SMTZ.XMH = BQ_TZXM.XMH AND BQ_SMTZ.ZFBZ &lt;>1 AND BQ_SMTZ.ZYH= #{ZYH} AND BQ_SMTZ.CJSJ >= #{START}
+            AND
+            BQ_SMTZ.CJSJ &lt;= #{END}
+            ORDER BY BQ_SMTZ.XMH ASC,BQ_SMTZ.CJSJ DESC
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT BQ_SMTZ.XMH, BQ_SMTZ.CJH, BQ_TZXM.XMMC, BQ_SMTZ.TZNR, BQ_TZXM.XMDW, BQ_SMTZ.CJSJ, BQ_SMTZ.YCBZ,
+            BQ_SMTZ.XMXB,BQ_SMTZ.FCBZ
+            FROM BQ_SMTZ, BQ_TZXM
+            WHERE BQ_SMTZ.XMH = BQ_TZXM.XMH AND BQ_SMTZ.ZFBZ &lt;>1 AND BQ_SMTZ.ZYH= #{ZYH} AND BQ_SMTZ.CJSJ >=
+            to_date(#{START}, 'yyyy-mm-dd hh24:mi:ss') AND BQ_SMTZ.CJSJ &lt;= to_date(#{END}, 'yyyy-mm-dd hh24:mi:ss')
+            ORDER BY BQ_SMTZ.XMH ASC,BQ_SMTZ.CJSJ DESC
+        </if>
+    </select>
+
+    <select id="getLifeSignHistoryDataType" resultType="LifeSignHistoryDataType" flushCache="true">
+		SELECT XMH, XMMC FROM BQ_TZXM WHERE XTBZ = 1
+	</select>
+
+    <update id="deleteLifeSignHistoryData" flushCache="true">
+        UPDATE BQ_SMTZ SET ZFBZ = 1 WHERE CJH = #{CJH}
+    </update>
+    <update id="updateLifeSignHistoryData" flushCache="true">
+        UPDATE BQ_SMTZ SET TZNR = #{VAL} WHERE CJH = #{CJH} OR (FCBZ = 1 AND FCGL = #{CJH})
+    </update>
+    <select id="getLifeSignDoubleCheckMaxCjsj" resultType="java.util.Date" flushCache="true">
+        SELECT MAX(CJSJ) AS ENDTIME FROM BQ_SMTZ WHERE ZYH = #{ZYH} AND XMH = #{TZXM} AND FCBZ = 0 AND ZFBZ = 0
+    </select>
+
+    <select id="getLifeSignDoubleCheckHistoryDataItem" resultType="LifeSignDoubleCheckHistoryDataItem"
+            flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT CJH, CJSJ, TZNR
+            FROM BQ_SMTZ
+            WHERE ZYH = #{ZYH} AND XMH = #{TZXM} AND FCBZ = 0 AND ZFBZ = 0 AND CJSJ >= #{START} AND CJSJ &lt;= #{END} ORDER BY
+            CJSJ DESC
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT CJH, CJSJ, TZNR
+            FROM BQ_SMTZ
+            WHERE ZYH = #{ZYH} AND XMH = #{TZXM} AND FCBZ = 0 AND ZFBZ = 0 AND CJSJ >= to_date(#{START}, 'yyyy-mm-dd
+            hh24:mi:ss') AND CJSJ &lt;= to_date(#{END}, 'yyyy-mm-dd hh24:mi:ss') ORDER BY CJSJ DESC
+        </if>
+    </select>
+
+    <select id="getLifeSignDoubleCheckCoolingMeasure" resultType="LifeSignDoubleCheckCoolingMeasure" flushCache="true">
+        SELECT DMSB,DMMC FROM MOB_DMZD WHERE DMLB = 130 AND DMSB &lt;> 0
+    </select>
+
+    <select id="getLifeSignSpecialDataItem" resultType="LifeSignDoubleCheckHistoryDataItem" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT CJSJ, TZNR
+            FROM BQ_SMTZ
+            WHERE ZYH = #{ZYH} AND XMH = 31 AND ZFBZ = 0 AND CJSJ >= #{START} AND CJSJ &lt;= #{END} ORDER BY CJSJ DESC
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT CJSJ, TZNR
+            FROM BQ_SMTZ
+            WHERE ZYH = #{ZYH} AND XMH = 31 AND ZFBZ = 0 AND CJSJ >= to_date(#{START}, 'yyyy-mm-dd hh24:mi:ss') AND CJSJ
+            &lt;= to_date(#{END}, 'yyyy-mm-dd hh24:mi:ss') ORDER BY CJSJ DESC
+        </if>
+    </select>
+
+    <select id="getClinicalEventInfoList" resultType="ClinicalEventInfo" flushCache="true">
+        SELECT SJXH, SJGS, JZXH, JZHM, SJFL, FSSJ, SJMS, JLGH, JLSJ, XTBZ, JGID
+        FROM EMR_LCSJBC
+        WHERE JZXH = #{ZYH} AND SJGS = 3 AND SJFL = #{SJFL} ORDER BY FSSJ DESC
+    </select>
+
+    <insert id="addClinicalEventInfo" parameterType="ClinicalEventInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO EMR_LCSJBC (SJXH, SJGS, JZXH, JZHM, SJFL, FSSJ, SJMS, JLSJ, JLGH, XTBZ, JGID)
+            VALUES(#{SJXH}, 3, #{JZXH}, #{JZHM}, #{SJFL}, #{FSSJ}, #{SJMS}, #{JLSJ}, #{JLGH}, 0, #{JGID})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO EMR_LCSJBC (SJXH, SJGS, JZXH, JZHM, SJFL, FSSJ, SJMS, JLSJ, JLGH, XTBZ, JGID)
+            VALUES(#{SJXH}, 3, #{JZXH}, #{JZHM}, #{SJFL}, to_date(#{FSSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{SJMS},
+            to_date(#{JLSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{JLGH}, 0, #{JGID})
+        </if>
+    </insert>
+
+    <update id="editClinicalEventInfo" parameterType="ClinicalEventInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE EMR_LCSJBC
+            SET FSSJ = #{FSSJ}, SJMS = #{SJMS}
+            WHERE SJXH = #{SJXH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE EMR_LCSJBC
+            SET FSSJ = to_date(#{FSSJ}, 'yyyy-mm-dd hh24:mi:ss'), SJMS = #{SJMS}
+            WHERE SJXH = to_date(#{SJXH}, 'yyyy-mm-dd hh24:mi:ss')
+        </if>
+    </update>
+
+    <delete id="deleteClinicalEventInfo" parameterType="String" flushCache="true">
+        DELETE FROM EMR_LCSJBC
+        WHERE SJXH = #{SJXH}
+    </delete>
+
+    <select id="getClinicalEventDieInfo" resultType="String" flushCache="true">
+        Select FSSJ From V_MOB_HIS_WZJL Where ZYH = #{ZYH}
+    </select>
+
+    <select id="getClinicalEventChildbirthInfo" resultType="String" flushCache="true">
+        SELECT  ENR_JL02.XMQZ
+        FROM ENR_JL01,ENR_JL02
+        WHERE ENR_JL01.ZYH = #{ZYH}
+        AND ENR_JL01.JLZT &lt;> 9 AND ENR_JL01.JLBH = ENR_JL02.JLBH
+        AND ENR_JL02.XMMC = '产程开始时间'
+    </select>
+
+	<select id="getCjzhByCjh" resultType="String" flushCache="true">
+        SELECT CJZH
+        FROM BQ_SMTZ
+        WHERE CJH = #{CJH} AND JGID = #{JGID}
+    </select>
+
+    <select id="getZKXM" resultType="String" flushCache="true">
+        SELECT DISTINCT TZXM FROM ENR_TZZKXX where ZYH =#{ZYH} AND FSSJ &lt;=#{KSSJ} AND ZHSJ >= #{JSSJ} AND JSBZ = 0
+    </select>
+
+    <!-- <if test="dbtype == 'sqlserver'"> -->
+    <select id="getLifeSignHistoryInfo" resultType="com.bsoft.nis.domain.lifesign.LifeSignHistoryInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            Select a.CJH, Convert(VARCHAR(20), a.CJSJ, 120) CJSJ, b.XMMC, a.XMXB, a.TZNR
+            FROM BQ_SMTZ a, BQ_TZXM b
+            WHERE a.ZYH = #{ZYH} AND a.XMH = #{XMH} AND a.XMH = b.XMH
+            ORDER BY a.CJSJ DESC
+        </if>
+        <if test="dbtype == 'oracle'">
+            Select a.CJH, to_char(a.CJSJ,'yyyy-MM-dd HH24:MI:SS') CJSJ, b.XMMC, a.XMXB, a.TZNR
+            FROM BQ_SMTZ a, BQ_TZXM b
+            WHERE a.ZYH = #{ZYH} AND a.XMH = #{XMH} AND a.XMH = b.XMH
+            ORDER BY a.CJSJ DESC
+        </if>
+    </select>
+
+</mapper>

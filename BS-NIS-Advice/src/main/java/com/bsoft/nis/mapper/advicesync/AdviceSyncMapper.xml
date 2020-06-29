@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.advicesync.AdviceSyncMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getBQPlanInfoListByZyh" resultType="PlanInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT YSYZBH,JHH,GLJHH,JGID,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,
+            SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,TBBZ,TZBZ ZFBZ
+            FROM V_MOB_HIS_YZJH
+            WHERE GSLX IN
+            <foreach collection="GSLXLIST" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            AND ZYH = #{ZYH} AND JHRQ = #{JHRQ} AND JGID = #{JGID}
+            AND (TBBZ = 0 OR TBBZ IS NULL)
+            AND TZBZ = 0
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT YSYZBH,JHH,GLJHH,JGID,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,
+            SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,TBBZ,TZBZ ZFBZ
+            FROM V_MOB_HIS_YZJH
+            WHERE GSLX IN
+            <foreach collection="GSLXLIST" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            AND ZYH = #{ZYH} AND JHRQ = to_date(#{JHRQ}, 'yyyy-mm-dd hh24:mi:ss') AND JGID = #{JGID}
+            AND (TBBZ = 0 OR TBBZ IS NULL)
+            AND TZBZ = 0
+        </if>
+    </select>
+
+    <select id="getBQPlanInfoListByJhhList" resultType="PlanInfo" flushCache="true">
+        SELECT YSYZBH,JHH,GLJHH,JGID,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,
+        SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,TBBZ,TZBZ ZFBZ
+        FROM V_MOB_HIS_YZJH
+        WHERE JHH IN
+        <foreach collection="JHHLIST" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        AND (TBBZ = 0 OR TBBZ IS NULL)
+        AND TZBZ = 0
+    </select>
+
+    <select id="getBQPlanInfoListByBqdm" resultType="PlanInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT YSYZBH,JHH,GLJHH,JGID,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,
+            SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,TBBZ,TZBZ ZFBZ
+            FROM V_MOB_HIS_YZJH
+            WHERE GSLX IN
+            <foreach collection="GSLXLIST" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            AND BQDM = #{BQDM} AND JHRQ = #{JHRQ} AND JGID = #{JGID}
+            AND (TBBZ = 0 OR TBBZ IS NULL)
+            AND TZBZ = 0
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT YSYZBH,JHH,GLJHH,JGID,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,
+            SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,TBBZ,TZBZ ZFBZ
+            FROM V_MOB_HIS_YZJH
+            WHERE GSLX IN
+            <foreach collection="GSLXLIST" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            AND BQDM = #{BQDM} AND JHRQ = to_date(#{JHRQ}, 'yyyy-mm-dd hh24:mi:ss') AND JGID = #{JGID}
+            AND (TBBZ = 0 OR TBBZ IS NULL)
+            AND TZBZ = 0
+        </if>
+    </select>
+
+    <select id="getPlanInfoListByZyh" resultType="PlanInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT YSYZBH,JHH,GLJHH,JGID,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,
+            SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,TBBZ,ZFBZ
+            FROM ENR_YZJH
+            WHERE GSLX IN
+            <foreach collection="GSLXLIST" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            AND ZYH = #{ZYH} AND JHRQ = #{JHRQ} AND JGID = #{JGID}
+            AND (TBBZ = 0 OR TBBZ IS NULL)
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT JHH GLJHH,JGID,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,
+            SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,TBBZ,ZFBZ
+            FROM ENR_YZJH
+            WHERE GSLX IN
+            <foreach collection="GSLXLIST" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            AND ZYH = #{ZYH} AND JHRQ = to_date(#{JHRQ}, 'yyyy-mm-dd hh24:mi:ss') AND JGID = #{JGID}
+            AND (TBBZ = 0 OR TBBZ IS NULL)
+        </if>
+    </select>
+
+    <select id="getPlanInfoListByGljhhList" resultType="PlanInfo" flushCache="true">
+        SELECT YSYZBH,JHH,GLJHH,JGID,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,
+        SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,TBBZ,ZFBZ
+        FROM ENR_YZJH
+        WHERE GLJHH IN
+        <foreach collection="JHHLIST" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        AND (TBBZ = 0 OR TBBZ IS NULL)
+    </select>
+
+    <select id="getPlanInfoListByBqdm" resultType="PlanInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT YSYZBH,JHH GLJHH,JGID,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,
+            SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,TBBZ,ZFBZ
+            FROM ENR_YZJH
+            WHERE GSLX IN
+            <foreach collection="GSLXLIST" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            AND BQDM = #{BQDM} AND JHRQ = #{JHRQ} AND JGID = #{JGID}
+            AND (TBBZ = 0 OR TBBZ IS NULL)
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT YSYZBH,JHH GLJHH,JGID,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,
+            SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,TBBZ,ZFBZ
+            FROM ENR_YZJH
+            WHERE GSLX IN
+            <foreach collection="GSLXLIST" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            AND BQDM = #{BQDM} AND JHRQ = to_date(#{JHRQ}, 'yyyy-mm-dd hh24:mi:ss') AND JGID = #{JGID}
+            AND (TBBZ = 0 OR TBBZ IS NULL)
+        </if>
+    </select>
+
+    <select id="getGslxListByBqdm" resultType="String" flushCache="true">
+        SELECT GS.GSLX
+        FROM ENR_KSJH KS ,ENR_JHLX JH,ENR_GSLX GS
+        WHERE KS.LXH = JH.LXH AND JH.GSLX = GS.GSLX AND JH.ZXBZ = 0 AND KS.KSDM = #{BQDM}
+    </select>
+
+    <insert id="addPlanInfoList" parameterType="java.util.Map" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            <foreach collection="planInfoList" item="plan" index="index"
+                     separator=";">
+                INSERT INTO
+                ENR_YZJH(JHH,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,ZQRQ,ZFBZ,QRBZ,ZXZT,LSYZ,SJMC,JGID,GLJHH)
+                VALUES(#{plan.JHH},#{plan.GSLX},#{plan.LXH},#{plan.ZYH},#{plan.BRBQ},#{plan.YZZH},#{plan.YSYZBH},#{plan.YZXH},#{plan.XMLX},#{plan.XMXH},#{plan.YZZX},#{plan.YZMC},#{plan.YPYF},
+                #{plan.SYPC},#{plan.YCJL},#{plan.JLDW},#{plan.YCSL},#{plan.SLDW},#{plan.JHRQ},#{plan.JHSJ},#{plan.JHSD},#{plan.CSSJ},#{plan.ZQRQ},0,0,0,#{plan.LSYZ},#{plan.SJMC},#{plan.JGID},#{plan.GLJHH})
+            </foreach>
+        </if>
+        <if test="dbtype == 'oracle'">
+            <foreach collection="planInfoList" item="plan" index="index"
+                     separator=";">
+                INSERT INTO
+                ENR_YZJH(JHH,GSLX,LXH,ZYH,BRBQ,YZZH,YSYZBH,YZXH,XMLX,XMXH,YZZX,YZMC,YPYF,SYPC,YCJL,JLDW,YCSL,SLDW,JHRQ,JHSJ,JHSD,CSSJ,ZQRQ,ZFBZ,QRBZ,ZXZT,LSYZ,SJMC,JGID,GLJHH)
+                VALUES
+                (#{plan.JHH},#{plan.GSLX},#{plan.LXH},#{plan.ZYH},#{plan.BRBQ},#{plan.YZZH},#{plan.YSYZBH},#{plan.YZXH},#{plan.XMLX},#{plan.XMXH},#{plan.YZZX},#{plan.YZMC},#{plan.YPYF},
+                #{plan.SYPC},#{plan.YCJL},#{plan.JLDW},#{plan.YCSL},#{plan.SLDW},to_date({JHRQ},'yyyy-mm-dd'),to_date({JHSJ},'yyyy-mm-dd
+                hh24:mi:ss'),#{plan.JHSD},
+                to_date({plan.CSSJ},'yyyy-mm-dd
+                hh24:mi:ss'),#{plan.ZQRQ},0,0,0,#{plan.LSYZ},#{plan.SJMC},#{plan.JGID},#{plan.GLJHH})
+            </foreach>
+        </if>
+    </insert>
+
+    <update id="editPlanInfo" parameterType="String" flushCache="true">
+        UPDATE ENR_YZJH SET ZFBZ = 1 WHERE GLJHH = #{GLJHH}
+    </update>
+
+    <update id="editBQPlanInfo" parameterType="String" flushCache="true">
+        UPDATE BQ_YZJH SET TBBZ = 1 WHERE JHH = #{JHH}
+    </update>
+</mapper>

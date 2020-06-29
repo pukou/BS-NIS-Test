@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.bloodsugar.BloodSugarMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getClsdList" resultType="String" flushCache="true">
+		SELECT DMMC FROM MOB_XTPZ WHERE DMLB = 458 AND DMSB !=0
+	</select>
+
+    <select id="getBloodSugarList" resultType="BloodSugar" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, CLSD, CLZ, WCSJ, SYBZ, SYSJ, SYGH, JLZT, JGID
+            FROM IENR_XTCLJL
+            WHERE ZYH = #{ZYH} AND SXSJ >= #{START} AND SXSJ &lt; #{END} AND JLZT &lt;> 9 AND JGID = #{JGID}
+            ORDER BY SXSJ DESC
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, CLSD, CLZ, WCSJ, SYBZ, SYSJ, SYGH, JLZT, JGID
+            FROM IENR_XTCLJL
+            WHERE ZYH = #{ZYH} AND SXSJ >= to_date(#{START}, 'yyyy-mm-dd') AND SXSJ &lt; to_date(#{END}, 'yyyy-mm-dd')
+            AND JLZT &lt;> 9 AND JGID = #{JGID}
+            ORDER BY SXSJ DESC
+        </if>
+    </select>
+
+    <select id="getNeedGetBloodSugarList" resultType="PersonBloodSugar" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+
+            SELECT ZY_BRRY.ZYH,
+            ZY_BRRY.BRXM,
+            ZY_BRRY.BRCH,
+            EMR_YZB.YZMC,
+            EMR_YZB.YZBXH,
+            EMR_YZB.YSZT,
+            EMR_YZB.YZQX,
+            EMR_YZB.KZSJ
+            FROM ZY_BRRY,
+            EMR_YZB
+            WHERE ZY_BRRY.ZYH = EMR_YZB.ZYH AND
+            ZY_BRRY.JGID = #{JGID} AND ZY_BRRY.BRBQ = #{BRBQ} AND ZY_BRRY.CYPB = 0 AND
+            EMR_YZB.YZZT = 5  AND EMR_YZB.YDYZLB <![CDATA[ <>  ]]> 202
+            AND ( (EMR_YZB.YZQX = 2 AND KZSJ >= dateadd(day,0,convert(varchar(10),getdate(),120))
+            AND KZSJ <![CDATA[ < ]]> dateadd(day,1,convert(varchar(10),getdate(),120)) )
+            OR (EMR_YZB.YZQX = 1 AND KZSJ <![CDATA[ <  ]]> dateadd(day,1,convert(varchar(10),getdate(),120))  AND TZSJ IS NULL )
+            )
+            AND EMR_YZB.yzmc like '%血糖%'
+            ORDER BY ZY_BRRY.BRCH,EMR_YZB.YZMC
+
+        </if>
+        <if test="dbtype == 'oracle'">
+
+            SELECT ZY_BRRY.ZYH,
+            ZY_BRRY.BRXM,
+            ZY_BRRY.BRCH,
+            EMR_YZB.YZMC,
+            EMR_YZB.YZBXH,
+            EMR_YZB.YSZT,
+            EMR_YZB.YZQX,
+            EMR_YZB.KZSJ
+            FROM ZY_BRRY,
+            EMR_YZB
+            WHERE ZY_BRRY.ZYH = EMR_YZB.ZYH AND
+            ZY_BRRY.JGID = #{JGID} AND ZY_BRRY.BRBQ = #{BRBQ} AND ZY_BRRY.CYPB = 0 AND
+            EMR_YZB.YZZT = 5  AND EMR_YZB.YDYZLB <![CDATA[ <>  ]]> 202
+            AND ((EMR_YZB.YZQX = 2 AND KZSJ >= trunc(sysdate) AND KZSJ <![CDATA[ < ]]> (trunc(sysdate)+ 1))
+            OR (EMR_YZB.YZQX = 1 AND KZSJ <![CDATA[ <  ]]> (trunc(sysdate)+ 1) AND TZSJ IS NULL ))
+            AND EMR_YZB.yzmc like '%血糖%'
+            ORDER BY ZY_BRRY.BRCH,EMR_YZB.YZMC
+
+        </if>
+    </select>
+
+    <insert id="addBloodSugar">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_XTCLJL(JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, CLSD, CLZ, WCSJ, SYBZ, SYSJ, SYGH,
+            JLZT, JGID)
+            VALUES(#{JLXH}, #{ZYH}, #{SXBQ}, #{BRCH}, #{SXSJ}, #{SXGH}, #{CJSJ}, #{CJGH}, #{CLSD}, #{CLZ}, NULL, 0,
+            NULL, NULL, 0, #{JGID})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_XTCLJL(JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, CLSD, CLZ, WCSJ, SYBZ, SYSJ, SYGH,
+            JLZT, JGID)
+            VALUES(#{JLXH}, #{ZYH}, #{SXBQ}, #{BRCH}, to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{SXGH}, to_date(#{CJSJ},
+            'yyyy-mm-dd hh24:mi:ss'), #{CJGH}, #{CLSD}, #{CLZ}, NULL, 0, NULL, NULL, 0, #{JGID})
+        </if>
+    </insert>
+
+    <update id="editBloodSugar">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_XTCLJL
+            SET CLSD = #{CLSD}, SXSJ = #{SXSJ}, CLZ = #{CLZ}
+            WHERE JLXH = #{JLXH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_XTCLJL
+            SET CLSD = #{CLSD}, SXSJ = to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'), CLZ = #{CLZ}
+            WHERE JLXH = #{JLXH}
+        </if>
+    </update>
+
+    <update id="deleteBloodSugar">
+        UPDATE IENR_XTCLJL
+        SET JLZT = 9
+        WHERE JLXH = #{JLXH}
+    </update>
+</mapper>

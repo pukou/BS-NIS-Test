@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="NIS:war">
+    <output-path>$PROJECT_DIR$/BS-NIS/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>NIS</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="NIS.war">
+      <element id="artifact" artifact-name="NIS:war exploded" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.dailywork.DailyWorkBaseServiceMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getPlan" flushCache="false" resultType="DailyWork" useCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT ZYH
+            FROM ENR_YZJH
+            WHERE ZXZT = 0 AND JHRQ = #{JHRQ} AND JGID = #{JGID} AND ZYH IN
+            <foreach collection="ZYH" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT ZYH
+            FROM ENR_YZJH
+            WHERE ZXZT = 0 AND JHRQ = to_date(#{JHRQ}, 'yyyy-mm-dd hh24:mi:ss') AND JGID = #{JGID} AND ZYH IN
+            <foreach collection="ZYH" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getPatientsByBq" flushCache="false" resultType="DailyWork" useCache="true">
+        SELECT ZYH, ZYHM, BRXM, BRCH
+        FROM V_MOB_HIS_BRRY
+        WHERE CYPB = 0 AND BRBQ = #{BRBQ} AND JGID = #{JGID}
+        ORDER BY BRCH
+    </select>
+
+    <select id="getChangeAdvice" flushCache="false" resultType="DailyWork" useCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT T1.ZYH, T2.BRCH, T2.ZYHM, T2.BRXM
+            FROM V_MOB_HIS_BQYZ T1, V_MOB_HIS_BRRY T2
+            WHERE T1.ZYH = T2.ZYH AND T1.JGID = T2.JGID AND
+            (T1.KZSJ > #{KZSJ} OR T1.TZSJ > #{KZSJ}) AND
+            T1.JGID = #{JGID} AND T2.CYPB != 8 AND T1.XMLX IN(1, 2, 3, 4) AND
+            T2.ZYH IN
+            <foreach collection="ZYH" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            GROUP BY T1.ZYH, T2.BRCH, T2.BRXM, T2.ZYHM
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT T1.ZYH, T2.BRCH, T2.ZYHM, T2.BRXM
+            FROM V_MOB_HIS_BQYZ T1, V_MOB_HIS_BRRY T2
+            WHERE T1.ZYH = T2.ZYH AND T1.JGID = T2.JGID AND
+            (T1.KZSJ > to_date(#{KZSJ}, 'yyyy-mm-dd hh24:mi:ss') OR
+            T1.TZSJ > to_date(#{KZSJ}, 'yyyy-mm-dd hh24:mi:ss')) AND
+            T1.JGID = #{JGID} AND T2.CYPB != 8 AND T1.XMLX IN(1, 2, 3, 4) AND
+            T2.ZYH IN
+            <foreach collection="ZYH" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            GROUP BY T1.ZYH, T2.BRCH, T2.BRXM, T2.ZYHM
+        </if>
+    </select>
+
+    <select id="getInspection" flushCache="false" resultType="DailyWork" useCache="true">
+        <if test="dbtype == 'oracle'">
+            SELECT DISTINCT ZYHM,KDSJ
+            FROM V_MOB_LIS_JYTMMX
+            WHERE YBZT = 1 AND (CYBZ = 0 OR CYBZ IS NULL) AND JGID = #{JGID}
+            <if test="RYRQ !=  null">
+                AND KDSJ >= to_date(#{RYRQ},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            AND ZYHM IN
+            <foreach collection="zyhmList" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="dbtype == 'sqlserver'">
+            SELECT DISTINCT  ZYHM,KDSJ
+            FROM V_MOB_LIS_JYTMMX
+            WHERE YBZT = 1 AND (CYBZ = 0 OR CYBZ IS NULL) AND JGID = #{JGID}
+            <if test="RYRQ !=  null">
+                AND KDSJ >= #{RYRQ}
+            </if>
+            AND ZYHM IN
+            <foreach collection="zyhmList" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <!-- 今日工作 之前  TX.TXRQ = #{TXRQ} /   TX.TXRQ = to_date(#{TXRQ}, 'yyyy-mm-dd hh24:mi:ss')
+         修改 2018-06-12 20:49:44 对应 病人列表 亮底色的tx
+         -->
+    <select id="getRisk" flushCache="false" resultType="DailyWork" useCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT DISTINCT TX.ZYH, TX.TXNR, TX.PGXH, JL.PGDH, JL.PGLX, JL.PGSJ, PGD.PGDMC BDMC, ZK.ZKMS
+            FROM IENR_FXZKTX TX, IENR_FXPGJL JL, IENR_FXPGD PGD, IENR_FXPGZK ZK
+            WHERE JL.PGDH = PGD.PGDH AND JL.PGDH = ZK.PGDH AND JL.FXCD = ZK.FXCD AND
+            TX.TXZT = 0 AND TX.PGXH = JL.PGXH AND
+            TX.TXRQ <![CDATA[<=]]> #{TXRQ} AND TX.JGID = #{JGID} AND
+            TX.ZYH IN
+            <foreach collection="ZYH" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT DISTINCT TX.ZYH, TX.TXNR, TX.PGXH, JL.PGDH, JL.PGLX, JL.PGSJ, PGD.PGDMC BDMC, ZK.ZKMS
+            FROM IENR_FXZKTX TX, IENR_FXPGJL JL, IENR_FXPGD PGD, IENR_FXPGZK ZK
+            WHERE JL.PGDH = PGD.PGDH AND JL.PGDH = ZK.PGDH AND JL.FXCD = ZK.FXCD AND
+            TX.TXZT = 0 AND TX.PGXH = JL.PGXH AND
+            TX.TXRQ <![CDATA[<=]]> to_date(#{TXRQ}, 'yyyy-mm-dd hh24:mi:ss') AND TX.JGID = #{JGID} AND
+            TX.ZYH IN
+            <foreach collection="ZYH" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

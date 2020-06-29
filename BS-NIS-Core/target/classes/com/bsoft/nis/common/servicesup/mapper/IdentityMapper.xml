@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.common.servicesup.mapper.IdentityMapper">
+
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+	<select id="getIdentityList" flushCache="true" resultType="map">
+		SELECT * FROM IENM_HLRY WHERE JGID = 1
+	</select>
+
+	<insert id="insertItem" statementType="STATEMENT" flushCache="true">
+		<!-- 新增（mob库） -->
+		INSERT INTO ${TABLE}(BMC,DQZ,CSZ,DZZ)
+		VALUES('${BMC}',${DQZ},${CSZ},${DZZ})
+	</insert>
+
+	<update id="updateCurValue" statementType="STATEMENT" flushCache="true">
+		<!-- 根据表名，更新当前值（mob库） -->
+		UPDATE ${TABLE} SET DQZ=DQZ+${count}*DZZ WHERE BMC='${BMC}'
+	</update>
+
+	<select id="getCurValue" statementType="STATEMENT" resultType="map" flushCache="true">
+		<!-- 根据表名，获取当前值（mob库） -->
+		SELECT DQZ,DZZ FROM ${TABLE} WHERE BMC='${BMC}'
+	</select>
+
+	<select id="getCurList" flushCache="true" resultType="map" statementType="STATEMENT">
+		<!-- 根据表名，获取当前值（mob库） -->
+		SELECT DQZ,DZZ FROM ${TABLE} WHERE BMC='${BMC}'
+	</select>
+</mapper>

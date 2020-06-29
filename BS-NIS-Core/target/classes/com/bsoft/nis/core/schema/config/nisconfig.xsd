@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+-->
+<xsd:schema xmlns="http://www.bsoft.com.cn/nis/schema/config"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.bsoft.com.cn/nis/schema/config"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified" version="5.6.1">
+    <!--总体xml架构模板-->
+    <xsd:element name="configs">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="system"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="flowGroups"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+
+    <!--系统配置模板-->
+    <xsd:element name="system">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="1" minOccurs="1" name="organization">
+                    <xsd:complexType>
+                        <xsd:attribute name="value" use="required" type="organizationScope"/>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element minOccurs="1" maxOccurs="1" name="mqttclienturl">
+                    <xsd:complexType>
+                        <xsd:attribute name="value" use="required"/>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element minOccurs="1" maxOccurs="1" name="advicePlanMerge">
+                    <xsd:complexType>
+                        <xsd:attribute name="value" use="required"/>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element minOccurs="1" maxOccurs="1" name="dataTransferOutHospitalDays">
+                    <xsd:complexType>
+                        <xsd:attribute name="value" use="required"/>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element minOccurs="1" maxOccurs="1" name="dataTransferDays">
+                    <xsd:complexType>
+                        <xsd:attribute name="value" use="required"/>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element minOccurs="1" maxOccurs="1" name="CommonDB">
+                    <xsd:complexType>
+                        <xsd:attribute name="value" use="required"/>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <!--流程控制模板-->
+    <xsd:element name="flowGroups">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="flowGroup"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="flowGroup">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="1" ref="flow"/>
+            </xsd:sequence>
+            <xsd:attribute name="id" use="required" type="flowControllScope"/>
+            <xsd:attribute name="remark" use="required" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="flow">
+        <xsd:complexType>
+            <xsd:attribute name="flowName" use="required" type="xsd:string"/>
+            <xsd:attribute name="flowHandlerClass" use="required" type="flowScope"/>
+            <xsd:attribute name="flowRemark" use="required" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <!--枚举-->
+    <xsd:simpleType name="organizationScope">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="0"/>
+            <xsd:enumeration value="1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="flowControllScope">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="adviceExcuteFlow"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="flowScope">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="com.bsoft.nis.adviceexecute.FlowControl.AdviceGeneralCheck"/>
+            <xsd:enumeration value="com.bsoft.nis.adviceexecute.FlowControl.CommonControl"/>
+            <xsd:enumeration value="com.bsoft.nis.adviceexecute.FlowControl.DoubleCheckControl"/>
+            <xsd:enumeration value="com.bsoft.nis.adviceexecute.FlowControl.OralGeneralCheck"/>
+            <xsd:enumeration value="com.bsoft.nis.adviceexecute.FlowControl.TransfusionDosingCheck"/>
+            <xsd:enumeration value="com.bsoft.nis.adviceexecute.FlowControl.SkinTestCheck"/>
+            <xsd:enumeration value="com.bsoft.nis.adviceexecute.FlowControl.InjectionDosingCheck"/>
+            <xsd:enumeration value="com.bsoft.nis.adviceexecute.FlowControl.PlanGeneralCheck"/>
+            <xsd:enumeration value="com.bsoft.nis.adviceexecute.FlowControl.InjectionGeneralCheck"/>
+            <xsd:enumeration value="com.bsoft.nis.adviceexecute.FlowControl.TransfusionGeneralCheck"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

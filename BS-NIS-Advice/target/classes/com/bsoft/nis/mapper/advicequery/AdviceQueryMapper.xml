@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.advicequery.AdviceQueryMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+	<!--获取拒绝执行原因列表-->
+	<select id="getRefuseReason" resultType="PhraseModel" flushCache="true">
+		SELECT DYXH, DYMS
+		FROM IENR_CYDY
+		WHERE DYLB = 1 AND ZFBZ = 0 AND JGID = #{JGID}
+		ORDER BY PLSX
+	</select>
+
+	<!--医嘱查询(获取病区医嘱)-->
+	<select id="getAdviceBqyzList" resultType="AdviceBqyzVo" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT QRSJ, JLXH, YFSB, YZMC, YCJL, YPXH, YCSL, SYPC, YPYF, KZSJ, TZSJ,
+				   KZYS, TZYS, YPDJ, BZXX, YZZH, LSYZ, XMLX, YPLX, LSBZ, ZFBZ
+			FROM V_MOB_HIS_BQYZ
+			WHERE (YSBZ = 0 OR (YSBZ = 1 AND YSTJ = 1)) AND YZPB = 0 AND
+				  ZYH = #{ZYH} AND KZSJ <![CDATA[<=]]> #{JSSJ} AND
+				  ((KZSJ >= #{KSSJ} AND LSYZ = 1) OR (LSYZ = 0 AND (TZSJ IS NULL OR TZSJ >= #{KSSJ})))
+				  <if test="JLLX == '1'.toString()">
+					  AND YEPB = 0
+				  </if>
+				  <if test="JLLX != '1'.toString()">
+					  AND YEWYH = #{ZYH}
+				  </if>
+				  <if test="LSYZ == '1'.toString() || LSYZ == '0'.toString()">
+					  AND LSYZ = #{LSYZ}
+				  </if>
+				  <if test="WXBZ == '0'.toString()">
+					  AND ((LSYZ = 1 AND QRSJ IS NULL) OR
+					       (LSYZ = 0 AND (TZSJ IS NULL OR LSBZ = 0 OR (TZSJ >= #{DQSJ} AND LSBZ = 2))))
+					  AND (ZFBZ = 0 OR ZFBZ IS NULL)
+				  </if>
+				  <if test="WXBZ == '1'.toString()">
+					  AND ((LSYZ = 1 AND QRSJ IS NOT NULL) OR
+					       (LSYZ = 0 AND (TZSJ <![CDATA[<]]> #{DQSJ} OR LSBZ = 1)) OR ZFBZ = 1)
+				  </if>
+			ORDER BY YZZH DESC, JLXH, KZSJ DESC
+		</if>
+		<if test="dbtype == 'oracle'">
+			SELECT QRSJ, JLXH, YFSB, YZMC, YCJL, YPXH, YCSL, SYPC, YPYF, KZSJ, TZSJ,
+				   KZYS, TZYS, YPDJ, BZXX, YZZH, LSYZ, XMLX, YPLX, LSBZ, ZFBZ
+			FROM V_MOB_HIS_BQYZ
+			WHERE (YSBZ = 0 OR (YSBZ = 1 AND YSTJ = 1)) AND YZPB = 0 AND ZYH = #{ZYH} AND
+					KZSJ <![CDATA[<=]]> to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss') AND
+				  ((KZSJ >= to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss') AND LSYZ = 1) OR
+				   (LSYZ = 0 AND (TZSJ IS NULL OR TZSJ >= to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss'))))
+				  <if test="JLLX == '1'.toString()">
+					  AND YEPB = 0
+				  </if>
+				  <if test="JLLX != '1'.toString()">
+					  AND YEWYH = #{ZYH}
+				  </if>
+				  <if test="LSYZ == '1'.toString() || LSYZ == '0'.toString()">
+					  AND LSYZ = #{LSYZ}
+				  </if>
+				  <if test="WXBZ == '0'.toString()">
+					  AND ((LSYZ = 1 AND QRSJ IS NULL) OR
+					       (LSYZ = 0 AND (TZSJ IS NULL OR LSBZ = 0 OR
+					        (TZSJ >= to_date(#{DQSJ}, 'yyyy-mm-dd hh24:mi:ss') AND LSBZ = 2))))
+					  AND (ZFBZ = 0 OR ZFBZ IS NULL)
+				  </if>
+				  <if test="WXBZ == '1'.toString()">
+					  AND ((LSYZ = 1 AND QRSJ IS NOT NULL) OR ZFBZ = 1 OR
+					       (LSYZ = 0 AND (TZSJ <![CDATA[<]]> to_date(#{DQSJ}, 'yyyy-mm-dd hh24:mi:ss') OR LSBZ = 1)))
+				  </if>
+			ORDER BY YZZH DESC, JLXH, KZSJ DESC
+		</if>
+	</select>
+
+	<select id="getAdviceOne" resultType="AdviceBqyzVo" flushCache="true">
+		SELECT QRSJ, JLXH, YFSB, YZMC, YCJL, YPXH, YCSL, SYPC, YPYF, KZSJ, TZSJ,
+			   KZYS, TZYS, YPDJ, BZXX, YZZH, ZFBZ, LSYZ, XMLX, YPLX, LSBZ
+		FROM V_MOB_HIS_BQYZ
+		WHERE JLXH = #{JLXH} AND JGID = #{JGID}
+	</select>
+
+	<select id="getAdviceRecord" resultType="AdviceDetail" flushCache="true">
+		SELECT GSLX, ZXZT, JHSJ, KSSJ, KSGH, JSGH, JSSJ
+		FROM ENR_YZJH
+		WHERE ZFBZ = 0 AND YZXH = #{YZXH} AND JGID = #{JGID}
+		ORDER BY JHSJ
+	</select>
+
+	<select id="getTransfusionListByZyh" resultType="TransfusionVo" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT SYDH, TMBH, SYSJ, KSSJ, KSGH, JSSJ, JSGH, SYZT, PJDS, ZYH
+			FROM ENR_SYD
+			WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND
+				  SYSJ >= #{KSSJ} AND SYSJ <![CDATA[<]]> #{JSSJ}
+				  <if test="SYZT != null and SYZT != ''">
+					  AND SYZT = #{SYZT}
+				  </if>
+			ORDER BY SYSJ
+		</if>
+		<if test="dbtype == 'oracle'">
+			SELECT SYDH, TMBH, SYSJ, KSSJ, KSGH, JSSJ, JSGH, SYZT, PJDS, ZYH
+			FROM ENR_SYD
+			WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND
+				  SYSJ >= to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss') AND
+				  SYSJ <![CDATA[<]]> to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss')
+				  <if test="SYZT != null and SYZT != ''">
+					  AND SYZT = #{SYZT}
+				  </if>
+			ORDER BY SYSJ
+		</if>
+	</select>
+
+	<select id="getSydhByZyh" resultType="java.lang.String" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT SYDH
+			FROM ENR_SYD
+			WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND
+				  SYSJ >= #{KSSJ} AND SYSJ <![CDATA[<]]> #{JSSJ}
+				  <if test="SYZT != null and SYZT != ''">
+					  AND SYZT = #{SYZT}
+				  </if>
+			ORDER BY SYSJ
+		</if>
+		<if test="dbtype == 'oracle'">
+			SELECT SYDH
+			FROM ENR_SYD
+			WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND
+				  SYSJ >= to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss') AND
+				  SYSJ <![CDATA[<]]> to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss')
+				  <if test="SYZT != null and SYZT != ''">
+					  AND SYZT = #{SYZT}
+				  </if>
+			ORDER BY SYSJ
+		</if>
+	</select>
+
+	<select id="getTransfusionInfoList" resultType="TransfusionInfoVoTemp" flushCache="true">
+		SELECT YZXH, SYDH, YCJL, JLDW, YCSL, SLDW
+		FROM ENR_SYMX
+		WHERE SYDH IN
+			  <foreach collection="SYDHS" item="item" index="index" open="(" close=")" separator=",">
+				  #{item}
+			  </foreach>
+	</select>
+
+	<select id="getYzmcByYzxh" resultType="java.lang.String" flushCache="true">
+		SELECT YZMC
+		FROM V_MOB_HIS_BQYZ
+		WHERE JLXH = #{JLXH} AND JGID = #{JGID}
+	</select>
+
+	<select id="getTransfusionReactionList" resultType="PhraseModel">
+		SELECT DYXH, DYMS
+		FROM IENR_CYDY
+		WHERE DYLB = 3 AND ZFBZ = 0 AND JGID = #{JGID}
+		ORDER BY PLSX
+	</select>
+
+	<select id="getTransfusionPatrolList" resultType="TransfusionPatrolRecord" flushCache="true">
+		SELECT XSSJ, XSGH, SYDS, SYFY, SYDH
+		FROM ENR_SYXS
+		WHERE SYDH = #{SYDH} AND JGID = #{JGID}
+		ORDER BY XSSJ DESC
+	</select>
+
+	<select id="getKfdhListByZyh" resultType="java.lang.String" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT T1.KFDH
+			FROM ENR_KFD T1, ENR_KFBZ T2
+			WHERE T1.KFDH = T2.KFDH AND t1.ZYH = #{ZYH} AND T1.JGID = #{JGID} AND
+				  T1.KFSJ >= #{KSSJ} AND T1.KFSJ <![CDATA[<]]> #{JSSJ}
+		</if>
+		<if test="dbtype == 'oracle'">
+			SELECT T1.KFDH
+			FROM ENR_KFD T1, ENR_KFBZ T2
+			WHERE T1.KFDH = T2.KFDH AND t1.ZYH = #{ZYH} AND T1.JGID = #{JGID} AND
+				  T1.KFSJ >= to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss') AND
+				  T1.KFSJ <![CDATA[<]]> to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss')
+		</if>
+	</select>
+
+	<select id="getZsdhListByZyh" resultType="java.lang.String" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+			SELECT ZSDH
+			FROM ENR_ZSD
+			WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND ZSSJ >= #{KSSJ} AND
+				  ZSSJ <![CDATA[<]]> #{JSSJ}
+		</if>
+		<if test="dbtype == 'oracle'">
+			SELECT ZSDH
+			FROM ENR_ZSD
+			WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND
+				  ZSSJ >= to_date(#{KSSJ}, 'yyyy-mm-dd hh24:mi:ss') AND
+				  ZSSJ <![CDATA[<]]> to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss')
+		</if>
+	</select>
+</mapper>

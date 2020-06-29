@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.dailycare.DailyCareBaseServiceMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <select id="getDailyNurseType" flushCache="false" resultType="DailyTopItem" useCache="true">
+        SELECT ENR_HLLB.LBMC,ENR_HLLB.LBBS
+        FROM ENR_HLLB,ENR_KSHL
+        WHERE ENR_KSHL.JGID = #{JGID} AND
+               (ENR_KSHL.KSDM = #{KSDM} OR ENR_KSHL.KSDM = 0) AND
+               ENR_HLLB.LBBS = ENR_KSHL.LBBS  AND
+               ENR_HLLB.ZTBZ = 0
+    </select>
+    <select id="getDailyNurseList" flushCache="false" resultType="DailySecondItem" useCache="true">
+        SELECT ENR_HLXM.XMBS,ENR_HLXM.XMMC
+        FROM ENR_HLXM,ENR_HLMX
+        WHERE ENR_HLXM.JGID = #{JGID} AND
+               ENR_HLMX.LBBS = #{LBBS} AND
+               ENR_HLXM.XMBS = ENR_HLMX.XMBS
+    </select>
+    <insert id="SaveDailyNurseItems">
+		<if test="dbtype == 'sqlserver'">
+	        INSERT INTO ENR_BRHL
+	        (JLBS,ZYH,XMBS,ZFBZ,ZXR,ZXSJ,BRBQ,JGID)
+	        VALUES
+	        (#{JLBS},#{ZYH},#{XMBS},#{ZFBZ},#{ZXR},#{ZXSJ},#{BRBQ},#{JGID})
+	    </if>
+	    <if test="dbtype == 'oracle'">
+	        INSERT INTO ENR_BRHL
+	        (JLBS,ZYH,XMBS,ZFBZ,ZXR,ZXSJ,BRBQ,JGID)
+	        VALUES
+	        (#{JLBS},#{ZYH},#{XMBS},#{ZFBZ},#{ZXR},
+		     to_date(#{ZXSJ}, 'yyyy-mm-dd hh24:mi:ss'),#{BRBQ},#{JGID})
+	    </if>
+    </insert>
+
+</mapper>

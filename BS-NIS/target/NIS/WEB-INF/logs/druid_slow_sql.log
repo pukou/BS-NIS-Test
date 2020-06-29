@@ -1,0 +1,35 @@
+[15:04:12] StatFilter - slow sql 371 millis. 
+SELECT SUM(ZJJE) AS ZJJE,SUM(ZFJE) AS ZFJE
+		FROM V_MOB_HIS_FYMX
+		WHERE ZYH = ? AND JGID=?
+["8","1"]
+[16:36:25] StatFilter - slow sql 326 millis. 
+INSERT INTO BQ_SMTZ (CJH, ZYH, JHBZ, CJSJ, XMH, TZNR, CJZH, BRKS, BRBQ, BRCH, JLSJ, JLGH, YCBZ, FCBZ, FCGL,
+            BZXX, XMXB, ZFBZ, TWDXS,JGID)
+             (  
+                SELECT ?, ?, ?, to_date(?, 'yyyy-mm-dd hh24:mi:ss'), ?,
+                ?,?,?, ?, ?, to_date(?, 'yyyy-mm-dd hh24:mi:ss'),
+                ?, ?,?,?, ?, ?, 0, ?, ?
+                FROM DUAL
+             union all 
+                SELECT ?, ?, ?, to_date(?, 'yyyy-mm-dd hh24:mi:ss'), ?,
+                ?,?,?, ?, ?, to_date(?, 'yyyy-mm-dd hh24:mi:ss'),
+                ?, ?,?,?, ?, ?, 0, ?, ?
+                FROM DUAL
+             union all 
+                SELECT ?, ?, ?, to_date(?, 'yyyy-mm-dd hh24:mi:ss'), ?,
+                ?,?,?, ?, ?, to_date(?, 'yyyy-mm-dd hh24:mi:ss'),
+                ?, ?,?,?, ?, ?, 0, ?, ?
+                FROM DUAL
+             union all 
+                SELECT ?, ?, ?, to_date(?, 'yyyy-mm-dd hh24:mi:ss'), ?,
+                ?,?,?, ?, ?, to_date(?, 'yyyy-mm-dd hh24:mi:ss'),
+                ?, ?,?,?, ?, ?, 0, ?, ?
+                FROM DUAL
+             union all 
+                SELECT ?, ?, ?, to_date(?, 'yyyy-mm-dd hh24:mi:ss'), ?,
+                ?,?,?, ?, ?, to_date(?, 'yyyy-mm-dd hh24:mi:ss'),
+                ?, ?,?,?, ?, ?, 0, ?, ?
+                FROM DUAL
+             )
+["5635","8","1","2020-06-23 16:35:52","2","86","405","1258","1259","2001","2020-06-23 16:35:52","2000007","0","0",null,null,null,"0","1","5636","8","1","2020-06-23 16:35:52","4","45","405","1258","1259","2001","2020-06-23 16:35:52","2000007","0","0",null,null,null,"0","1","5637","8","1","2020-06-23 16:35:52","1","36","405","1258","1259","2001","2020-06-23 16:35:52","2000007","0","0",null,null,null,"0","1","5638","8","1","2020-06-23 16:35:52","3","40","405","1258","1259","2001","2020-06-23 16:35:52","2000007","0","0",null,null,null,"0","1","5639","8","1","2020-06-23 16:35:52","31","3/E","405","1258","1259","2001","2020-06-23 16:35:52","2000007","0","0",null,null,null,"0","1"]

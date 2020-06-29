@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.bloodtransfusion.BloodTransfusionMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getBloodTransfusionPlanList" resultType="BloodTransfusionInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT SQD.REQUESTNO SQDH, SX.SXDH, MX.SXLEIBIE XYLX, MX.LBMC MC, SX.BYTM XDH, SX.XDXH XDXH, SQD.ABO ABO,
+            SQD.RH RH, SX.SXSL XL, RKD.BAOZHUANG, SQD.YYRQ YYRQ, RKD.DQRQ DQRQ, RKD.PXFF PXFF, SX.ZYH BYH,
+            SQD.PATIENTNAME BRXM, SQD.SEX BRXB, SQD.AGE BRNL, SQD.BED_NO BRCH, SX.KSGH SXR1, SX.HDGH1 SXR2, SX.KSRQ
+            SXSJ, SX.JSGH JSR, SX.JSRQ JSSJ, SX.SXPB, SX.SJPB, SX.HSPB
+            FROM BLOOD_XK_SX SX, BLOOD_SQDXX SQD, BLOOD_RKD RKD, BLOOD_SQDXX_MX MX
+            WHERE SX.REQUESTNO = SQD.REQUESTNO AND SX.BYTM = RKD.XDH AND SX.XDXH = RKD.XDXH AND SX.JGID = SQD.JGID AND
+            SX.JGID = RKD.JGID AND SX.JGID = #{JGID} AND MX.REQUESTNO = SX.REQUESTNO AND SX.ZYH = #{ZYHM} AND RKD.XYLX =
+            MX.SXLEIBIE
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT SQD.REQUESTNO SQDH, SX.SXDH, MX.SXLEIBIE XYLX, MX.LBMC MC, SX.BYTM XDH, SX.XDXH XDXH, SQD.ABO ABO,
+            SQD.RH RH, SX.SXSL XL, RKD.BAOZHUANG, SQD.YYRQ YYRQ, RKD.DQRQ DQRQ, RKD.PXFF PXFF, SX.ZYH BYH,
+            SQD.PATIENTNAME BRXM, SQD.SEX BRXB, SQD.AGE BRNL, SQD.BED_NO BRCH, SX.KSGH SXR1, SX.HDGH1 SXR2, SX.KSRQ
+            SXSJ, SX.JSGH JSR, SX.JSRQ JSSJ, SX.SXPB, SX.SJPB, SX.HSPB
+            FROM BLOOD_XK_SX SX, BLOOD_SQDXX SQD, BLOOD_RKD RKD, BLOOD_SQDXX_MX MX
+            WHERE SX.REQUESTNO = SQD.REQUESTNO AND SX.BYTM = RKD.XDH AND SX.XDXH = RKD.XDXH AND SX.JGID = SQD.JGID AND
+            SX.JGID = RKD.JGID AND SX.JGID = #{JGID} AND MX.REQUESTNO = SX.REQUESTNO AND SX.ZYH = #{ZYHM} AND RKD.XYLX =
+            MX.SXLEIBIE
+        </if>
+    </select>
+
+    <update id="startBloodTransfusion">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE BLOOD_XK_SX
+            SET KSGH = #{ZXGH}, HDGH1 = #{HDGH}, KSRQ = #{SXSJ},JYBZ = 1, SXPB =1,
+            HC46=1,HC47=1,HC48=1,HC49=1,HC50=1,HC51=1,HC52=1,HC53=1,HC54=1,HC55=1,HC56=1,HC57=1,HC58=1,HC59=1,HC60=1,HC61=1,HC62=1,HC63=1,HC64=1
+            WHERE BYTM = #{XDH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE BLOOD_XK_SX
+            SET KSGH = #{ZXGH}, HDGH1 = #{HDGH}, KSRQ = to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'),JYBZ = 1,
+            SXPB=1,HC46=1,HC47=1,HC48=1,HC49=1,HC50=1,HC51=1,HC52=1,HC53=1,HC54=1,HC55=1,HC56=1,HC57=1,HC58=1,HC59=1,HC60=1,HC61=1,HC62=1,HC63=1,HC64=1
+            WHERE BYTM = #{XDH}
+        </if>
+    </update>
+
+    <update id="endBloodTransfusion">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE BLOOD_XK_SX
+            SET JSGH = #{JSR}, JSRQ = #{JSSJ}
+            WHERE BYTM = #{XDH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE BLOOD_XK_SX
+            SET JSGH = #{JSR}, JSRQ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE BYTM = #{XDH}
+        </if>
+    </update>
+
+    <select id="getBloodTransfusionInfoList" resultType="BloodTransfusionInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT KSGH SXR1, HDGH1 SXR2, KSRQ SXSJ, JSGH JSR,JSRQ JSSJ
+            FROM BLOOD_XK_SX
+            WHERE BYTM = #{XDH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT KSGH SXR1, HDGH1 SXR2, KSRQ SXSJ, JSGH JSR,JSRQ JSSJ
+            FROM BLOOD_XK_SX
+            WHERE BYTM = #{XDH}
+        </if>
+    </select>
+
+    <select id="getBloodRecieveList" resultType="BloodReciveInfo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT SX.BYTM XMTM, MX.LBMC XMMC, SX.BYTM XMID, SQD.PATIENTID ZYH, SQD.PatientName BRXM, SQD.BED_NO BRCH,
+            CASE WHEN SQD.SEX = 1 THEN '男' ELSE '女' END XBMC, SQD.AGE BRNL, SX.JXHS QSGH, SX.JXRQ SJSJ, SX.SXZ SXGH,
+            SX.JXRQ QSSJ, CX.CXRQ CJSJ, CX.CXGH, CASE WHEN SX.JSRQ IS NULL THEN 0 ELSE 1 END Status
+            FROM BLOOD_SQDXX SQD, BLOOD_XK_SX SX, BLOOD_RKD RKD, BLOOD_XK_CX CX, BLOOD_SQDXX_MX MX
+            WHERE SQD.REQUESTNO = SX.REQUESTNO AND SQD.JGID = RKD.JGID AND SX.BYTM = RKD.XDH AND SX.XDXH = RKD.XDXH AND
+            SQD.JGID = SX.JGID AND CX.REQUESTNO = SX.REQUESTNO AND SQD.REQUESTNO = MX.REQUESTNO AND RKD.XYLX =
+            MX.SXLEIBIE
+            <if test="STATUS == 0">
+                AND SX.JXRQ IS NULL
+            </if>
+            <if test="STATUS == 1">
+                AND SX.JXRQ IS NOT NULL
+            </if>
+            AND SQD.YYRQ >= #{START} AND SQD.YYRQ &lt; #{END}
+            AND SQD.SECTION = #{BQID} AND SQD.JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT SX.BYTM XMTM, MX.LBMC XMMC, SX.BYTM XMID, SQD.PATIENTID ZYH, SQD.PatientName BRXM, SQD.BED_NO BRCH,
+            CASE WHEN SQD.SEX = 1 THEN '男' ELSE '女' END XBMC, SQD.AGE BRNL, SX.JXHS QSGH, SX.JXRQ SJSJ, SX.SXZ SXGH,
+            SX.JXRQ QSSJ, CX.CXRQ CJSJ, CX.CXGH, CASE WHEN SX.JSRQ IS NULL THEN 0 ELSE 1 END Status
+            FROM BLOOD_SQDXX SQD, BLOOD_XK_SX SX, BLOOD_RKD RKD, BLOOD_XK_CX CX, BLOOD_SQDXX_MX MX
+            WHERE SQD.REQUESTNO = SX.REQUESTNO AND SQD.JGID = RKD.JGID AND SX.BYTM = RKD.XDH AND SX.XDXH = RKD.XDXH AND
+            SQD.JGID = SX.JGID AND CX.REQUESTNO = SX.REQUESTNO AND SQD.REQUESTNO = MX.REQUESTNO AND RKD.XYLX =
+            MX.SXLEIBIE
+            <if test="STATUS == 0">
+                AND SX.JXRQ IS NULL
+            </if>
+            <if test="STATUS == 1">
+                AND SX.JXRQ IS NOT NULL
+            </if>
+            AND SQD.YYRQ >= to_date(#{START}, 'yyyy-mm-dd hh24:mi:ss') AND SQD.YYRQ &lt; to_date(#{END}, 'yyyy-mm-dd hh24:mi:ss') AND SQD.SECTION = #{BQID} AND SQD.JGID = #{JGID}
+        </if>
+    </select>
+
+    <update id="bloodRecieve">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE BLOOD_XK_SX
+            SET JXHS = #{JXHS},JXRQ = #{JXRQ},SXZ = #{SXZ},
+            HC23=1,HC24=1,HC25=1,HC26=1,HC27=1,HC28=1,HC29=1,HC30=1,HC31=1,HC32=1,HC33=1,HC34=1,HC35=1,HC36=1,HC37=1,HC38=1,HC39=1,HC40=1,HC41=1
+            WHERE BYTM IN (#{BYTM})
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE BLOOD_XK_SX
+            SET JXHS = #{JXHS},JXRQ = to_date(#{JXRQ}, 'yyyy-mm-dd hh24:mi:ss'),SXZ = #{SXZ},
+            HC23=1,HC24=1,HC25=1,HC26=1,HC27=1,HC28=1,HC29=1,HC30=1,HC31=1,HC32=1,HC33=1,HC34=1,HC35=1,HC36=1,HC37=1,HC38=1,HC39=1,HC40=1,HC41=1
+            WHERE BYTM IN (#{BYTM})
+        </if>
+    </update>
+
+    <update id="cancleBloodRecieve">
+        UPDATE BLOOD_XK_SX SET JXHS = null, JXRQ = null, SXZ = null WHERE BYTM IN (#{BYTM})
+    </update>
+
+    <select id="getBloodTransfusionTourInfoList" resultType="BloodTransfusionTourInfo" flushCache="true">
+        SELECT SXDH, XSGH, XSRQ, SXSD, BLFY, BZ, XSCS, JGID
+        FROM BLOOD_SX_XS
+        WHERE SXDH = #{SXDH} AND JGID = #{JGID}
+    </select>
+
+    <insert id="addBloodTransfusionTourInfo">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO BLOOD_SX_XS(SXDH, XSGH, XSRQ, SXSD, BLFY, BZ, XSCS, JGID)
+            VALUES(#{SXDH}, #{XSGH}, #{XSRQ}, #{SXSD}, #{BLFY}, #{BZ}, #{XSCS}, #{JGID})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO BLOOD_SX_XS(SXDH, XSGH, XSRQ, SXSD, BLFY, BZ, XSCS, JGID)
+            VALUES(#{SXDH}, #{XSGH}, to_date(#{XSRQ}, 'yyyy-mm-dd hh24:mi:ss'), #{SXSD}, #{BLFY}, #{BZ}, #{XSCS},
+            #{JGID})
+        </if>
+    </insert>
+
+    <update id="editBloodTransfusionTourInfo">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE BLOOD_SX_XS
+            SET SXSD = #{SXSD}, BLFY = #{BLFY}, BZ = #{BZ}
+            WHERE SXDH = #{SXDH} AND JGID = #{JGID} AND XSRQ = #{XSRQ}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE BLOOD_SX_XS
+            SET SXSD = #{SXSD}, BLFY = #{BLFY}, BZ = #{BZ}
+            WHERE SXDH = #{SXDH} AND JGID = #{JGID} AND XSRQ = to_date(#{XSRQ}, 'yyyy-mm-dd hh24:mi:ss')
+        </if>
+    </update>
+
+    <delete id="deleteBloodTransfusionTourInfo">
+        <if test="dbtype == 'sqlserver'">
+            DELETE FROM BLOOD_SX_XS
+            WHERE SXDH = #{SXDH} AND JGID = #{JGID} AND XSRQ = #{XSRQ}
+        </if>
+        <if test="dbtype == 'oracle'">
+            DELETE FROM BLOOD_SX_XS
+            WHERE SXDH = #{SXDH} AND JGID = #{JGID} AND XSRQ = to_date(#{XSRQ}, 'yyyy-mm-dd hh24:mi:ss')
+        </if>
+    </delete>
+
+    <update id="saveBloodBagRecieve">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE BLOOD_XK_SX
+            SET SJPB = 1, SJRQ = #{SJRQ}, SJGH = #{SJGH}
+            WHERE SXDH = #{SXDH} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE BLOOD_XK_SX
+            SET SJPB = 1, SJRQ = to_date(#{SJRQ}, 'yyyy-mm-dd hh24:mi:ss'), SJGH = #{SJGH}
+            WHERE SXDH = #{SXDH} AND JGID = #{JGID}
+        </if>
+    </update>
+</mapper>

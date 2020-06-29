@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>BS-NIS-Parent</artifactId>
+        <groupId>com.bsoft.mobile</groupId>
+        <version>5.6.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>BS-NIS-Advice</artifactId>
+    <packaging>jar</packaging>
+
+    <name>BS-NIS-Advice</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+	    <!--util-->
+	    <dependency>
+            <groupId>com.bsoft.mobile</groupId>
+            <artifactId>BS-NIS-Util</artifactId>
+            <version>5.6.0.1-SNAPSHOT</version>
+        </dependency>
+	    <!--domain-->
+	    <dependency>
+            <groupId>com.bsoft.mobile</groupId>
+            <artifactId>BS-NIS-Bean</artifactId>
+            <version>5.6.0.1-SNAPSHOT</version>
+        </dependency>
+	    <!--Core-->
+	    <dependency>
+            <groupId>com.bsoft.mobile</groupId>
+            <artifactId>BS-NIS-Core</artifactId>
+            <version>5.6.0.1-SNAPSHOT</version>
+        </dependency>
+	    <!--patient-->
+	    <dependency>
+            <groupId>com.bsoft.mobile</groupId>
+            <artifactId>BS-NIS-Patient</artifactId>
+            <version>5.6.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.bsoft.mobile</groupId>
+            <artifactId>BS-NIS-User</artifactId>
+            <version>5.6.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+	<build>
+        <finalName>BS-NIS-Advice</finalName>
+		<!-- to add xml files to compile -->
+		<resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

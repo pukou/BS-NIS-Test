@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.nurserecord.NurseRecordWriteMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getCtrlListByJlbh" flushCache="true" resultType="Controll">
+		SELECT A.XMBH,A.YSBH, A.XSMC, A.HDBZ,
+				A.YSKZ, A.SJGS, A.ZCZSX, A.ZCZXX,
+				A.YXZSX, A.YXZXX, A.SFBT,A.JZBJ,A.YMCLFS,
+				A.HHJG, A.KSLH, A.JSLH, A.JSLH,B.YSLX,B.SJLX,B.LXKZ,B.SJGS,
+				(SELECT D.XMQZ FROM ENR_JL02 D WHERE D.JLBH=#{JLBH} AND D.XMBH=A.XMBH ) XMQZ
+		FROM ENR_JG02 A ,ENR_JBYS B,ENR_JL01 C
+		WHERE C.JLBH=#{JLBH} AND
+				A.JGBH=C.JGBH AND
+				A.YSBH=B.YSBH AND
+				B.ZXBZ=0
+		ORDER BY A.KSLH
+	</select>
+
+    <select id="getCtrlListByJgbh" flushCache="true" resultType="Controll">
+		SELECT A.XMBH,
+			   A.JGBH,
+			   A.YSBH,
+			   A.XMMC,
+			   A.XSMC,
+			   A.XMQZ,
+			   A.KSLH,
+			   A.JSLH,
+			   A.HDBZ,
+			   A.YSKZ,
+			   A.SJGS,
+			   A.ZCZSX,
+			   A.ZCZXX,
+			   A.YXZSX,
+			   A.YXZXX,
+			   A.SFBT,
+			   A.JZBJ,
+			   A.FZYT,
+			   A.XMDC,
+			   A.YMCLFS,
+			   A.HHJG,
+			   A.XMKD,
+			   A.ZDYXM,
+			   B.YSLX,
+			   B.SJLX,
+			   B.LXKZ,
+			   B.SJGS
+		  FROM ENR_JG02 A, ENR_JBYS B
+		 WHERE A.JGBH = #{JGBH}
+		   AND A.YSBH = B.YSBH
+		   AND B.ZXBZ = 0
+		 ORDER BY A.HDBZ,
+          			A.KSLH
+	</select>
+
+    <select id="getActivieCtrlListByJlbh" flushCache="true" resultType="Controll" >
+		<if test="dbtype == 'sqlserver'">
+		SELECT DISTINCT T1.XMBH
+		FROM ENR_JL02 T1
+		WHERE T1.JLBH IN (
+			 	SELECT T2.JLBH FROM ENR_JL01 T2  WHERE T2.JLBH = #{JLBH}  AND T2.JLSJ>#{JLSJ})
+			 AND T1.HDBZ=1
+		</if>
+		<if test="dbtype == 'oracle'">
+		SELECT DISTINCT T1.XMBH
+		FROM ENR_JL02 T1
+		WHERE T1.JLBH IN (
+		SELECT T2.JLBH FROM ENR_JL01 T2  WHERE T2.JLBH = #{JLBH}  AND T2.JLSJ>to_date(#{JLSJ},'yyyy-mm-dd hh24:mi:ss'))
+		AND T1.HDBZ=1
+		</if>
+
+	</select>
+
+
+    <select id="getActivieCtrlListByJgbh" flushCache="true" resultType="Controll">
+		<if test="dbtype == 'sqlserver'">
+		SELECT DISTINCT XMBH
+		  FROM ENR_JL02
+		 WHERE ENR_JL02.JLBH IN (SELECT JLBH
+								   FROM ENR_JL01
+								  WHERE ENR_JL01.JGBH = #{JGBH}
+									AND ZYH = #{ZYH}
+									AND ENR_JL01.JLSJ > #{JLSJ})
+		   AND ENR_JL02.HDBZ = 1
+		</if>
+		<if test="dbtype == 'oracle'">
+		SELECT DISTINCT XMBH
+		FROM ENR_JL02
+		WHERE ENR_JL02.JLBH IN (SELECT JLBH
+		FROM ENR_JL01
+		WHERE ENR_JL01.JGBH = #{JGBH}
+		AND ZYH = #{ZYH}
+		AND ENR_JL01.JLSJ > to_date(#{JLSJ},'yyyy-mm-dd hh24:mi:ss'))
+		AND ENR_JL02.HDBZ = 1
+		</if>
+
+
+
+	</select>
+    <!-- 升级编号【56010022】============================================= start
+     护理记录:可以查看项目最近3次的记录，可以选择其中一次的数据到当前的护理记录单上。
+    ================= Classichu 2017/10/18 10:54
+    -->
+    <select id="getlastXMData" flushCache="true" resultType="LastDataBean">
+		SELECT  ENR_JL02.XMQZ ,ENR_JL01.JLSJ,ENR_JL01.SXSJ  FROM  ENR_JL01,ENR_JL02 WHERE ENR_JL01.JLBH=ENR_JL02.JLBH AND
+		ENR_JL01.JLZT != 9
+		<if test="ZYH != null">
+		AND  ENR_JL01.ZYH = #{ZYH}
+		</if>
+		<if test="HSGH != null">
+			AND ENR_JL01.SXHS= #{HSGH}
+		</if>
+		AND ENR_JL02.XMBH= #{XMBH} and ENR_JL01.JGID=#{JGID}
+		ORDER BY ENR_JL01.JLSJ DESC
+	</select>
+    <!-- =============================================================== end -->
+    <select id="getDangerRefrence" flushCache="true" resultType="RefrenceValue">
+		SELECT PGSJ TIME,
+				(SELECT PGDMC FROM IENR_FXPGD WHERE PGDH = d.PGDH) NAME,
+				PGZF VALUE
+		FROM (SELECT a.PGDH,a.PGSJ,a.PGZF,
+				SUM(CASE WHEN b.PGSJ >= a.PGSJ THEN 1 ELSE 0 END) RN	FROM IENR_FXPGJL a, IENR_FXPGJL b
+				WHERE a.ZYH = #{ZYH} AND a.ZTBZ = 1 AND a.ZYH = b.ZYH AND a.ZTBZ = b.ZTBZ
+				GROUP BY a.PGDH,a.PGSJ,a.PGZF	) d WHERE d.RN > 5 * #{PAGEINDEX}
+				AND d.RN <![CDATA[<=]]> 5 * (1 + #{PAGEINDEX})
+	</select>
+
+    <select id="getLifeSignRefrece" flushCache="true" resultType="RefrenceValue">
+		SELECT CJSJ TIME,XMXB NAME,TZNR VALUE
+		FROM (SELECT a.XMH,a.CJSJ,a.TZNR,a.XMXB,
+				SUM(CASE WHEN b.CJSJ >= a.CJSJ THEN 1 ELSE 0 END) RN FROM BQ_SMTZ a, BQ_SMTZ b
+				WHERE a.ZYH = #{ZYH} AND a.XMH = #{XMH} AND a.ZFBZ = 0 AND a.ZYH = b.ZYH AND a.XMH = b.XMH AND a.ZFBZ = b.ZFBZ
+					GROUP BY a.XMH,a.CJSJ,a.TZNR,a.XMXB) d
+					WHERE d.RN > 5 * #{PAGEINDEX} AND d.RN <![CDATA[<=]]> 5 * (1 + #{PAGEINDEX})
+	</select>
+
+    <select id="getDangerRecordSum" flushCache="true" resultType="map">
+		SELECT COUNT(ZYH) TOTAL
+		FROM IENR_FXPGJL
+		WHERE ZYH=#{ZYH} AND ZTBZ= 1
+	</select>
+
+    <select id="getLifeSignRecordSum" flushCache="true" resultType="map">
+		SELECT COUNT(ZYH) TOTAL
+		FROM BQ_SMTZ
+		WHERE ZYH=#{ZYH} AND XMH=#{XMH} AND ZFBZ=0
+	</select>
+
+    <select id="getNRTree" flushCache="true" resultType="NRDbTree">
+		SELECT T1.JLBH,
+			   T1.JLSJ,
+			   T1.SXHS,
+			   T2.JGMC,
+			   T1.JLMC,
+			   T.JGBH,
+			   T.JLYS,
+			   T.PLCX,
+			   T1.BLLB,
+			   T1.WCQM,
+			   T1.SYBZ
+		  FROM ENR_JLML T, ENR_JL01 T1, ENR_JG01 T2
+		 WHERE T.ZYH = #{ZYH}
+		   AND T.JGID = #{JGID}
+		   AND T1.BLLX = 2
+		   AND T.ZYH = T1.ZYH
+		   AND T.JGBH = T1.JGBH
+		   AND T2.JGBH = T.JGBH
+		   AND T1.JLZT <![CDATA[<]]> 9 ORDER BY T.JGBH ASC, T1.JLSJ DESC
+	</select>
+
+    <select id="getNRTreeByMblx" flushCache="true" resultType="NRDbTree">
+		SELECT T1.JLBH,
+			   T1.JLSJ,
+			   T1.SXHS,
+			   T2.JGMC,
+			   T1.JLMC,
+			   T.JGBH,
+			   T.JLYS,
+			   T.PLCX,
+			   T1.BLLB,
+			   T1.WCQM,
+			   T1.SYBZ
+		  FROM ENR_JLML T, ENR_JL01 T1, ENR_JG01 T2
+		 WHERE T.ZYH = #{ZYH}
+		   AND T.JGID = #{JGID}
+		   AND T1.BLLX = 2
+		   AND T.ZYH = T1.ZYH
+		   AND T2.MBLB = #{MBLX}
+		   AND T.JGBH = T1.JGBH
+		   AND T2.JGBH = T.JGBH
+		   AND T1.JLZT != 9 ORDER BY T.JGBH ASC , T1.JLSJ DESC
+	</select>
+
+    <select id="getNRTreeByZYHAndJGBH" flushCache="true" resultType="map">
+		SELECT JLXH
+		  FROM ENR_JLML
+		 WHERE ZYH = #{ZYH}
+		   AND JGBH = #{JGBH}
+	</select>
+
+    <insert id="addNurseRecord" parameterType="NRData" flushCache="true" >
+		<if test="dbtype == 'sqlserver'">
+		INSERT INTO ENR_JL01( JLBH, ZYH, JGBH, JLMC, BLLX, BLLB, MBLB, MBBH, DLLB, DLJ, JLHS,
+		 						HYBZ, JLSJ, SXSJ, XTSJ, SXBQ, SXHS, WCQM, WCSJ, SYBZ, SYHS, SYQM,
+		 						DYBZ,ZJLX, JLZT, DLHHBZ,JGID)
+		VALUES(#{JLBH},#{ZYH},#{JGBH},#{JLMC},#{BLLX},#{BLLB},#{MBLB},#{MBBH},#{DLLB},#{DLJ},#{JLHS},
+				#{HYBZ},#{JLSJ},#{SXSJ},#{XTSJ},#{SXBQ},#{SXHS},#{WCQM},#{WCSJ},#{SYBZ},#{SYHS},#{SYQM},
+				#{DYBZ},#{ZJLX},#{JLZT},#{DLHHBZ},#{JGID})
+		</if>
+		<if test="dbtype == 'oracle'">
+		INSERT INTO ENR_JL01( JLBH, ZYH, JGBH, JLMC, BLLX, BLLB, MBLB, MBBH, DLLB, DLJ, JLHS,
+		 						HYBZ, JLSJ, SXSJ, XTSJ, SXBQ, SXHS, WCQM, WCSJ, SYBZ, SYHS, SYQM,
+			DYBZ,ZJLX, JLZT, DLHHBZ,JGID)
+		VALUES(#{JLBH},#{ZYH},#{JGBH},#{JLMC},#{BLLX},#{BLLB},#{MBLB},#{MBBH},#{DLLB},#{DLJ},#{JLHS},
+				#{HYBZ},to_date(substr(#{JLSJ},1,19),'yyyy-mm-dd hh24:mi:ss'),to_date(substr(#{SXSJ},1,19),'yyyy-mm-dd hh24:mi:ss'),to_date(substr(#{XTSJ},1,19),'yyyy-mm-dd hh24:mi:ss'),#{SXBQ},#{SXHS},#{WCQM},to_date(substr(#{WCSJ},1,19),'yyyy-mm-dd hh24:mi:ss'),#{SYBZ},#{SYHS},#{SYQM},
+			#{DYBZ},#{ZJLX},#{JLZT},#{DLHHBZ},#{JGID})
+		</if>
+	</insert>
+
+    <insert id="addNurseRecordDetail" parameterType="NRItem" flushCache="true">
+		INSERT INTO ENR_JL02(MXBH, JLBH, XMBH, XMMC, XSMC, XMQZ, KSLH, JSLH,
+		 			          HDBZ, YMCLFS, HHJG, XGBZ,LYBD,LYBH,LYMX,LYMXLX)
+					  VALUES(#{MXBH},#{JLBH},#{XMBH},#{XMMC},#{XSMC},#{XMQZ},#{KSLH},#{JSLH},
+					          #{HDBZ},#{YMCLFS},#{HHJG},#{XGBZ},#{LYBD},#{LYBH},#{LYMX},#{LYMXLX})
+	</insert>
+
+    <insert id="addNurseRecordContent" parameterType="NRContent" flushCache="true">
+		INSERT INTO ENR_JLML(JLXH,ZYH,BLLX,BLLB,JGBH,JLYS,PLCX,JGID)
+				VALUES(#{JLXH},#{ZYH},#{BLLX},#{BLLB},#{JGBH},#{JLYS},#{PLCX},#{JGID})
+	</insert>
+
+    <select id="getNRData" resultMap="nrDataResultMap" flushCache="true">
+		SELECT JLBH,
+			   ZYH,
+			   JGBH,
+			   JLMC,
+			   BLLX,
+			   BLLB,
+			   MBLB,
+			   MBBH,
+			   DLLB,
+			   DLJ,
+			   JLHS,
+			   HYBZ,
+			   JLSJ,
+			   SXSJ,
+			   XTSJ,
+			   SXBQ,
+			   SXHS,
+			   WCQM,
+			   WCSJ,
+			   SYBZ,
+			   SYSJ,
+			   SYHS,
+			   SYQM,
+			   DYBZ,
+			   JLZT,
+			   ZJBH,
+			   ZJMC,
+			   ZJLX,
+			   KSSJ,
+			   JSSJ,
+			   DLHHBZ
+		  FROM ENR_JL01
+		 WHERE JLBH = #{JLBH}
+	</select>
+
+    <resultMap id="nrDataResultMap" type="NRData">
+        <id column="JLBH" property="JLBH"/>
+        <association property="XMLB" select="selectNRItems" column="JLBH" javaType="List"/>
+    </resultMap>
+
+    <select id="selectNRItems" resultType="NRItem" flushCache="true">
+		SELECT MXBH, JLBH, XMBH, XMMC, XSMC, XMQZ, KSLH, JSLH, HDBZ, YMCLFS, HHJG, XGBZ  FROM ENR_JL02 WHERE JLBH = #{JLBH}
+	</select>
+
+    <select id="getNRContents" resultType="NRContent" flushCache="true">
+		SELECT JLXH FROM ENR_JLML WHERE ZYH=#{ZYH} AND JGBH=#{JGBH} AND JGID = #{JGID}
+	</select>
+
+    <update id="updatePrimaryRecord" parameterType="NRData" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+		UPDATE ENR_JL01 SET JLSJ=#{JLSJ},JLMC=#{JLMC},HYBZ=#{HYBZ},JLHS=#{JLHS} WHERE JLBH=#{JLBH} AND ZYH=#{ZYH}
+		</if>
+		<if test="dbtype == 'oracle'">
+		UPDATE ENR_JL01 SET JLSJ=to_date(substr(#{JLSJ},1,19),'yyyy-mm-dd hh24:mi:ss'),JLMC=#{JLMC},HYBZ=#{HYBZ} ,JLHS=#{JLHS} WHERE JLBH=#{JLBH} AND ZYH=#{ZYH}
+		</if>
+	</update>
+
+    <update id="updatePrimaryRecordLines" flushCache="true">
+		UPDATE ENR_JL01 SET JLHS = -1 WHERE JLBH = #{JLBH}
+	</update>
+    <update id="updateNurseRecordDetail" parameterType="NRItem" flushCache="true">
+		UPDATE ENR_JL02 SET XMQZ=#{XMQZ},XGBZ=#{XGBZ},YMCLFS=#{YMCLFS} WHERE XMBH=#{XMBH} AND JLBH=#{JLBH}
+	</update>
+
+    <update id="deleteNurseRecord" flushCache="true">
+		UPDATE ENR_JL01 SET JLZT=9 WHERE JLBH=#{JLBH} AND ZYH=#{ZYH} AND JGID = #{JGID}
+	</update>
+
+    <select id="getSignValids" resultType="EMR_WH_QMXX" flushCache="true">
+		SELECT JLXH FROM  EMR_WH_QMXX  WHERE YSDM=#{YHID} AND ZFBZ=0
+	</select>
+
+    <update id="signNameNurseRecord" flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+		UPDATE ENR_JL01 SET WCQM=#{WCQM},WCSJ=#{WCSJ},JLZT=1 WHERE JLBH=#{JLBH} AND JLZT=0
+		</if>
+		<if test="dbtype == 'oracle'">
+		UPDATE ENR_JL01 SET WCQM=#{WCQM},WCSJ=to_date(#{WCSJ},'yyyy-mm-dd hh24:mi:ss'),JLZT=1 WHERE JLBH=#{JLBH} AND JLZT=0
+		</if>
+	</update>
+
+
+    <select id="getGrugMedicalAdvices" resultType="DrugMedicalAdviceRefContent"
+            flushCache="true">
+		<if test="dbtype == 'sqlserver'">
+		SELECT T.JLXH, T.YZMC, T.KZSJ KSSJ, T.SYPC, T.YCJL, T.TZSJ,T.LSYZ, T1.XMMC YPYF
+		FROM V_MOB_HIS_BQYZ T, V_MOB_HIS_YPYF T1
+		WHERE T.ZYH = #{ZYH} AND T1.YPYF = T.YPYF  AND T.YPLX > 0
+		AND ((T.TZSJ IS NULL) OR (T.TZSJ >= #{KSSJ} AND T.TZSJ <![CDATA[<]]> #{JSSJ}))
+		ORDER BY T.KZSJ
+		</if>
+		<if test="dbtype == 'oracle'">
+		SELECT T.JLXH, T.YZMC, T.KZSJ KSSJ, T.SYPC, T.YCJL, T.TZSJ,T.LSYZ, T1.XMMC YPYF,T.YZZH,T.YPXH
+		FROM V_MOB_HIS_BQYZ T, V_MOB_HIS_YPYF T1
+		WHERE T.ZYH = #{ZYH} AND T1.YPYF = T.YPYF AND T.YPLX > 0
+		AND ((T.TZSJ IS NULL) OR (T.TZSJ >= to_date(#{KSSJ},'yyyy-mm-dd hh24:mi:ss') AND T.TZSJ <![CDATA[<]]> to_date(#{JSSJ},'yyyy-mm-dd hh24:mi:ss')))
+		ORDER BY T.KZSJ
+		</if>
+	</select>
+
+
+    <select id="getYPJCForYPXH" resultType="String" flushCache="true">
+		SELECT YPJC FROM ENR_YPJC WHERE YPXH = #{YPXH} And YPJC IS NOT NULL
+	</select>
+
+    <select id="getOperationRefs" resultType="OperationRefContent" flushCache="true">
+		SELECT T.SSBH,
+			   T.SSRQ,
+			   (SELECT DMMC
+				  FROM GY_DMZD
+				 WHERE DMLB = 28
+				   AND DMSB = T.MZDM) MZFS,
+			   (SELECT T1.SSMC FROM GY_SSDM T1 WHERE T1.SSNM = T.SSNM) SSMC
+		  FROM SM_SSAP T
+		 WHERE T.ZYH = #{ZYH}
+		   AND (T.ZFBZ = 0)
+		   AND (T.WCBZ = 0)
+	</select>
+
+    <select id="getLifeSignRefs" resultType="SignRefContent" flushCache="true" databaseId="sqlserver">
+		<if test="dbtype == 'sqlserver'">
+		SELECT XM.XMH YYBH,
+		   XM.XMMC YYMC,
+		   TZ.JHBZ,
+		   TZ.CJSJ JLSJ,
+		   TZ.TZNR YYNR,
+		   TZ.YCBZ,
+		   0 SELECTED,
+		   TZ.CJZH CJZH
+	  FROM BQ_SMTZ TZ, BQ_TZXM XM
+	 WHERE TZ.ZYH = #{ZYH}
+	   AND TZ.XMH = XM.XMH
+	   AND TZ.ZFBZ = 0
+	   AND TZ.CJSJ >= #{KSSJ}
+	   AND TZ.CJSJ <![CDATA[<]]> #{JSSJ} ORDER BY TZ.CJSJ ASC
+		</if>
+		<if test="dbtype == 'oracle'">
+		SELECT XM.XMH YYBH,
+			XM.XMMC YYMC,
+			TZ.JHBZ,
+			TZ.CJSJ JLSJ,
+			TZ.TZNR YYNR,
+			TZ.YCBZ,
+			0 SELECTED,
+			TZ.CJZH CJZH
+		FROM BQ_SMTZ TZ, BQ_TZXM XM
+		WHERE TZ.ZYH = #{ZYH}
+		AND TZ.XMH = XM.XMH
+		AND TZ.ZFBZ = 0
+		AND TZ.CJSJ >= to_date(#{KSSJ},'yyyy-mm-dd hh24:mi:ss')
+		AND TZ.CJSJ <![CDATA[<]]>to_date(#{JSSJ},'yyyy-mm-dd hh24:mi:ss') ORDER BY TZ.CJSJ ASC
+		</if>
+	</select>
+
+    <select id="getLzjh" resultType="map" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT * FROM IENM_LZJHB WHERE KSRQ > #{ksrq} AND KSRQ <![CDATA[<]]> #{jsrq}
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT * FROM IENM_LZJHB WHERE KSRQ > to_date(#{ksrq},'yyyy-mm-dd hh24:mi:ss') AND KSRQ <![CDATA[<]]>
+            to_date(#{jsrq},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+    </select>
+
+    <select id="getMergeRule" resultType="string" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT MAX(JLBH) FROM ENR_JL01 WHERE JGBH=#{JGBH} AND ZYH=#{ZYH} AND SXHS = #{YHID} AND DATEDIFF(minute
+            ,JLSJ,#{JLSJ}) <![CDATA[<=]]> 1
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT MAX(JLBH) FROM ENR_JL01 WHERE JGBH=#{JGBH} AND ZYH=#{ZYH} AND SXHS = #{YHID} AND
+            TRUNC(( TRUNC(to_date(substr(#{JLSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'), 'mi')-TRUNC(JLSJ, 'mi')) * 1440)
+            <![CDATA[<=]]> 1
+        </if>
+    </select>
+
+    <select id="getNRItemsForSync" resultType="NRItem" flushCache="true">
+		SELECT MXBH, LYBD, LYBH FROM ENR_JL02 WHERE JLBH = #{JLBH} AND KSLH <![CDATA[<]]> 50
+	</select>
+
+    <update id="updateNRItemsForSyncDel" flushCache="true">
+        UPDATE ENR_JL02
+        SET XMQZ = ''
+        WHERE MXBH IN
+        <foreach collection="MXBHLIST" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="updateNRDataForSyncDel" flushCache="true">
+		UPDATE ENR_JL01
+		SET JLZT = 9
+		WHERE JLBH = #{JLBH}
+	</update>
+
+    <select id="getNRDatas" resultType="NRData" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT JLBH,
+            ZYH,
+            SXBQ
+            FROM ENR_JL01
+            WHERE ZYH = #{ZYH} AND JGBH = #{JGBH} AND JLZT != 9 AND JLSJ <![CDATA[<]]> #{JLSJ} ORDER BY JLSJ DESC
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT JLBH,
+            ZYH,
+            SXBQ
+            FROM ENR_JL01
+            WHERE ZYH = #{ZYH} AND JGBH = #{JGBH} AND JLZT != 9 AND JLSJ <![CDATA[<]]> to_date(#{JLSJ},'yyyy-mm-dd
+            hh24:mi:ss') ORDER BY JLSJ DESC
+        </if>
+
+    </select>
+
+    <select id="getExsitProjectsInRecord" flushCache="true" resultType="map" parameterType="map">
+        SELECT XMBH FROM ENR_JL01,ENR_JL02 WHERE ENR_JL01.JLBH = ENR_JL02.JLBH AND ENR_JL01.JLBH = #{JLBH} AND
+        ENR_JL02.XMBH IN
+        <foreach collection="XMS" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

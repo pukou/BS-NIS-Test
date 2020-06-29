@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.handover.HandOverMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getHandOverFormList" resultType="HandOverForm" flushCache="true">
+		SELECT YSXH, YSLX, YSMC, PLSX, QYBZ, JGID
+		FROM IENR_JJDYS
+		WHERE QYBZ = 1 AND JGID = #{JGID}
+		ORDER BY PLSX
+	</select>
+
+    <select id="getHandOverRecordList" resultType="HandOverRecord" flushCache="true">
+        SELECT JLXH, ZYH, ZYHM, BRXM, BRXB, BRCH, BRBQ, DQZD, YSXH, YSLX, JSBQ, TXSJ, TXGH, JLSJ, JLGH, JSSJ, DYCS,
+        JJNR, ZTBZ, ZFBZ, JGID
+        FROM IENR_JJDJL
+        WHERE ZFBZ = 0
+        <if test="ZTBZ != null and ZTBZ != ''">AND ZTBZ >= #{ZTBZ}</if>
+        <if test="YSXH != null and YSXH != ''">AND YSXH = #{YSXH}</if>
+        <if test="ZYH != null and ZYH != ''">AND ZYH = #{ZYH}</if>
+        AND BRBQ = #{BQID} AND JGID = #{JGID}
+        ORDER BY JLSJ
+    </select>
+
+    <select id="getHandOverRecordListBySSKS" resultType="HandOverRecord" flushCache="true">
+        SELECT JLXH, ZYH, ZYHM, BRXM, BRXB, BRCH, BRBQ, DQZD, YSXH, YSLX, JSBQ, TXSJ, TXGH, JLSJ, JLGH, JSSJ, DYCS,
+        JJNR, ZTBZ, ZFBZ, JGID
+        FROM IENR_JJDJL
+        WHERE ZFBZ = 0
+        <if test="ZTBZ != null and ZTBZ != ''">AND ZTBZ >= #{ZTBZ}</if>
+        <if test="YSXH != null and YSXH != ''">AND YSXH = #{YSXH}</if>
+        <if test="ZYH != null and ZYH != ''">AND ZYH = #{ZYH}</if>
+         AND ( BRBQ = #{SSKS} OR  JSBQ = #{SSKS} )
+         AND JGID = #{JGID}
+        ORDER BY JLSJ
+    </select>
+
+    <select id="getHandOverRecord" resultType="HandOverRecord" flushCache="true">
+        SELECT JLXH, ZYH, ZYHM, BRXM, BRXB, BRCH, BRBQ, DQZD, YSXH, YSLX, JSBQ, TXSJ, TXGH, JLSJ, JLGH, JSSJ, DYCS, JJNR, ZTBZ, ZFBZ, JGID
+        FROM IENR_JJDJL
+        WHERE ZFBZ = 0 AND JLXH = #{JLXH}
+        ORDER BY JLSJ
+    </select>
+
+    <select id="getHandOverRecordProjectList" resultType="HandOverProject" flushCache="true">
+        SELECT JLXM, JLXH, YSXM, YSFL, JJQH, XMHZ
+        FROM IENR_JJDJLXM
+        WHERE JLXH = #{JLXH}
+        ORDER BY JLXH
+    </select>
+
+    <select id="getHandOverRecordOptionList" resultType="HandOverOption" flushCache="true">
+        SELECT JLXX, JLXM, JLXH, YSXX, XXNR, DZLX, DZBDJL
+        FROM IENR_JJDJLXX
+        WHERE JLXH = #{JLXH}
+        ORDER BY JLXM
+    </select>
+
+    <select id="getHandOverForm" resultType="HandOverForm" flushCache="true">
+        SELECT YSXH, YSLX, YSMC, PLSX, QYBZ, JGID
+        FROM IENR_JJDYS
+        WHERE QYBZ = 1 AND YSXH = #{YSXH}
+        ORDER BY PLSX
+    </select>
+
+    <select id="getHandOverClassifyList" resultType="HandOverClassify" flushCache="true">
+        SELECT YSFL, YSXH, FLMC, FLJB, PLSX, XSBZ, ZFBZ
+        FROM IENR_JJDFL
+        WHERE ZFBZ = 0 AND YSXH = #{YSXH}
+        ORDER BY PLSX
+    </select>
+
+    <select id="getHandOverProjectList" resultType="HandOverProject" flushCache="true">
+        SELECT XMBS, YSFL, XMMC, YSXH, SYFW, QZWB, HZWB, XSCD, CZLX, XLLB, SJLX, DZLX, DZBD, DZBDMC, DZXM, DZXMMC, TSXM, HHBZ, ZFBZ, PLSX
+        FROM IENR_JJDXM
+        WHERE ZFBZ = 0 AND YSXH = #{YSXH}
+        ORDER BY PLSX
+    </select>
+
+    <select id="getHandOverOptionList" resultType="HandOverOption" flushCache="true">
+        SELECT XXBS, XMBS, YSXH, PLSX, XXMC, XSCD, HHBZ, XJFL, ZFBZ
+        FROM IENR_JJDXX
+        WHERE ZFBZ = 0 AND YSXH = #{YSXH}
+        ORDER BY PLSX
+    </select>
+
+    <insert id="addHandOverRecord" parameterType="HandOverRecord" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            INSERT INTO IENR_JJDJL(JLXH, ZYH, ZYHM, BRXM, BRXB, BRCH, BRBQ, DQZD, YSXH, YSLX, JSBQ, TXSJ, TXGH, JLSJ,
+            JLGH, DYCS, JJNR, ZTBZ, ZFBZ, JGID)
+            VALUES(#{JLXH}, #{ZYH}, #{ZYHM}, #{BRXM}, #{BRXB}, #{BRCH}, #{BRBQ}, #{DQZD}, #{YSXH}, #{YSLX}, #{JSBQ},
+            #{TXSJ}, #{TXGH}, #{JLSJ}, #{JLGH}, #{DYCS}, #{JJNR,jdbcType=LONGVARCHAR}, 0, 0, #{JGID})
+        </if>
+        <if test="dbtype == 'oracle'">
+            INSERT INTO IENR_JJDJL(JLXH, ZYH, ZYHM, BRXM, BRXB, BRCH, BRBQ, DQZD, YSXH, YSLX, JSBQ, TXSJ, TXGH, JLSJ,
+            JLGH, DYCS, JJNR, ZTBZ, ZFBZ, JGID)
+            VALUES(#{JLXH}, #{ZYH}, #{ZYHM}, #{BRXM}, #{BRXB}, #{BRCH}, #{BRBQ}, #{DQZD}, #{YSXH}, #{YSLX}, #{JSBQ},
+            to_date(#{TXSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{TXGH}, to_date(#{JLSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{JLGH},
+            #{DYCS}, #{JJNR,jdbcType=LONGVARCHAR}, 0, 0, #{JGID})
+        </if>
+    </insert>
+
+    <update id="editHandOverRecordForSender" parameterType="HandOverRecord" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_JJDJL
+            SET TXSJ = #{TXSJ}, JSBQ = #{JSBQ}, JJNR = #{JJNR,jdbcType=LONGVARCHAR}
+            WHERE JLXH = #{JLXH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_JJDJL
+            SET TXSJ = to_date(#{TXSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSBQ = #{JSBQ}, JJNR = #{JJNR,jdbcType=LONGVARCHAR}
+            WHERE JLXH = #{JLXH}
+        </if>
+    </update>
+
+    <update id="editHandOverRecordForReceiver" parameterType="HandOverRecord" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE IENR_JJDJL
+            SET JSSJ = #{JSSJ}, JSGH = #{JSGH}, JJNR = #{JJNR,jdbcType=LONGVARCHAR}, ZTBZ = 2
+            WHERE JLXH = #{JLXH}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE IENR_JJDJL
+            SET JSSJ = to_date(#{JSSJ}, 'yyyy-mm-dd hh24:mi:ss'), JSGH = #{JSGH}, JJNR = #{JJNR,jdbcType=LONGVARCHAR},
+            ZTBZ = 2
+            WHERE JLXH = #{JLXH}
+        </if>
+    </update>
+
+    <update id="sendHandOverRecord" parameterType="String" flushCache="true">
+        UPDATE IENR_JJDJL
+        SET ZTBZ = 1
+        WHERE JLXH = #{JLXH}
+    </update>
+
+    <update id="delHandOverRecord" parameterType="String" flushCache="true">
+        UPDATE IENR_JJDJL
+        SET ZFBZ = 1
+        WHERE JLXH = #{JLXH}
+    </update>
+
+    <insert id="addHandOverProject" parameterType="HandOverProject" flushCache="true">
+        INSERT INTO IENR_JJDJLXM(JLXM, JLXH, YSXM, YSFL, JJQH, XMHZ)
+        VALUES(#{JLXM}, #{JLXH}, #{YSXM}, #{YSFL}, #{JJQH}, #{XMHZ})
+    </insert>
+
+    <update id="editHandOverProject" parameterType="HandOverProject" flushCache="true">
+        UPDATE IENR_JJDJLXM set XMHZ = #{XMHZ} WHERE JLXM = #{JLXM}
+    </update>
+
+    <delete id="delHandOverProject" parameterType="String" flushCache="true">
+        DELETE FROM IENR_JJDJLXM WHERE JLXM = #{JLXM}
+    </delete>
+
+    <delete id="delHandOverProjectByJlxh" parameterType="String" flushCache="true">
+        DELETE FROM IENR_JJDJLXM WHERE JLXH = #{JLXH}
+    </delete>
+
+    <insert id="addHandOverOption" parameterType="HandOverOption" flushCache="true">
+        INSERT INTO IENR_JJDJLXX(JLXX, JLXM, JLXH, YSXX, XXNR, DZLX, DZBDJL)
+        VALUES(#{JLXX}, #{JLXM}, #{JLXH}, #{YSXX}, #{XXNR}, #{DZLX}, #{DZBDJL})
+    </insert>
+
+    <update id="editHandOverOption" parameterType="HandOverOption" flushCache="true">
+        UPDATE IENR_JJDJLXX SET XXNR = #{XXNR}, DZLX = #{DZLX}, DZBDJL = #{DZBDJL} WHERE JLXX = #{JLXX}
+    </update>
+
+    <delete id="delHandOverOption" parameterType="String" flushCache="true">
+        DELETE FROM IENR_JJDJLXX WHERE JLXX = #{JLXX}
+    </delete>
+
+    <delete id="delHandOverOptionByJlxm" parameterType="String" flushCache="true">
+        DELETE FROM IENR_JJDJLXX WHERE JLXM = #{JLXM}
+    </delete>
+
+    <delete id="delHandOverOptionByJlxh" parameterType="String" flushCache="true">
+        DELETE FROM IENR_JJDJLXX WHERE JLXH = #{JLXH}
+    </delete>
+
+    <select id="getLifeSignDataList" resultType="RelativeItem" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT XMH ID,TZNR VALUE, 5 DZLX, CJH DZBDJL
+            FROM V_MOB_HIS_SMTZ
+            WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND CJSJ &lt; #{TXSJ} AND ZFBZ = 0 AND JHBZ = 1
+            ORDER BY CJSJ DESC
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT XMH ID,TZNR VALUE, 5 DZLX, CJH DZBDJL
+            FROM V_MOB_HIS_SMTZ
+            WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND CJSJ &lt; to_date(#{TXSJ}, 'yyyy-mm-dd hh24:mi:ss') AND ZFBZ = 0
+            AND JHBZ=1
+            ORDER BY CJSJ DESC
+        </if>
+    </select>
+
+    <select id="getRiskDataList" resultType="RelativeItem" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT PGLX ID,PGZF VALUE, 2 DZLX, PGXH DZBDJL
+            FROM IENR_FXPGJL
+            WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND PGSJ &lt; #{TXSJ} AND ZTBZ &lt;> 0
+            ORDER BY PGSJ DESC
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT PGLX ID,PGZF VALUE, 2 DZLX, PGXH DZBDJL
+            FROM IENR_FXPGJL
+            WHERE ZYH = #{ZYH} AND JGID = #{JGID} AND PGSJ &lt; to_date(#{TXSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            AND ZTBZ &lt;> 0
+            ORDER BY PGSJ DESC
+        </if>
+    </select>
+
+    <select id="getDqzd" resultType="String" flushCache="true">
+            SELECT MQZD
+            FROM V_MOB_HIS_MQZD
+            WHERE ZYH = #{ZYH}
+    </select>
+
+
+</mapper>

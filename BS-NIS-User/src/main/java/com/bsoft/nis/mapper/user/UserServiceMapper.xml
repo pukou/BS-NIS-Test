@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.user.UserServiceMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <!--获取机构列表-->
+    <select id="getAgency" flushCache="true" resultType="Agency" statementType="STATEMENT">
+        SELECT YLGJ.JGID,
+        YLGJ.JGMC
+        FROM V_MOB_PORTAL_YLJG YLGJ
+        <if test="YGDM != null">
+            ,V_MOB_PORTAL_XTYH XTYH WHERE YLGJ.JGID = XTYH.JGID AND XTYH.YHDM = '${YGDM}'
+        </if>
+    </select>
+
+    <select id="getUserByYGBH" flushCache="true" resultType="LoginUser">
+		SELECT YHID FROM V_MOB_PORTAL_XTYH WHERE YHDM=#{YGBH} AND JGID=#{JGID}
+	</select>
+
+    <select id="getPDAInfo" flushCache="true" resultType="PDAInfo">
+        Select MANUER, MODEL, ACTION, DATA, ACTION2, DATA2 FROM IENR_PDAINFO WHERE MANUER =#{MANUER} AND MODEL =#{MODEL}
+    </select>
+
+    <insert id="addPDAInfo">
+        INSERT INTO IENR_PDAINFO(MANUER, MODEL) VALUES (#{MANUER}, #{MODEL})
+    </insert>
+
+    <select id="getUserByYGDM" flushCache="true" resultType="LoginUser">
+		SELECT YHID,YHDM,YHXM,JGID FROM V_MOB_PORTAL_XTYH WHERE YHID=#{YGDM} AND JGID=#{JGID}
+	</select>
+
+    <select id="getUserByYGBHAndPwd" flushCache="true" resultType="LoginUser">
+		SELECT YHID,YHDM,YHXM,JGID FROM V_MOB_PORTAL_XTYH WHERE YHDM=#{YGBH} AND JGID=#{JGID} AND YHMM=#{YHMM}
+	</select>
+
+    <select id="getUserByCard" flushCache="true" resultType="LoginUser">
+		SELECT YGDM YHID,JGID JGID FROM MOB_YHTM WHERE TMNR=#{TMNR} AND TMZT =0
+	</select>
+
+    <select id="GetTmzd" flushCache="true" resultType="Barcode">
+		SELECT TMFL,FLBS,TMQZ,TMGZ,GZNR,JGID FROM ENR_TMSD WHERE ZFBZ = 0
+	</select>
+</mapper>

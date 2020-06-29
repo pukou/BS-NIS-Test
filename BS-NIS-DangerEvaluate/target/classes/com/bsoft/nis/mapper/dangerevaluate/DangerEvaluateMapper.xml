@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.dangerevaluate.DangerEvaluateMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+	<!--获取风险质控Risk_QC-->
+    <select id="getDEQualityControl" resultType="DEQualityControlVo" flushCache="true">
+		SELECT PGDH, ZKMS, FZSX, FZXX, ZKZQ, ZQPC
+		FROM IENR_FXPGZK
+		WHERE QYBZ = 1 AND ZFBZ = 0
+		ORDER BY FZSX DESC
+    </select>
+
+	<!--获取风险评估列表Risk_Risk-->
+	<select id="getDEList" resultType="DEOverview" flushCache="true">
+		SELECT PGD.PGDH, PGD.PGDMC, PGD.PGLX
+		FROM IENR_FXPGD PGD, IENR_FXLXDZ LXDZ, IENR_FXFFDZ FFDZ
+		WHERE PGD.PGDH = FFDZ.PGDH AND FFDZ.LXDZXH = LXDZ.LXDZXH AND PGD.QYBZ = 1 AND
+			  PGD.ZFBZ = 0 AND PGD.JGID = #{JGID} AND LXDZ.BQDM = #{BQID} AND
+			  LXDZ.JGID = #{JGID} AND PGD.NLSX >= #{BRNL} AND PGD.NLXX <![CDATA[<=]]> #{BRNL}
+		ORDER BY LXDZ.PLSX, FFDZ.PLSX
+    </select>
+
+	<!--获取风险评估记录Risk_RiskRecord-->
+	<select id="getSimDERecordList" resultType="SimDERecord" flushCache="true">
+		<if test="dbtype=='sqlserver'">
+		SELECT PGXH, PGDH, PGSJ, PGZF, PGGH, PGLX,
+			   (SELECT TOP 1 TXRQ FROM IENR_FXZKTX WHERE IENR_FXZKTX.PGXH = IENR_FXPGJL.PGXH AND IENR_FXZKTX.TXZT = 0) TXRQ
+		FROM IENR_FXPGJL
+		WHERE PGDH = #{PGDH} AND ZYH = #{ZYH} AND ZTBZ = 1
+		ORDER BY PGSJ DESC
+		</if>
+		<if test="dbtype=='oracle'">
+			SELECT PGXH, PGDH, PGSJ, PGZF, PGGH, PGLX,
+			(SELECT TXRQ FROM (SELECT * FROM IENR_FXZKTX WHERE IENR_FXZKTX.TXZT = 0 ORDER BY CJSJ DESC) FXZKTX WHERE rownum = 1 and
+			FXZKTX.PGXH = IENR_FXPGJL.PGXH) TXRQ
+			FROM IENR_FXPGJL
+			WHERE PGDH = #{PGDH} AND ZYH = #{ZYH}  AND ZTBZ = 1
+			ORDER BY PGSJ DESC
+		</if>
+    </select>
+
+	<!--获取风险表单的质控规则Risk_FormQC-->
+	<select id="getSimQualityControl" resultType="DEQualityControlVo" flushCache="true">
+		SELECT ZKXH, ZKMS, FZSX, FZXX, CSBZ, FXCD, ZKZQ, ZQPC
+		FROM IENR_FXPGZK
+		WHERE QYBZ = 1 AND ZFBZ = 0 AND PGDH = #{PGDH}
+		ORDER BY FZSX ${order}
+    </select>
+
+	<!--获取风险评估单的评估因子Risk_Factor-->
+	<select id="getDEFactorList" resultType="DEFactor" flushCache="true">
+		SELECT FXYZ, PGDH, YZMS, DXBZ,BXBZ
+		FROM IENR_FXPGYZ
+		WHERE ZFBZ = 0 AND PGDH = #{PGDH}
+		ORDER BY PLSX ASC
+    </select>
+
+	<!--获取风险因子的因子评分Risk_FactorGoal-->
+	<select id="getDEFactorGoalList" resultType="FactorGoal" flushCache="true">
+		SELECT FZXH, FXYZ, SRBZ, PFFZ, FZMS, FZSX, FZXX, BZXX
+		FROM IENR_FXYZPF
+		WHERE FXYZ = #{FXYZ} AND ZFBZ=0 ORDER BY PLSX ASC
+    </select>
+
+	<select id="getFXPGDHList" resultType="DEPGHBean" flushCache="true">
+		SELECT PGDH,PGDMC
+		FROM IENR_FXPGD
+		WHERE PGLX = #{PGLX} AND
+		JGID = #{JGID} AND QYBZ=1 AND ZFBZ= 0
+	</select>
+
+
+	<!--获取第一条风险评估记录Risk_GetFirstRiskRecord  2017年4月27日08:57:11 remove  AND PGDH = #{PGDH}-->
+	<select id="getFirstDERecord" resultType="java.lang.String" flushCache="true">
+		SELECT PGXH
+		FROM IENR_FXPGJL
+		WHERE ZYH = #{ZYH} AND PGLX = #{PGLX} AND
+			  JGID = #{JGID} AND ZTBZ <![CDATA[<>]]> 0
+		ORDER BY PGSJ
+    </select>
+
+	<!--获取评估记录Risk_GetRiskRecord-->
+	<select id="getDERecordByPgxh" resultType="DERecord" flushCache="true">
+		SELECT JL.PGXH, JL.PGDH, JL.PGSJ, JL.PGZF, JL.PGGH, JL.HSZQM, PGD.PGLX
+		FROM IENR_FXPGJL JL, IENR_FXPGD PGD
+		WHERE JL.PGDH = PGD.PGDH AND PGXH = #{PGXH} AND PGD.ZFBZ = 0
+    </select>
+
+	<!--获取评估分值Risk_GetFactorGoal-->
+	<select id="getDEFactorGoalWithMXXH" resultType="FactorGoal" flushCache="true">
+		SELECT PF.FXYZ, PF.SRBZ, PF.PFFZ, PF.FZMS, PF.FZSX, PF.FZXX, PF.FZXH, BZXX,
+			   (SELECT MXXH FROM IENR_FXPGMX MX WHERE MX.FZXH = PF.FZXH AND MX.PGXH = #{PGXH}) MXXH
+		FROM IENR_FXYZPF PF
+		WHERE PF.FXYZ = #{FXYZ} AND PF.ZFBZ=0
+    </select>
+
+	<!--获取风险措施主记录Risk_MeasureRecord-->
+	<select id="getDEMeasureRecord" resultType="MeasureRecord" flushCache="true">
+		SELECT JLXH, BDXH, PGXH, CSSJ, CSGH, HSZQM, HSZQMSJ, CSPJ, BRBQ,
+			   CASE WHEN SFPJ IS NULL THEN 0 WHEN SFPJ IS NOT NULL THEN SFPJ END SFPJ
+		FROM IENR_FXCSJL FXCSJL
+		LEFT JOIN IENR_FXCSD FXCSD ON FXCSJL.BDXH = FXCSD.CSDH
+		WHERE PGXH = #{PGXH} AND FXCSJL.ZTBZ = 1 AND FXCSD.ZFBZ=0 ORDER BY CSSJ DESC
+    </select>
+	<!--JL2.CSSJ <![CDATA[ >= ]]> JL.CSSJ  最后一条-->
+	<!--JL2.CSSJ <![CDATA[ > ]]> JL.CSSJ  倒数第二条-->
+	<!-- AND JL.PGXH=#{PGXH} 不止只针对当前评估记录 -->
+	<select id="getPreOneCSJL" resultType="SimMeasureRecord" flushCache="true">
+		SELECT JLXH,PGXH FROM IENR_FXCSJL JL WHERE JL.ZYH=#{ZYH} AND JL.BDXH=#{CSDH} AND JL.ZTBZ = 1 AND
+		(SELECT COUNT(1) FROM IENR_FXCSJL JL2  WHERE JL2.ZTBZ = 1 AND JL2.BDXH=JL.BDXH AND JL2.ZYH=JL.ZYH AND JL2.CSSJ <![CDATA[ > ]]> JL.CSSJ) =1
+	</select>
+	<!--获取措施单号Risk_MeasureCode-->
+	<select id="getDEMeasureCode" resultType="DEMeasureFormVo" flushCache="true">
+		SELECT CSDH, FXFX
+		FROM IENR_FXCSD
+		WHERE PGDH = #{PGDH} AND QYBZ = 1 AND ZFBZ=0 AND JGID = #{JGID}
+    </select>
+
+	<!--获取风险措施项目记录Risk_MeasureItemRecord-->
+	<select id="getDEMeasureItemRecord" resultType="DEMeasureItemVo" flushCache="true">
+		SELECT XM.JLXM, XM.JLXH, CS.CSXH, 0 ZDYBZ, CS.XMNR, CS.ZMC, CS.FZSX, CS.FZXX, CS.PLSX
+		FROM IENR_FXPGCS CS
+		LEFT JOIN IENR_FXCSXM XM ON CS.CSXH = XM.CSXH AND XM.ZDYBZ = 0 AND XM.JLXH = #{JLXH}
+		WHERE CS.CSDH = #{CSDH} AND CS.ZFBZ=0
+		UNION ALL
+		SELECT JLXM, JLXH, CSXH, ZDYBZ, XMNR, '自定义措施' ZMC, 0 FZSX, 0 FZXX, 1000 PLSX
+		FROM IENR_FXCSXM
+		WHERE ZDYBZ = 1 AND JLXH = #{JLXH}
+		ORDER BY PLSX
+    </select>
+
+	<!--获取风险措施评价Risk_MeasureEvaluateList   PJLB 数据库里暂时没有-->
+	<select id="getDEEvaluateList" resultType="DEEvaluate" flushCache="true">
+		SELECT PJXH, PJMS, NULL AS PJLB
+		FROM IENR_FXCSPJ
+		WHERE CSDH = (SELECT MAX(CSDH) CSDH FROM IENR_FXCSD
+					  WHERE PGDH = #{PGDH} AND QYBZ = 1 AND JGID = #{JGID}) AND ZFBZ=0
+    </select>
+	<!--获取风险措施评价选项 下拉  PJLB 数据库里暂时没有-->
+	<select id="getCSPJList" resultType="DEEvaluate" flushCache="true">
+		SELECT PJXH, PJMS, NULL AS PJLB
+		FROM IENR_FXCSPJ
+		WHERE CSDH = #{CSDH}  AND ZFBZ=0
+	</select>
+	<!--获取风险措施单Risk_MeasureItems-->
+	<select id="getDEMeasureItems" resultType="DEMeasureItemVo" flushCache="true">
+		SELECT CSXH, ZMC, XMNR, FZSX, FZXX, XMZH
+		FROM IENR_FXPGCS
+		WHERE CSDH = (SELECT MAX(CSDH) CSDH FROM IENR_FXCSD
+					  WHERE PGDH = #{PGDH} AND QYBZ = 1 AND JGID = #{JGID}) AND ZFBZ=0
+		ORDER BY XMZH, PLSX
+    </select>
+
+	<!--新建风险评估Risk_AddRisk-->
+	<insert id="addDERecord" parameterType="DERecordVo" flushCache="true">
+		<if test="dbtype=='sqlserver'">
+			INSERT INTO IENR_FXPGJL
+			(PGXH, JGID, PGLX, ZYH, BRBQ, PGDH, PGSJ, PGGH, PGZF, FXCD, CJSJ, CJGH, ZTBZ, CDMS)
+			VALUES
+			(#{PGXH}, #{JGID}, #{PGLX}, #{ZYH}, #{BRBQ}, #{PGDH}, #{PGSJ},
+			 #{PGGH}, #{PGZF}, #{FXCD}, #{CJSJ}, #{PGGH}, 1, #{CDMS})
+		</if>
+		<if test="dbtype=='oracle'">
+			INSERT INTO IENR_FXPGJL
+			(PGXH, JGID, PGLX, ZYH, BRBQ, PGDH, PGSJ, PGGH, PGZF, FXCD, CJSJ, CJGH, ZTBZ, CDMS)
+			VALUES
+			(#{PGXH}, #{JGID}, #{PGLX}, #{ZYH}, #{BRBQ}, #{PGDH},
+			 to_date(substr(#{PGSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'), #{PGGH}, #{PGZF}, #{FXCD},
+			 to_date(substr(#{CJSJ},1,19), 'yyyy-mm-dd hh24:mi:ss'), #{PGGH}, 1, #{CDMS})
+		</if>
+    </insert>
+
+	<!--新建评分明细Risk_AddGoal-->
+	<insert id="addDERecordDetail" parameterType="DERecordDetailVo" flushCache="true">
+		INSERT INTO IENR_FXPGMX
+		(MXXH, FZYZ, FZXH, PFFZ, PGXH)
+		VALUES
+		(#{MXXH}, #{FZYZ}, #{FZXH}, #{PFFZ}, #{PGXH})
+    </insert>
+
+	<!--修改评估记录Risk_ModifyRisk-->
+	<update id="updateDERecord" parameterType="DERecordVo" flushCache="true">
+		<if test="dbtype=='sqlserver'">
+			UPDATE IENR_FXPGJL
+			SET PGSJ = #{PGSJ},
+				PGGH = #{PGGH},
+				PGZF = #{PGZF},
+				FXCD = #{FXCD},
+				CDMS = #{CDMS}
+			WHERE PGXH = #{PGXH}
+		</if>
+		<if test="dbtype=='oracle'">
+			UPDATE IENR_FXPGJL
+			SET PGSJ = to_date(#{PGSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+				PGGH = #{PGGH},
+				PGZF = #{PGZF},
+				FXCD = #{FXCD},
+				CDMS = #{CDMS}
+			WHERE PGXH = #{PGXH}
+		</if>
+    </update>
+
+	<!--删除因子评分Risk_DeleteFactorGoal-->
+	<delete id="deleteDERecordDetail" parameterType="DERecordDetailVo" flushCache="true">
+		DELETE FROM IENR_FXPGMX
+		WHERE MXXH = #{MXXH}
+    </delete>
+
+	<!--更新更新风险质控提醒记录Risk_UpdateRemind-->
+	<update id="finishDEQCRemind" flushCache="true">
+		UPDATE IENR_FXZKTX
+		SET TXZT = 1
+		WHERE PGLX = #{PGLX} AND ZYH = #{ZYH}
+    </update>
+
+	<!--插入风险评估记录Risk_InsertRemind-->
+	<insert id="addDEQCRemind" parameterType="DEQCRemindVo" flushCache="true">
+		<if test="dbtype=='sqlserver'">
+			INSERT INTO IENR_FXZKTX
+			(TXXH, ZKXH, ZYH, BRBQ, PGXH, TXNR, TXRQ, TXZT, CJSJ, PGZF, JGID, PGLX, FXCD)
+			VALUES
+			(#{TXXH}, #{ZKXH}, #{ZYH}, #{BRBQ}, #{PGXH}, #{TXNR},
+			 #{TXRQ}, 0, #{CJSJ}, #{PGZF}, #{JGID}, #{PGLX}, #{FXCD})
+		</if>
+		<if test="dbtype=='oracle'">
+			INSERT INTO IENR_FXZKTX
+			(TXXH, ZKXH, ZYH, BRBQ, PGXH, TXNR, TXRQ, TXZT, CJSJ, PGZF, JGID, PGLX, FXCD)
+			VALUES
+			(#{TXXH}, #{ZKXH}, #{ZYH}, #{BRBQ}, #{PGXH}, #{TXNR},
+			 to_date(#{TXRQ}, 'yyyy-mm-dd hh24:mi:ss'), 0,
+			 to_date(#{CJSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{PGZF}, #{JGID}, #{PGLX}, #{FXCD})
+		</if>
+    </insert>
+
+	<!--获取措施单列表Risk_Measure-->
+	<select id="getDEMeasureList" resultType="MeasureOverview" flushCache="true">
+		SELECT CSD.CSDH, CSD.PGDH, CSD.CSDMC, PGD.PGLX
+		FROM IENR_FXCSD CSD, IENR_FXPGD PGD
+		WHERE PGD.PGDH = CSD.PGDH AND PGD.PGDH = #{PGDH} AND PGD.JGID = #{JGID} AND
+			  PGD.QYBZ = 1 AND PGD.ZFBZ = 0 AND CSD.ZFBZ = 0
+    </select>
+
+	<!--获取措施简略措施记录Riks_SimMeasureRecord-->
+	<select id="getSimMeasureRecord" resultType="SimMeasureRecord" flushCache="true">
+		SELECT JLXH, BDXH, PGXH, CSSJ, CSGH, HSZQM,CSPJ,
+		 CASE WHEN SFPJ IS NULL THEN 0 WHEN SFPJ IS NOT NULL THEN SFPJ END SFPJ
+		FROM IENR_FXCSJL FXCSJL
+		LEFT JOIN IENR_FXCSD FXCSD ON FXCSJL.BDXH = FXCSD.CSDH
+		WHERE ZYH = #{ZYH} AND FXCSJL.JGID = #{JGID} AND BDXH = #{BDXH} AND
+			  FXCSJL.ZTBZ = 1 AND PGXH = #{PGXH} AND FXCSD.ZFBZ=0
+    </select>
+
+	<!--插入措施记录Risk_InsertMeasureRecord-->
+	<insert id="addMeasureRecord" parameterType="MeasureRecordVo" flushCache="true">
+		<if test="dbtype=='sqlserver'">
+			INSERT INTO IENR_FXCSJL
+			(JLXH, ZYH, BDXH, PGXH, CJSJ, CJGH, CSSJ, CSGH, JGID, ZTBZ, BRBQ,CSPJ)
+			VALUES
+			(#{JLXH}, #{ZYH}, #{BDXH}, #{PGXH}, #{CJSJ},
+			 #{CSGH}, #{CSSJ}, #{CSGH}, #{JGID}, 1, #{BRBQ}, #{CSPJ})
+		</if>
+		<if test="dbtype=='oracle'">
+			INSERT INTO IENR_FXCSJL
+			(JLXH, ZYH, BDXH, PGXH, CJSJ, CJGH, CSSJ, CSGH, JGID, ZTBZ, BRBQ,CSPJ)
+			VALUES
+			(#{JLXH}, #{ZYH}, #{BDXH}, #{PGXH}, to_date(#{CJSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+			 #{CSGH}, to_date(#{CSSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{CSGH}, #{JGID}, 1, #{BRBQ}, #{CSPJ})
+		</if>
+    </insert>
+
+	<!--插入措施项目Risk_InsertMeasure-->
+	<insert id="addMeasureItem" parameterType="MeasureItemVo" flushCache="true">
+		INSERT INTO IENR_FXCSXM
+		(JLXM, JLXH, CSXH, ZDYBZ, XMNR)
+		VALUES
+		(#{JLXM}, #{JLXH}, #{CSXH}, #{ZDYBZ}, #{XMNR})
+    </insert>
+
+	<!--更新措施记录Risk_UpdateMeasureRecord-->
+	<update id="updateMeasureRecord" parameterType="MeasureRecordVo" flushCache="true">
+		<if test="dbtype=='sqlserver'">
+			UPDATE IENR_FXCSJL
+			SET CSSJ = #{CSSJ},
+				CSGH = #{CSGH},CSPJ = #{CSPJ},HSZQM=#{HSZQM}, HSZQMSJ=#{HSZQMSJ}
+			WHERE JLXH = #{JLXH}
+		</if>
+		<if test="dbtype=='oracle'">
+			UPDATE IENR_FXCSJL
+			SET CSSJ = to_date(#{CSSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+				CSGH = #{CSGH},CSPJ = #{CSPJ},HSZQM = #{HSZQM},HSZQMSJ = to_date(#{HSZQMSJ}, 'yyyy-mm-dd hh24:mi:ss')
+			WHERE JLXH = #{JLXH}
+		</if>
+    </update>
+
+	<!--删除措施项目Risk_deleteMeasure-->
+	<delete id="deleteMeasureItem" flushCache="true">
+		DELETE FROM IENR_FXCSXM
+		WHERE JLXM = #{JLXM}
+    </delete>
+
+	<!--删除评估记录Risk_DeleteRiskRecode-->
+	<update id="deleteDERecord" flushCache="true">
+		UPDATE IENR_FXPGJL
+		SET ZTBZ = 0
+		WHERE PGXH = #{PGXH}
+    </update>
+
+	<!--Risk_CancleRemind-->
+	<update id="cancleDEQCRemind" flushCache="true">
+		UPDATE IENR_FXZKTX
+		SET TXZT = 2
+		WHERE PGXH = #{PGXH}
+    </update>
+
+	<!--Risk_UpdateRemind_2-->
+	<update id="returnDEQCRemind" flushCache="true">
+		UPDATE IENR_FXZKTX
+		SET TXZT = 0
+		WHERE PGXH = #{PGXH}
+    </update>
+
+	<!--Risk_UpdateRemind_ZYH-->
+	<select id="getZYHOfDEQCRemind" resultType="DEQCRemindVo" flushCache="true">
+		SELECT DISTINCT ZYH, PGLX
+		FROM IENR_FXZKTX
+		WHERE PGXH = #{PGXH}
+    </select>
+
+	<!--Risk_UpdateRemind_MAX-->
+	<select id="getMAXOfDEQCRemind" resultType="java.lang.String" flushCache="true">
+		SELECT MAX(PGXH)
+		FROM IENR_FXZKTX
+		WHERE ZYH = #{ZYH} AND PGLX = #{PGLX} AND TXZT <![CDATA[<>]]> 2
+    </select>
+
+	<!--删除风险措施Risk_deleteMeasureRecord-->
+	<update id="deleteDEMeasure" flushCache="true">
+		UPDATE IENR_FXCSJL
+		SET ZTBZ = 0
+		WHERE JLXH = #{JLXH}
+    </update>
+
+	<!--护士长审核风险评估Risk_CheckRisk-->
+	<update id="checkDERecord" flushCache="true">
+		<if test="dbtype=='sqlserver'">
+			UPDATE IENR_FXPGJL
+			SET HSZQM = #{HSZQM},
+				HSZQMSJ = #{HSZQMSJ}
+			WHERE PGXH = #{PGXH}
+		</if>
+		<if test="dbtype=='oracle'">
+			UPDATE IENR_FXPGJL
+			SET HSZQM = #{HSZQM},
+				HSZQMSJ = to_date(#{HSZQMSJ}, 'yyyy-mm-dd hh24:mi:ss')
+			WHERE PGXH = #{PGXH}
+		</if>
+    </update>
+
+	<!--措施评价Risk_MeasureEvalute-->
+	<update id="evaluateMeasure" flushCache="true">
+		<if test="dbtype=='sqlserver'">
+			UPDATE IENR_FXCSJL
+			SET HSZQM = #{HSZQM},
+				HSZQMSJ = #{HSZQMSJ},
+				CSPJ = #{CSPJ}
+			WHERE JLXH = #{JLXH}
+		</if>
+		<if test="dbtype=='oracle'">
+			UPDATE IENR_FXCSJL
+			SET HSZQM = #{HSZQM},
+				HSZQMSJ = to_date(#{HSZQMSJ}, 'yyyy-mm-dd hh24:mi:ss'),
+				CSPJ = #{CSPJ}
+			WHERE JLXH = #{JLXH}
+		</if>
+    </update>
+
+	<!--获取疼痛评估项目-->
+	<select id="getPainEvaluate" resultType="PainEvaluate" flushCache="true">
+		SELECT XMXH, XMMC, XMLX
+		FROM IENR_TTPGXM
+		WHERE JGID = #{JGID} AND ZFBZ = 0
+		ORDER BY PLSX
+	</select>
+
+	<!--获取疼痛评估选项-->
+	<select id="getPEOption" resultType="PEOption" flushCache="true">
+		SELECT XX.XXXH, XX.XMXH, XX.XXMC, XX.XGBZ,
+			   (SELECT JLXM FROM IENR_TTXMJL JL WHERE JL.XXXH = XX.XXXH AND JL.PGXH = #{PGXH}) JLXM,
+			   (SELECT XMQZ FROM IENR_TTXMJL JL WHERE JL.XXXH = XX.XXXH AND JL.PGXH = #{PGXH}) XMQZ
+		FROM IENR_TTPGXX XX
+		WHERE XX.ZFBZ = 0 AND XX.XMXH = #{XMXH}
+		ORDER BY XX.PLSX
+	</select>
+
+	<!--获取XMLX=1(手工输入)的疼痛评估项目的记录内容-->
+	<select id="getPEOptionOfNoXXXH" resultType="PEOption" flushCache="true">
+		SELECT NULL XXXH, XM.XMXH, '' XXMC, 1 XGBZ,
+			   (SELECT JLXM FROM IENR_TTXMJL JL WHERE JL.XMXH = XM.XMXH AND JL.PGXH = #{PGXH}) JLXM,
+			   (SELECT XMQZ FROM IENR_TTXMJL JL WHERE JL.XMXH = XM.XMXH AND JL.PGXH = #{PGXH}) XMQZ
+		FROM IENR_TTPGXM XM
+		WHERE XM.ZFBZ = 0 AND XM.XMLX = 1 AND XM.XMXH = #{XMXH}
+	</select>
+
+	<!--获取疼痛项目记录-->
+	<select id="getPERecord" resultType="PERecordVo" flushCache="true">
+
+	</select>
+
+	<!--新增疼痛项目记录-->
+	<insert id="addPERecord" parameterType="PERecordVo" flushCache="true">
+		INSERT INTO IENR_TTXMJL
+		(JLXM, JGID, ZYH, PGXH, XMXH, XXXH, XMQZ)
+		VALUES
+		(#{JLXM}, #{JGID}, #{ZYH}, #{PGXH}, #{XMXH}, #{XXXH}, #{XMQZ})
+	</insert>
+
+	<!--删除疼痛项目记录-->
+	<delete id="deletePERecord" flushCache="true">
+		DELETE IENR_TTXMJL
+		WHERE JLXM = #{JLXM}
+	</delete>
+
+	<!--修改疼痛评估记录-->
+	<update id="updatePERecord" parameterType="PERecordVo" flushCache="true">
+		UPDATE IENR_TTXMJL
+		SET XXXH = #{XXXH},
+			XMQZ = #{XMQZ}
+		WHERE JLXM = #{JLXM}
+	</update>
+</mapper>

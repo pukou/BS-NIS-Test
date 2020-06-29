@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.advicecheck.AdviceCheckMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="getDosingCheckList" resultType="AdviceForm" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT GSLX,SYDH,ZYH,BRCH,TMBH,SYSJ,BYHDBZ,BYHDGH,BYHDSJ,JYHDBZ,JYHDGH,JYHDSJ
+            FROM V_MOB_HDXX
+            WHERE BRBQ = #{BRBQ} AND SYRQ = #{SYRQ}
+            <if test="JYHDBZ !=  null">
+                AND JYHDBZ = #{JYHDBZ}
+            </if>
+            <if test="BYHDBZ !=  null">
+                AND BYHDBZ = #{BYHDBZ}
+            </if>
+            <if test='GSLX != "-1"'>
+                AND GSLX = #{GSLX}
+            </if>
+            ORDER BY BRCH,SYSJ
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT GSLX,SYDH,ZYH,BRCH,TMBH,SYSJ,BYHDBZ,BYHDGH,BYHDSJ,JYHDBZ,JYHDGH,JYHDSJ
+            FROM V_MOB_HDXX
+            WHERE BRBQ = #{BRBQ} AND SYRQ = to_date(#{SYRQ}, 'yyyy-mm-dd hh24:mi:ss')
+            <if test="JYHDBZ !=  null">
+                AND JYHDBZ = #{JYHDBZ}
+            </if>
+            <if test="BYHDBZ !=  null">
+                AND BYHDBZ = #{BYHDBZ}
+            </if>
+            <if test='GSLX != "-1"'>
+                AND GSLX = #{GSLX}
+            </if>
+            ORDER BY BRCH,SYSJ
+        </if>
+    </select>
+
+    <select id="getPatientsByBQ" resultType="AdviceForm" flushCache="true">
+        SELECT ZYH,ZYHM,BRXM,CSNY,BRXB
+        FROM V_MOB_HIS_BRRY
+        WHERE CYPB = 0  AND
+               BRBQ = #{BRBQ} AND
+               JGID = #{JGID}
+        ORDER BY BRCH
+    </select>
+
+    <select id="create" resultType="CheckForm" flushCache="true">
+        SELECT T2.GSLX,T2.SYDH,T2.BYHDBZ,T2.BYHDGH,T2.JYHDBZ,T2.JYHDGH,T1.YZXH,T1.YZZX,T1.JLDW,T1.YCJL,T1.SLDW
+        FROM V_MOB_HDMX T1, V_MOB_HDXX T2
+        WHERE T1.SYDH = T2.SYDH AND
+               T2.TMBH = #{TMBH} AND
+               T2.GSLX = #{GSLX}
+    </select>
+
+    <select id="getAdviceName" resultType="AdviceFormDetail" flushCache="true">
+        SELECT JLXH YZXH,YZMC,YPYF,SYPC
+        FROM V_MOB_HIS_BQYZ
+        WHERE JLXH IN
+        <foreach collection="JLXH" item="item" index="index"
+                 open="(" separator="," close=")">#{item}
+        </foreach>
+    </select>
+
+    <update id="updateCheckForm1" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_SYD
+            SET BYHDBZ = 1 , BYHDGH = #{HDGH} , BYHDSJ = #{HDSJ}
+            WHERE SYDH = #{SYDH} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_SYD
+            SET BYHDBZ = 1 , BYHDGH = #{HDGH} , BYHDSJ = to_date(#{HDSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE SYDH = #{SYDH} AND JGID = #{JGID}
+        </if>
+    </update>
+
+    <update id="updateCheckForm2" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_ZSD
+            SET BYHDBZ = 1 , BYHDGH = #{HDGH} , BYHDSJ = #{HDSJ}
+            WHERE ZSDH = #{SYDH} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_ZSD
+            SET BYHDBZ = 1 , BYHDGH = #{HDGH} , BYHDSJ = to_date(#{HDSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE ZSDH = #{SYDH} AND JGID = #{JGID}
+        </if>
+    </update>
+
+    <update id="updateCheckForm3" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_SYD
+            SET JYHDBZ = 1 , JYHDGH = #{HDGH} , JYHDSJ = #{HDSJ}
+            WHERE SYDH = #{SYDH} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_SYD
+            SET JYHDBZ = 1 , JYHDGH = #{HDGH} , JYHDSJ = to_date(#{HDSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE SYDH = #{SYDH} AND JGID = #{JGID}
+        </if>
+    </update>
+
+    <update id="updateCheckForm4" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            UPDATE ENR_ZSD
+            SET JYHDBZ = 1 , JYHDGH = #{HDGH} , JYHDSJ = #{HDSJ}
+            WHERE ZSDH = #{SYDH} AND JGID = #{JGID}
+        </if>
+        <if test="dbtype == 'oracle'">
+            UPDATE ENR_ZSD
+            SET JYHDBZ = 1 , JYHDGH = #{HDGH} , JYHDSJ = to_date(#{HDSJ}, 'yyyy-mm-dd hh24:mi:ss')
+            WHERE ZSDH = #{SYDH} AND JGID = #{JGID}
+        </if>
+    </update>
+
+    <select id="getCheckDetail" resultType="AdviceFormDetail" flushCache="true">
+        SELECT SYDH,YZXH,YZZX,YCJL,JLDW,YCSL,SLDW
+        FROM V_MOB_HDMX
+        WHERE SYDH = #{SYDH} AND
+        GSLX = #{GSLX}
+        ORDER BY YZZX
+    </select>
+
+    <select id="createBySydh" resultType="CheckForm" flushCache="true">
+        SELECT GSLX,SYDH,BYHDBZ,BYHDGH,JYHDBZ,JYHDGH
+        FROM V_MOB_HDXX
+        WHERE SYDH = #{SYDH} AND
+               GSLX = #{GSLX}
+    </select>
+
+
+</mapper>

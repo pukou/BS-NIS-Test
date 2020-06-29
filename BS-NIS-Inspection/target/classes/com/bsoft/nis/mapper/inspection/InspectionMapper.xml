@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.mapper.inspection.InspectionMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <select id="GetInspectionList" resultType="InspectionVo" flushCache="true">
+     SELECT DISTINCT T.YBHM,T.SHSJ,T.XMMC,
+     CASE WHEN (SELECT COUNT(1) FROM V_MOB_LIS_REPORT T2 WHERE T2.YBHM=T.YBHM AND T2.JGID=#{JGID} AND T2.YCBZ=1)>0 THEN 1 ELSE 0 END YCBZ
+     FROM V_MOB_LIS_REQUEST T
+     WHERE T.ZYHM = #{BRID} AND JGID= #{JGID} AND T.JGZT >= 4
+     ORDER BY T.SHSJ DESC
+    </select>
+
+
+    <select id="GetInspectionDetail" resultType="InspectionDetailVo" flushCache="true">
+       SELECT T.YCBZ,T.XMID,T.HYJG,T.DW,T.ZWMC,T.YBHM,T.CKXX,T.CKSX,T.JGTS
+       FROM V_MOB_LIS_REQUEST T1 ,V_MOB_LIS_REPORT T
+       WHERE T1.YBHM = T.YBHM AND T.JGID=T1.JGID AND T.JGID=#{JGID} AND T.YBHM =#{YBHM}
+    </select>
+    <!--
+    升级编号【56010025】============================================= start
+    检验检查：检验List项目数据趋势图，项目分类查看
+    ================= Classichu 2017/10/18 9:34
+    -->
+    <select id="GetInspectionXMBeanList" resultType="InspectionXMBean" flushCache="true">
+        SELECT rep.HYJG ,rep.DW ,req.SHSJ FROM V_MOB_LIS_REQUEST req, V_MOB_LIS_REPORT  rep
+        WHERE req.YBHM = rep.YBHM AND req.ZYHM =#{BRID} AND  XMID=#{XMID} ORDER BY req.SHSJ DESC
+    </select>
+    <!--    =============================================================== end -->
+    <select id="GetRisList" resultType="ExamineVo" flushCache="true">
+        SELECT DISTINCT DJBS YBHM,ZYH AS BRID,'' AS MZHM,ZYH,ZYH AS ZYHM,JCLX,JCLXMC JCMC,BWMS,DJGH,DJSJ,JCYS,JCSJ,BGYS,BGYS BGYSXM,BGSJ,SHYS,SHSJ,JCYSXM
+        FROM V_MOB_PACS_REPORT
+        WHERE ZYH = #{BRID} AND SHBZ = 1  AND JGID = #{JGID}
+        ORDER BY BGSJ DESC
+    </select>
+
+    <select id="GetRisDetail" resultType="ExamineDetailVo" flushCache="true">
+        SELECT DISTINCT DJBS,ZYH AS BRID,'' AS MZHM,ZYH, ZYH ZYHM,JCLX,JCLXMC, BWMS,DJGH,DJSJ,JCYS,JCSJ,BGYS,BGSJ,SHYS,SHSJ,JCBX,JCZD,'' JCJY,'' JCFF,'' BRZD
+        FROM V_MOB_PACS_REPORT
+        WHERE DJBS = #{DJBS} AND JGID = #{JGID}
+    </select>
+
+    <parameterMap id="GetDocNoBySpMap" type="java.util.Map">
+        <parameter property="VV_INDOCNO" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="VV_OUTDOCNO" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="VN_RET" jdbcType="INTEGER" mode="OUT"/>
+    </parameterMap>
+    <select id="GetDocNoBySp" parameterMap="GetDocNoBySpMap" statementType="CALLABLE" useCache="false"
+            flushCache="true">
+        {call SP_MOB_LIS_GETJYTM(?,?,?)}
+    </select>
+
+    <parameterMap id="ExecuteMap" type="java.util.Map">
+        <parameter property="VV_DOCNO" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="VV_CYR" jdbcType="VARCHAR" mode="IN"/>
+        <!--<parameter property="VD_CYRQ" jdbcType="DATE" mode="IN"/>-->
+        <parameter property="VD_CYRQ" jdbcType="TIMESTAMP" mode="IN"/>
+        <parameter property="VN_JGID" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="VN_TYPE" jdbcType="INTEGER" mode="IN"/>
+        <!-- 设备名称 -->
+        <parameter property="VV_SBMC" jdbcType="VARCHAR" mode="IN"/>
+
+        <parameter property="VN_RET" jdbcType="INTEGER" mode="OUT"/>
+        <parameter property="VV_RETMSG" jdbcType="VARCHAR" mode="OUT"/>
+    </parameterMap>
+    <select id="CaptureExecute" parameterMap="ExecuteMap" statementType="CALLABLE" useCache="false" flushCache="true">
+      {call SP_MOB_LIS_UPDATEJYTMXX(?,?,?,?,?,?,?,?)}
+    </select>
+
+    <select id="GetSQBH" resultType="java.util.HashMap" flushCache="true">
+        SELECT SQDH FROM V_MOB_LIS_JYTMMX WHERE TMBH = #{TMBH} AND JGID = #{JGID}
+    </select>
+
+    <update id="UpdateYZB">
+        UPDATE EMR_YZB SET HSZXSJ = #{HSZXSJ},HSZXGH = #{ZXHSGH}
+        WHERE YDYZLB = 202 AND SQDH = #{SQDH} AND ZYH = #{ZYH} AND JGID = #{JGID}
+    </update>
+
+    <select id="GetYZXH" resultType="java.lang.Long" flushCache="true">
+        SELECT DISTINCT YZXH FROM L_JYTMXX_MX WHERE DOCTADVISENO = #{TMBH} And JGID =#{JGID}
+    </select>
+
+    <update id="UpdateYZB2">
+        UPDATE EMR_YZB SET HSZXSJ = #{HSZXSJ},HSZXGH = #{ZXHSGH}
+        WHERE YZBXH In
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="DoubleCheck" resultType="java.util.HashMap" flushCache="true">
+        SELECT SRHDBZ FROM V_MOB_LIS_SRHD WHERE TMBH = #{TMBH} AND JGID = #{JGID}
+    </select>
+
+    <select id="GetCYInfoByTMBH" resultType="CYInfoBean" flushCache="true">
+        SELECT CYBZ,CYRQ,CYR FROM V_MOB_LIS_JYTMMX WHERE TMBH = #{TMBH} AND ZYHM = #{BRID}
+    </select>
+
+    <select id="GetCaptureDataList" resultType="SpecimenVo" flushCache="true">
+        <!--检验库 标准版 基本只有 oracle  ,T4.BBFL-->
+        <if test="dbtype == 'oracle'">
+            SELECT T1.TMBH,T1.XMMC,T1.KDSJ,T1.CYBZ,T1.CYRQ,T1.SGYS,T1.BZXX,T1.ZYHM
+            FROM V_MOB_LIS_JYTMMX T1
+            WHERE T1.JZLB=2
+            AND T1.ZYHM IN
+            <foreach collection="zyhmList" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            AND (T1.CYBZ=0 OR T1.CYBZ IS NULL) AND T1.YBZT =1
+            AND T1.JGID = #{JGID}
+            <if test="RYRQ !=  null">
+                AND T1.KDSJ >= to_date(#{RYRQ},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            ORDER BY T1.KDSJ DESC
+        </if>
+        <if test="dbtype == 'sqlserver'">
+            SELECT T1.TMBH,T1.XMMC,T1.KDSJ,T1.CYBZ,T1.CYRQ,T1.SGYS,T1.BZXX,T1.ZYHM
+            FROM V_MOB_LIS_JYTMMX T1
+            WHERE T1.JZLB=2
+            AND T1.ZYHM IN
+            <foreach collection="zyhmList" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            AND (T1.CYBZ=0 OR T1.CYBZ IS NULL) AND T1.YBZT =1
+            AND T1.JGID = #{JGID}
+            <if test="RYRQ !=  null">
+                AND T1.KDSJ >= #{RYRQ}
+            </if>
+            ORDER BY T1.KDSJ DESC
+        </if>
+    </select>
+
+
+    <select id="GetHistoryCaptureDataList" resultType="SpecimenVo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT T1.TMBH,T1.XMMC,T1.KDSJ,T1.CYBZ,T1.CYRQ,T1.CYR,T1.SGYS,T1.BZXX,T1.ZYHM
+            FROM V_MOB_LIS_JYTMMX T1
+            WHERE T1.JZLB=2
+            AND T1.ZYHM IN
+            <foreach collection="zyhmList" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            <if test="KSSJ != null">
+                AND T1.CYRQ>=#{KSSJ}
+            </if>
+            <if test="JSSJ != null">
+                AND T1.CYRQ&lt;#{JSSJ}
+            </if>
+
+            AND T1.CYBZ=1 AND T1.JGID=#{JGID} ORDER BY T1.CYRQ DESC
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT T1.TMBH,T1.XMMC,T1.KDSJ,T1.CYBZ,T1.CYRQ,T1.CYR,T1.SGYS,T1.BZXX,T1.ZYHM
+            FROM V_MOB_LIS_JYTMMX T1
+            WHERE T1.JZLB=2
+            AND T1.ZYHM IN
+            <foreach collection="zyhmList" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            <if test="KSSJ !=  null">
+                AND T1.CYRQ >= to_date(#{KSSJ},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            <if test="JSSJ !=  null">
+                AND T1.CYRQ&lt;to_date(#{JSSJ},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            AND T1.CYBZ=1 AND T1.JGID=#{JGID} ORDER BY T1.CYRQ DESC
+        </if>
+    </select>
+
+    <select id="GetCaptureData" resultType="SpecimenVo" flushCache="true">
+        <!--检验库 标准版 基本只有 oracle  ,T4.BBFL-->
+        <if test="dbtype == 'oracle'">
+            SELECT T1.TMBH,T1.XMMC,T1.KDSJ,T1.CYBZ,T1.CYRQ,T1.SGYS,T1.BZXX,T1.ZYHM
+            FROM V_MOB_LIS_JYTMMX T1
+            WHERE T1.JZLB=2
+            <if test="BRID !=  null">
+                AND T1.ZYHM = #{BRID}
+            </if>
+            AND (T1.CYBZ=0 OR T1.CYBZ IS NULL) AND T1.YBZT =1
+            AND T1.JGID = #{JGID}
+            <if test="RYRQ !=  null">
+                AND T1.KDSJ >= to_date(#{RYRQ},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            ORDER BY T1.KDSJ DESC
+        </if>
+        <if test="dbtype == 'sqlserver'">
+            SELECT T1.TMBH,T1.XMMC,T1.KDSJ,T1.CYBZ,T1.CYRQ,T1.SGYS,T1.BZXX,T1.ZYHM
+            FROM V_MOB_LIS_JYTMMX T1
+            WHERE T1.JZLB=2
+            <if test="BRID !=  null">
+                AND T1.ZYHM = #{BRID}
+            </if>
+            AND (T1.CYBZ=0 OR T1.CYBZ IS NULL) AND T1.YBZT =1
+            AND T1.JGID = #{JGID}
+            <if test="RYRQ !=  null">
+                AND T1.KDSJ >=#{RYRQ}
+            </if>
+            ORDER BY T1.KDSJ DESC
+        </if>
+    </select>
+
+
+    <select id="GetHistoryCaptureData" resultType="SpecimenVo" flushCache="true">
+        <if test="dbtype == 'sqlserver'">
+            SELECT T1.TMBH,T1.XMMC,T1.KDSJ,T1.CYBZ,T1.CYRQ,T1.CYR,T1.SGYS,T1.BZXX,T1.ZYHM
+            FROM V_MOB_LIS_JYTMMX T1
+            WHERE T1.JZLB=2
+            <if test="BRID !=  null">
+                AND T1.ZYHM = #{BRID}
+            </if>
+            <if test="KSSJ !=  null">
+                AND T1.CYRQ>=#{KSSJ}
+            </if>
+            <if test="JSSJ !=  null">
+                AND T1.CYRQ&lt;#{JSSJ}
+            </if>
+
+            AND T1.CYBZ=1 AND T1.JGID=#{JGID} ORDER BY T1.CYRQ DESC
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT T1.TMBH,T1.XMMC,T1.KDSJ,T1.CYBZ,T1.CYRQ,T1.CYR,T1.SGYS,T1.BZXX,T1.ZYHM
+            FROM V_MOB_LIS_JYTMMX T1
+            WHERE T1.JZLB=2
+            <if test="BRID !=  null">
+                AND T1.ZYHM = #{BRID}
+            </if>
+            <if test="KSSJ !=  null">
+                AND T1.CYRQ >= to_date(#{KSSJ},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            <if test="JSSJ !=  null">
+                AND T1.CYRQ&lt;to_date(#{JSSJ},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            AND T1.CYBZ=1 AND T1.JGID=#{JGID} ORDER BY T1.CYRQ DESC
+        </if>
+    </select>
+
+    <select id="getJYTM" flushCache="true" resultType="SpecimenJYTM">
+        SELECT TMBH,ZYHM,CYBZ FROM V_MOB_LIS_JYTMMX WHERE TMBH = #{TMBH} AND JZLB=2
+    </select>
+</mapper>

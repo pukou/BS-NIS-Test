@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bsoft.nis.mapper.evaluation.v56_update1.EvalutionRecordDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.bsoft.nis.domain.evaluation.evalnew.EvalutionRecordDetail" >
+    <id column="MXXH" property="MXXH" jdbcType="NUMERIC" />
+    <result column="JLXH" property="JLXH" jdbcType="NUMERIC" />
+    <result column="XMXH" property="XMXH" jdbcType="NUMERIC" />
+    <result column="SJXM" property="SJXM" jdbcType="NUMERIC" />
+    <result column="SJXMMC" property="SJXMMC" jdbcType="VARCHAR" />
+    <result column="XMNR" property="XMNR" jdbcType="VARCHAR" />
+    <result column="DZLX" property="DZLX" jdbcType="NUMERIC" />
+    <result column="DZBDJL" property="DZBDJL" jdbcType="NUMERIC" />
+    <result column="KJLX" property="KJLX" jdbcType="NUMERIC" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    MXXH, JLXH, XMXH, SJXM, SJXMMC, XMNR, DZLX, DZBDJL,KJLX
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from IENR_PGJLMX
+    where MXXH = #{MXXH,jdbcType=NUMERIC}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from IENR_PGJLMX
+    where MXXH = #{MXXH,jdbcType=NUMERIC}
+  </delete>
+  <insert id="insert" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionRecordDetail" >
+    insert into IENR_PGJLMX (MXXH, JLXH, XMXH, 
+      SJXM, SJXMMC, XMNR, 
+      DZLX, DZBDJL,KJLX)
+    values (#{MXXH,jdbcType=NUMERIC}, #{JLXH,jdbcType=NUMERIC}, #{XMXH,jdbcType=NUMERIC}, 
+      #{SJXM,jdbcType=NUMERIC}, #{SJXMMC,jdbcType=VARCHAR}, #{XMNR,jdbcType=VARCHAR}, 
+      #{DZLX,jdbcType=NUMERIC}, #{DZBDJL,jdbcType=NUMERIC},#{KJLX,jdbcType=NUMERIC})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionRecordDetail" >
+    insert into IENR_PGJLMX
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="MXXH != null" >
+        MXXH,
+      </if>
+      <if test="JLXH != null" >
+        JLXH,
+      </if>
+      <if test="XMXH != null" >
+        XMXH,
+      </if>
+      <if test="SJXM != null" >
+        SJXM,
+      </if>
+      <if test="SJXMMC != null" >
+        SJXMMC,
+      </if>
+      <if test="XMNR != null" >
+        XMNR,
+      </if>
+      <if test="DZLX != null" >
+        DZLX,
+      </if>
+      <if test="DZBDJL != null" >
+        DZBDJL,
+      </if>
+      <if test="KJLX != null">
+        KJLX,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="MXXH != null" >
+        #{MXXH,jdbcType=NUMERIC},
+      </if>
+      <if test="JLXH != null" >
+        #{JLXH,jdbcType=NUMERIC},
+      </if>
+      <if test="XMXH != null" >
+        #{XMXH,jdbcType=NUMERIC},
+      </if>
+      <if test="SJXM != null" >
+        #{SJXM,jdbcType=NUMERIC},
+      </if>
+      <if test="SJXMMC != null" >
+        #{SJXMMC,jdbcType=VARCHAR},
+      </if>
+      <if test="XMNR != null" >
+        #{XMNR,jdbcType=VARCHAR},
+      </if>
+      <if test="DZLX != null" >
+        #{DZLX,jdbcType=NUMERIC},
+      </if>
+      <if test="DZBDJL != null" >
+        #{DZBDJL,jdbcType=NUMERIC},
+      </if>
+      <if test="KJLX != null" >
+        #{KJLX,jdbcType=NUMERIC},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionRecordDetail" >
+    update IENR_PGJLMX
+    <set >
+      <if test="JLXH != null" >
+        JLXH = #{JLXH,jdbcType=NUMERIC},
+      </if>
+      <if test="XMXH != null" >
+        XMXH = #{XMXH,jdbcType=NUMERIC},
+      </if>
+      <if test="SJXM != null" >
+        SJXM = #{SJXM,jdbcType=NUMERIC},
+      </if>
+      <if test="SJXMMC != null" >
+        SJXMMC = #{SJXMMC,jdbcType=VARCHAR},
+      </if>
+      <if test="XMNR != null" >
+        XMNR = #{XMNR,jdbcType=VARCHAR},
+      </if>
+      <if test="DZLX != null" >
+        DZLX = #{DZLX,jdbcType=NUMERIC},
+      </if>
+      <if test="DZBDJL != null" >
+        DZBDJL = #{DZBDJL,jdbcType=NUMERIC},
+      </if>
+      <if test="KJLX != null" >
+        KJLX = #{KJLX,jdbcType=NUMERIC},
+      </if>
+    </set>
+    where MXXH = #{MXXH,jdbcType=NUMERIC}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionRecordDetail" >
+    update IENR_PGJLMX
+    set JLXH = #{JLXH,jdbcType=NUMERIC},
+      XMXH = #{XMXH,jdbcType=NUMERIC},
+      SJXM = #{SJXM,jdbcType=NUMERIC},
+      SJXMMC = #{SJXMMC,jdbcType=VARCHAR},
+      XMNR = #{XMNR,jdbcType=VARCHAR},
+      DZLX = #{DZLX,jdbcType=NUMERIC},
+      DZBDJL = #{DZBDJL,jdbcType=NUMERIC},
+      KJLX = #{KJLX,jdbcType=NUMERIC}
+    where MXXH = #{MXXH,jdbcType=NUMERIC}
+  </update>
+</mapper>

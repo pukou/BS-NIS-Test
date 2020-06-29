@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bsoft.nis.mapper.evaluation.v56_update1.EvalutionRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.bsoft.nis.domain.evaluation.evalnew.EvalutionRecord" >
+    <id column="JLXH" property="JLXH" jdbcType="NUMERIC" />
+    <result column="ZYH" property="ZYH" jdbcType="NUMERIC" />
+    <result column="BRBQ" property="BRBQ" jdbcType="NUMERIC" />
+    <result column="YSXH" property="YSXH" jdbcType="NUMERIC" />
+    <result column="BBH" property="BBH" jdbcType="NUMERIC" />
+    <result column="YSLX" property="YSLX" jdbcType="NUMERIC" />
+    <result column="TXSJ" property="TXSJ" jdbcType="TIMESTAMP" />
+    <result column="TXGH" property="TXGH" jdbcType="VARCHAR" />
+    <result column="JLSJ" property="JLSJ" jdbcType="TIMESTAMP" />
+    <result column="QMGH" property="QMGH" jdbcType="VARCHAR" />
+    <result column="QMSJ" property="QMSJ" jdbcType="TIMESTAMP" />
+    <result column="SYZT" property="SYZT" jdbcType="NUMERIC" />
+    <result column="SYGH" property="SYGH" jdbcType="VARCHAR" />
+    <result column="SYSJ" property="SYSJ" jdbcType="TIMESTAMP" />
+    <result column="DYCS" property="DYCS" jdbcType="NUMERIC" />
+    <result column="ZFBZ" property="ZFBZ" jdbcType="NUMERIC" />
+    <result column="JGID" property="JGID" jdbcType="NUMERIC" />
+    <result column="TXXM" property="TXXM" jdbcType="VARCHAR" />
+    <result column="QMXM" property="QMXM" jdbcType="VARCHAR" />
+    <result column="SYXM" property="SYXM" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.bsoft.nis.domain.evaluation.evalnew.EvalutionRecord" extends="BaseResultMap" >
+    <result column="PGNR" property="PGNR" jdbcType="LONGVARCHAR" />
+    <association property="details" column="JLXH" javaType="list" select="selectRecordDetailsByOutKey"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    JLXH, ZYH, BRBQ, YSXH, BBH, YSLX, TXSJ, TXGH, JLSJ, QMGH, QMSJ, SYZT, SYGH, SYSJ, 
+    DYCS, ZFBZ, JGID , TXXM , QMXM , SYXM
+  </sql>
+  <sql id="Blob_Column_List" >
+    PGNR
+  </sql>
+  <select id="selectRecordDetailsByOutKey" resultType="EvalutionRecordDetail" parameterType="java.lang.Long">
+    SELECT MXXH, JLXH, XMXH, SJXM, SJXMMC, XMNR, DZLX, DZBDJL,KJLX FROM IENR_PGJLMX WHERE JLXH = #{JLXH}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from IENR_HLPGJL
+    where JLXH = #{JLXH,jdbcType=NUMERIC}
+  </select>
+  <select id="selectStyleList" resultType="EvalutionStyle">
+  SELECT YSXH, BBH, YSLX, YSMC, PYDM, WBDM, PLSX, ZTBZ, QYBQ, DYWD, JGID
+  FROM IENR_HLPGYS WHERE ZTBZ=1 AND JGID=#{JGID,jdbcType=NUMERIC} ORDER BY PLSX,YSXH
+  </select>
+  <select id="selectStyleByPrimaryKey" resultType="EvalutionStyle">
+    SELECT YSXH, BBH, YSLX, YSMC, PYDM, WBDM, PLSX, ZTBZ, QYBQ, DYWD, JGID
+    FROM IENR_HLPGYS WHERE  JGID=#{JGID,jdbcType=NUMERIC} AND  YSXH=#{YSXH,jdbcType=NUMERIC}
+  </select>
+  <select id="selectRecordList" resultType="EvalutionRecord">
+    select
+    <include refid="Base_Column_List" />
+    from IENR_HLPGJL
+    where ZYH = #{ZYH,jdbcType=NUMERIC}
+    AND BRBQ = #{BRBQ,jdbcType=NUMERIC}
+    AND JGID = #{JGID,jdbcType=NUMERIC}
+    AND  ZFBZ = 0
+    ORDER  BY JLXH DESC
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from IENR_HLPGJL
+    where JLXH = #{JLXH,jdbcType=NUMERIC}
+  </delete>
+  <insert id="insert" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionRecord" >
+    insert into IENR_HLPGJL (JLXH, ZYH, BRBQ, 
+      YSXH, BBH, YSLX, TXSJ, 
+      TXGH, JLSJ, QMGH, 
+      QMSJ, SYZT, SYGH, 
+      SYSJ, DYCS, ZFBZ, 
+      JGID, PGNR, TXXM,
+      QMXM, SYXM)
+    values (#{JLXH,jdbcType=NUMERIC}, #{ZYH,jdbcType=NUMERIC}, #{BRBQ,jdbcType=NUMERIC}, 
+      #{YSXH,jdbcType=NUMERIC}, #{BBH,jdbcType=NUMERIC}, #{YSLX,jdbcType=NUMERIC}, #{TXSJ,jdbcType=TIMESTAMP}, 
+      #{TXGH,jdbcType=VARCHAR}, #{JLSJ,jdbcType=TIMESTAMP}, #{QMGH,jdbcType=VARCHAR}, 
+      #{QMSJ,jdbcType=TIMESTAMP}, #{SYZT,jdbcType=NUMERIC}, #{SYGH,jdbcType=VARCHAR}, 
+      #{SYSJ,jdbcType=TIMESTAMP}, #{DYCS,jdbcType=NUMERIC}, #{ZFBZ,jdbcType=NUMERIC}, 
+      #{JGID,jdbcType=NUMERIC}, #{PGNR,jdbcType=LONGVARCHAR}, #{TXXM,jdbcType=VARCHAR},
+      #{QMXM,jdbcType=VARCHAR}, #{SYXM,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionRecord" >
+    insert into IENR_HLPGJL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="JLXH != null" >
+        JLXH,
+      </if>
+      <if test="ZYH != null" >
+        ZYH,
+      </if>
+      <if test="BRBQ != null" >
+        BRBQ,
+      </if>
+      <if test="YSXH != null" >
+        YSXH,
+      </if>
+      <if test="BBH != null" >
+        BBH,
+      </if>
+      <if test="YSLX != null" >
+        YSLX,
+      </if>
+      <if test="TXSJ != null" >
+        TXSJ,
+      </if>
+      <if test="TXGH != null" >
+        TXGH,
+      </if>
+      <if test="JLSJ != null" >
+        JLSJ,
+      </if>
+      <if test="QMGH != null" >
+        QMGH,
+      </if>
+      <if test="QMSJ != null" >
+        QMSJ,
+      </if>
+      <if test="SYZT != null" >
+        SYZT,
+      </if>
+      <if test="SYGH != null" >
+        SYGH,
+      </if>
+      <if test="SYSJ != null" >
+        SYSJ,
+      </if>
+      <if test="DYCS != null" >
+        DYCS,
+      </if>
+      <if test="ZFBZ != null" >
+        ZFBZ,
+      </if>
+      <if test="JGID != null" >
+        JGID,
+      </if>
+      <if test="PGNR != null" >
+        PGNR,
+      </if>
+      <if test="TXXM != null" >
+        TXXM,
+      </if>
+      <if test="QMXM != null" >
+        QMXM,
+      </if>
+      <if test="SYXM != null" >
+        SYXM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="JLXH != null" >
+        #{JLXH,jdbcType=NUMERIC},
+      </if>
+      <if test="ZYH != null" >
+        #{ZYH,jdbcType=NUMERIC},
+      </if>
+      <if test="BRBQ != null" >
+        #{BRBQ,jdbcType=NUMERIC},
+      </if>
+      <if test="YSXH != null" >
+        #{YSXH,jdbcType=NUMERIC},
+      </if>
+      <if test="BBH != null" >
+        #{BBH,jdbcType=NUMERIC},
+      </if>
+      <if test="YSLX != null" >
+        #{YSLX,jdbcType=NUMERIC},
+      </if>
+      <if test="TXSJ != null" >
+        #{TXSJ,jdbcType=TIMESTAMP},
+      </if>
+      <if test="TXGH != null" >
+        #{TXGH,jdbcType=VARCHAR},
+      </if>
+      <if test="JLSJ != null" >
+        #{JLSJ,jdbcType=TIMESTAMP},
+      </if>
+      <if test="QMGH != null" >
+        #{QMGH,jdbcType=VARCHAR},
+      </if>
+      <if test="QMSJ != null" >
+        #{QMSJ,jdbcType=TIMESTAMP},
+      </if>
+      <if test="SYZT != null" >
+        #{SYZT,jdbcType=NUMERIC},
+      </if>
+      <if test="SYGH != null" >
+        #{SYGH,jdbcType=VARCHAR},
+      </if>
+      <if test="SYSJ != null" >
+        #{SYSJ,jdbcType=TIMESTAMP},
+      </if>
+      <if test="DYCS != null" >
+        #{DYCS,jdbcType=NUMERIC},
+      </if>
+      <if test="ZFBZ != null" >
+        #{ZFBZ,jdbcType=NUMERIC},
+      </if>
+      <if test="JGID != null" >
+        #{JGID,jdbcType=NUMERIC},
+      </if>
+      <if test="PGNR != null" >
+        #{PGNR,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="TXXM != null" >
+        #{TXXM,jdbcType=VARCHAR},
+      </if>
+      <if test="QMXM != null" >
+        #{QMXM,jdbcType=VARCHAR},
+      </if>
+      <if test="SYXM != null" >
+        #{SYXM,jdbcType=VARCHAR},
+      </if>
+    </trim>
+
+  </insert>
+
+  <update id="updateNurseSign">
+    update IENR_HLPGJL
+    <set >
+      <if test="QMGH != null" >
+        QMGH = #{QMGH,jdbcType=VARCHAR},
+      </if>
+      <if test="QMSJ != null" >
+        QMSJ = #{QMSJ,jdbcType=TIMESTAMP},
+      </if>
+      <if test="QMXM != null" >
+        QMXM = #{QMXM,jdbcType=VARCHAR},
+      </if>
+    </set>
+    WHERE JLXH = #{JLXH}
+  </update>
+
+  <update id="updatePNurseSign">
+    update IENR_HLPGJL
+    <set >
+      <if test="SYGH != null" >
+        SYGH = #{SYGH,jdbcType=VARCHAR},
+      </if>
+      <if test="SYSJ != null" >
+        SYSJ = #{SYSJ,jdbcType=TIMESTAMP},
+      </if>
+      <if test="SYXM != null" >
+        SYXM = #{SYXM,jdbcType=VARCHAR},
+      </if>
+      SYZT = 1,
+    </set>
+
+    WHERE JLXH = #{JLXH}
+  </update>
+
+  <update id="clearSignInfo">
+    update IENR_HLPGJL SET
+    <if test="WHO == 1" >
+      QMGH = null,
+      QMSJ = null,
+      QMXM = null
+    </if>
+    <if test="WHO == 2" >
+      SYGH = null,
+      SYXM = null,
+      SYSJ = null,
+      SYZT = 0
+    </if>
+    WHERE JLXH = #{JLXH}
+  </update>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionRecord" >
+    update IENR_HLPGJL
+    <set >
+      <if test="ZYH != null" >
+        ZYH = #{ZYH,jdbcType=NUMERIC},
+      </if>
+      <if test="BRBQ != null" >
+        BRBQ = #{BRBQ,jdbcType=NUMERIC},
+      </if>
+      <if test="YSXH != null" >
+        YSXH = #{YSXH,jdbcType=NUMERIC},
+      </if>
+      <if test="BBH != null" >
+        BBH = #{BBH,jdbcType=NUMERIC},
+      </if>
+      <if test="YSLX != null" >
+        YSLX = #{YSLX,jdbcType=NUMERIC},
+      </if>
+      <if test="TXSJ != null" >
+        TXSJ = #{TXSJ,jdbcType=TIMESTAMP},
+      </if>
+      <if test="TXGH != null" >
+        TXGH = #{TXGH,jdbcType=VARCHAR},
+      </if>
+      <if test="JLSJ != null" >
+        JLSJ = #{JLSJ,jdbcType=TIMESTAMP},
+      </if>
+      <if test="QMGH != null" >
+        QMGH = #{QMGH,jdbcType=VARCHAR},
+      </if>
+      <if test="QMSJ != null" >
+        QMSJ = #{QMSJ,jdbcType=TIMESTAMP},
+      </if>
+      <if test="SYZT != null" >
+        SYZT = #{SYZT,jdbcType=NUMERIC},
+      </if>
+      <if test="SYGH != null" >
+        SYGH = #{SYGH,jdbcType=VARCHAR},
+      </if>
+      <if test="SYSJ != null" >
+        SYSJ = #{SYSJ,jdbcType=TIMESTAMP},
+      </if>
+      <if test="DYCS != null" >
+        DYCS = #{DYCS,jdbcType=NUMERIC},
+      </if>
+      <if test="ZFBZ != null" >
+        ZFBZ = #{ZFBZ,jdbcType=NUMERIC},
+      </if>
+      <if test="JGID != null" >
+        JGID = #{JGID,jdbcType=NUMERIC},
+      </if>
+      <if test="PGNR != null" >
+        PGNR = #{PGNR,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where JLXH = #{JLXH,jdbcType=NUMERIC}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionRecord" >
+    update IENR_HLPGJL
+    set ZYH = #{ZYH,jdbcType=NUMERIC},
+      BRBQ = #{BRBQ,jdbcType=NUMERIC},
+      YSXH = #{YSXH,jdbcType=NUMERIC},
+      BBH = #{BBH,jdbcType=NUMERIC},
+      YSLX = #{YSLX,jdbcType=NUMERIC},
+      TXSJ = #{TXSJ,jdbcType=TIMESTAMP},
+      TXGH = #{TXGH,jdbcType=VARCHAR},
+      JLSJ = #{JLSJ,jdbcType=TIMESTAMP},
+      QMGH = #{QMGH,jdbcType=VARCHAR},
+      QMSJ = #{QMSJ,jdbcType=TIMESTAMP},
+      SYZT = #{SYZT,jdbcType=NUMERIC},
+      SYGH = #{SYGH,jdbcType=VARCHAR},
+      SYSJ = #{SYSJ,jdbcType=TIMESTAMP},
+      DYCS = #{DYCS,jdbcType=NUMERIC},
+      ZFBZ = #{ZFBZ,jdbcType=NUMERIC},
+      JGID = #{JGID,jdbcType=NUMERIC},
+      PGNR = #{PGNR,jdbcType=LONGVARCHAR}
+    where JLXH = #{JLXH,jdbcType=NUMERIC}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionRecord" >
+    update IENR_HLPGJL
+    set ZYH = #{ZYH,jdbcType=NUMERIC},
+      BRBQ = #{BRBQ,jdbcType=NUMERIC},
+      YSXH = #{YSXH,jdbcType=NUMERIC},
+      BBH = #{BBH,jdbcType=NUMERIC},
+      YSLX = #{YSLX,jdbcType=NUMERIC},
+      TXSJ = #{TXSJ,jdbcType=TIMESTAMP},
+      TXGH = #{TXGH,jdbcType=VARCHAR},
+      JLSJ = #{JLSJ,jdbcType=TIMESTAMP},
+      QMGH = #{QMGH,jdbcType=VARCHAR},
+      QMSJ = #{QMSJ,jdbcType=TIMESTAMP},
+      SYZT = #{SYZT,jdbcType=NUMERIC},
+      SYGH = #{SYGH,jdbcType=VARCHAR},
+      SYSJ = #{SYSJ,jdbcType=TIMESTAMP},
+      DYCS = #{DYCS,jdbcType=NUMERIC},
+      ZFBZ = #{ZFBZ,jdbcType=NUMERIC},
+      JGID = #{JGID,jdbcType=NUMERIC}
+    where JLXH = #{JLXH,jdbcType=NUMERIC}
+  </update>
+</mapper>

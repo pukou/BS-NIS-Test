@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bsoft.nis.mapper.evaluation.v56_update1.EvalutionStyleMapper" >
+  <resultMap id="BaseResultMap" type="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyle" >
+    <id column="YSXH" property="YSXH" jdbcType="NUMERIC" />
+    <id column="BBH" property="BBH" jdbcType="NUMERIC" />
+    <result column="YSLX" property="YSLX" jdbcType="NUMERIC" />
+    <result column="YSMC" property="YSMC" jdbcType="VARCHAR" />
+    <result column="PYDM" property="PYDM" jdbcType="VARCHAR" />
+    <result column="WBDM" property="WBDM" jdbcType="VARCHAR" />
+    <result column="PLSX" property="PLSX" jdbcType="NUMERIC" />
+    <result column="ZTBZ" property="ZTBZ" jdbcType="NUMERIC" />
+    <result column="QYBQ" property="QYBQ" jdbcType="VARCHAR" />
+    <result column="DYWD" property="DYWD" jdbcType="NUMERIC" />
+    <result column="JGID" property="JGID" jdbcType="NUMERIC" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyle" extends="BaseResultMap" >
+    <result column="XML" property="XML" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    YSXH, BBH, YSLX, YSMC, PYDM, WBDM, PLSX, ZTBZ, QYBQ, DYWD, JGID
+  </sql>
+  <sql id="Blob_Column_List" >
+    XML
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleKey" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from IENR_HLPGYS
+    where YSXH = #{YSXH,jdbcType=NUMERIC}
+    and BBH = #{BBH,jdbcType=NUMERIC}
+    and JGID = #{JGID,jdbcType=NUMERIC}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyleKey" >
+    delete from IENR_HLPGYS
+    where YSXH = #{YSXH,jdbcType=NUMERIC}
+      and BBH = #{BBH,jdbcType=NUMERIC}
+  </delete>
+  <insert id="insert" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyle" >
+    insert into IENR_HLPGYS (YSXH, BBH, YSLX, 
+      YSMC, PYDM, WBDM, PLSX, 
+      ZTBZ, QYBQ, DYWD, JGID, 
+      XML)
+    values (#{YSXH,jdbcType=NUMERIC}, #{BBH,jdbcType=NUMERIC}, #{YSLX,jdbcType=NUMERIC}, 
+      #{YSMC,jdbcType=VARCHAR}, #{PYDM,jdbcType=VARCHAR}, #{WBDM,jdbcType=VARCHAR}, #{PLSX,jdbcType=NUMERIC}, 
+      #{ZTBZ,jdbcType=NUMERIC}, #{QYBQ,jdbcType=VARCHAR}, #{DYWD,jdbcType=NUMERIC}, #{JGID,jdbcType=NUMERIC}, 
+      #{XML,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyle" >
+    insert into IENR_HLPGYS
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="YSXH != null" >
+        YSXH,
+      </if>
+      <if test="BBH != null" >
+        BBH,
+      </if>
+      <if test="YSLX != null" >
+        YSLX,
+      </if>
+      <if test="YSMC != null" >
+        YSMC,
+      </if>
+      <if test="PYDM != null" >
+        PYDM,
+      </if>
+      <if test="WBDM != null" >
+        WBDM,
+      </if>
+      <if test="PLSX != null" >
+        PLSX,
+      </if>
+      <if test="ZTBZ != null" >
+        ZTBZ,
+      </if>
+      <if test="QYBQ != null" >
+        QYBQ,
+      </if>
+      <if test="DYWD != null" >
+        DYWD,
+      </if>
+      <if test="JGID != null" >
+        JGID,
+      </if>
+      <if test="XML != null" >
+        XML,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="YSXH != null" >
+        #{YSXH,jdbcType=NUMERIC},
+      </if>
+      <if test="BBH != null" >
+        #{BBH,jdbcType=NUMERIC},
+      </if>
+      <if test="YSLX != null" >
+        #{YSLX,jdbcType=NUMERIC},
+      </if>
+      <if test="YSMC != null" >
+        #{YSMC,jdbcType=VARCHAR},
+      </if>
+      <if test="PYDM != null" >
+        #{PYDM,jdbcType=VARCHAR},
+      </if>
+      <if test="WBDM != null" >
+        #{WBDM,jdbcType=VARCHAR},
+      </if>
+      <if test="PLSX != null" >
+        #{PLSX,jdbcType=NUMERIC},
+      </if>
+      <if test="ZTBZ != null" >
+        #{ZTBZ,jdbcType=NUMERIC},
+      </if>
+      <if test="QYBQ != null" >
+        #{QYBQ,jdbcType=VARCHAR},
+      </if>
+      <if test="DYWD != null" >
+        #{DYWD,jdbcType=NUMERIC},
+      </if>
+      <if test="JGID != null" >
+        #{JGID,jdbcType=NUMERIC},
+      </if>
+      <if test="XML != null" >
+        #{XML,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyle" >
+    update IENR_HLPGYS
+    <set >
+      <if test="YSLX != null" >
+        YSLX = #{YSLX,jdbcType=NUMERIC},
+      </if>
+      <if test="YSMC != null" >
+        YSMC = #{YSMC,jdbcType=VARCHAR},
+      </if>
+      <if test="PYDM != null" >
+        PYDM = #{PYDM,jdbcType=VARCHAR},
+      </if>
+      <if test="WBDM != null" >
+        WBDM = #{WBDM,jdbcType=VARCHAR},
+      </if>
+      <if test="PLSX != null" >
+        PLSX = #{PLSX,jdbcType=NUMERIC},
+      </if>
+      <if test="ZTBZ != null" >
+        ZTBZ = #{ZTBZ,jdbcType=NUMERIC},
+      </if>
+      <if test="QYBQ != null" >
+        QYBQ = #{QYBQ,jdbcType=VARCHAR},
+      </if>
+      <if test="DYWD != null" >
+        DYWD = #{DYWD,jdbcType=NUMERIC},
+      </if>
+      <if test="JGID != null" >
+        JGID = #{JGID,jdbcType=NUMERIC},
+      </if>
+      <if test="XML != null" >
+        XML = #{XML,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where YSXH = #{YSXH,jdbcType=NUMERIC}
+      and BBH = #{BBH,jdbcType=NUMERIC}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyle" >
+    update IENR_HLPGYS
+    set YSLX = #{YSLX,jdbcType=NUMERIC},
+      YSMC = #{YSMC,jdbcType=VARCHAR},
+      PYDM = #{PYDM,jdbcType=VARCHAR},
+      WBDM = #{WBDM,jdbcType=VARCHAR},
+      PLSX = #{PLSX,jdbcType=NUMERIC},
+      ZTBZ = #{ZTBZ,jdbcType=NUMERIC},
+      QYBQ = #{QYBQ,jdbcType=VARCHAR},
+      DYWD = #{DYWD,jdbcType=NUMERIC},
+      JGID = #{JGID,jdbcType=NUMERIC},
+      XML = #{XML,jdbcType=LONGVARCHAR}
+    where YSXH = #{YSXH,jdbcType=NUMERIC}
+      and BBH = #{BBH,jdbcType=NUMERIC}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bsoft.nis.domain.evaluation.evalnew.EvalutionStyle" >
+    update IENR_HLPGYS
+    set YSLX = #{YSLX,jdbcType=NUMERIC},
+      YSMC = #{YSMC,jdbcType=VARCHAR},
+      PYDM = #{PYDM,jdbcType=VARCHAR},
+      WBDM = #{WBDM,jdbcType=VARCHAR},
+      PLSX = #{PLSX,jdbcType=NUMERIC},
+      ZTBZ = #{ZTBZ,jdbcType=NUMERIC},
+      QYBQ = #{QYBQ,jdbcType=VARCHAR},
+      DYWD = #{DYWD,jdbcType=NUMERIC},
+      JGID = #{JGID,jdbcType=NUMERIC}
+    where YSXH = #{YSXH,jdbcType=NUMERIC}
+      and BBH = #{BBH,jdbcType=NUMERIC}
+  </update>
+
+  <select id="getComboboxDatas" statementType="STATEMENT" resultType="ComboUi">
+    ${sql}
+  </select>
+</mapper>

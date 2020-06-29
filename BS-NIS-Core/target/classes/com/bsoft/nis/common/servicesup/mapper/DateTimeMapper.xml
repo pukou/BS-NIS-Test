@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bsoft.nis.common.servicesup.mapper.DateTimeMapper">
+
+    <select id="now" resultType="java.lang.String">
+        <if test="dbtype == 'sqlserver'">
+            SELECT CONVERT(VARCHAR(19),GETDATE(),20)
+        </if>
+        <if test="dbtype == 'oracle'">
+            SELECT TO_CHAR(sysdate,'YYYY-MM-DD HH24:MI:SS') AS TIME FROM dual
+        </if>
+    </select>
+
+</mapper>

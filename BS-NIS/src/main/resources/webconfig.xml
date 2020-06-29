@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configs xmlns="http://www.bsoft.com.cn/nis/schema/config"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.bsoft.com.cn/nis/schema/config
+                             http://www.bsoft.com.cn/nis/schema/config/nisconfig.xsd">
+    <!--系统参数配置
+        1.系统参数配置都以key-value的格式书写 key：元素名；value：元素属性value的值
+        2.使用方式：调用BS-NIS-CORE包中的ConfigHandler.getSystemConfig(String key)
+    -->
+    <system>
+        <!--多机构判断，1 多机构 0 单机构-->
+        <organization value="1"/>
+        <!--mqtt服务地址-->
+        <mqttclienturl value="tcp://127.0.0.1:1883"/>
+        <!--医嘱计划是否与HIS计划合并-->
+        <advicePlanMerge value="1"/>
+        <!--出院多少天的病人开始数据转移(单位：天)-->
+        <dataTransferOutHospitalDays value="30"/>
+        <!--只转移多少天的数据-->
+        <dataTransferDays value="3"/>
+
+        <CommonDB value="SQLPortal:portal|SQLHIS:hrp|SQLMOBHIS:hrp|SQLCIS:hrp|SQLMOB:mob|SQLENR:enr|SQLMOBENR:enr|SQLEMR:emr|SQLLIS:lis"/>
+    </system>
+
+    <!--执行流程组控制
+        1.执行流程包含，医嘱执行流程控制，等...
+        2.使用方法：
+    -->
+    <flowGroups>
+        <flowGroup  remark="医嘱执行流程控制" id="adviceExcuteFlow">
+            <flow flowName="adviceFlow_1" flowHandlerClass="com.bsoft.nis.adviceexecute.FlowControl.CommonControl" flowRemark="基础校验"/>
+            <flow flowName="adviceFlow_2" flowHandlerClass="com.bsoft.nis.adviceexecute.FlowControl.AdviceGeneralCheck" flowRemark="医嘱校验"/>
+            <flow flowName="adviceFlow_3" flowHandlerClass="com.bsoft.nis.adviceexecute.FlowControl.DoubleCheckControl" flowRemark="双核对校验"/>
+            <!--<flow flowName="adviceFlow_4" flowHandlerClass="com.bsoft.nis.adviceexecute.FlowControl.SkinTestCheck" flowRemark="皮试校验"/>-->
+            <flow flowName="adviceFlow_5" flowHandlerClass="com.bsoft.nis.adviceexecute.FlowControl.InjectionDosingCheck" flowRemark="注射类加药核对校验"/>
+            <flow flowName="adviceFlow_6" flowHandlerClass="com.bsoft.nis.adviceexecute.FlowControl.TransfusionDosingCheck" flowRemark="输液类加药核对校验"/>
+            <flow flowName="adviceFlow_7" flowHandlerClass="com.bsoft.nis.adviceexecute.FlowControl.PlanGeneralCheck" flowRemark="医嘱计划校验"/>
+            <flow flowName="adviceFlow_8" flowHandlerClass="com.bsoft.nis.adviceexecute.FlowControl.InjectionGeneralCheck" flowRemark="医嘱跟注射明细数据是否匹配校验"/>
+            <flow flowName="adviceFlow_9" flowHandlerClass="com.bsoft.nis.adviceexecute.FlowControl.TransfusionGeneralCheck" flowRemark="医嘱跟输液明细数据是否匹配校验"/>
+            <flow flowName="adviceFlow_10" flowHandlerClass="com.bsoft.nis.adviceexecute.FlowControl.OralGeneralCheck" flowRemark="医嘱跟口服明细数据是否匹配校验"/>
+        </flowGroup>
+    </flowGroups>
+
+</configs>

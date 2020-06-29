@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.common.servicesup.mapper.SystemParamsMapper">
+
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+
+
+	<select id="getParamsInHRP" resultType="java.lang.String">
+		SELECT CSQZ FROM GY_YHCS WHERE GSJB=#{GSJB}  AND CSMC=#{CSMC} AND JGID=#{JGID}
+		<if test="GSDX!=null">
+			AND GSDX=#{GSDX}
+		</if>
+	</select>
+
+	<select id="getParamsInMOB" resultType="java.lang.String">
+		SELECT CSQZ FROM MOB_YHCS WHERE GSJB=#{GSJB}  AND CSMC=#{CSMC} AND JGID=#{JGID}
+		<if test="GSDX!=null">
+			AND GSDX=#{GSDX}
+		</if>
+	</select>
+
+
+	<select id="getParamsListInMOB" resultType="UserParams">
+		SELECT * FROM MOB_YHCS WHERE GSJB=#{GSJB}   AND JGID=#{JGID}
+		<if test="GSDX!=null">
+			AND GSDX=#{GSDX}
+		</if>
+		AND CSMC IN
+		<foreach item="item" index="index" collection="array"
+				 open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="getParamsListInHRP" resultType="UserParams">
+		SELECT * FROM GY_YHCS WHERE GSJB=#{GSJB}  AND JGID=#{JGID}
+		<if test="GSDX!=null">
+			AND GSDX=#{GSDX}
+		</if>
+		AND CSMC IN
+		<foreach item="item" index="index" collection="array"
+				 open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+</mapper>

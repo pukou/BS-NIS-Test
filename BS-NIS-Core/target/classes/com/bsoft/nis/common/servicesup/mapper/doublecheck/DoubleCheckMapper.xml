@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.common.servicesup.mapper.doublecheck.DoubleCheckMapper">
+
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+
+	<insert id="addDoubleCheck" parameterType="DoubleCheckType">
+		<if test="dbtype == 'sqlserver'">
+    INSERT INTO IENR_SRHDJL (JLXH ,HDBS1 ,HDBS2 ,ZYH ,BRBQ ,HDSJ ,HDGH ,HDZT ,JGID)
+    VALUES(#{JLXH},#{HDBS1},#{HDBS2},#{ZYH},#{BRBQ},#{HDSJ},#{HDGH},#{HDZT},#{JGID})
+		</if>
+		<if test="dbtype == 'oracle'">
+		INSERT INTO IENR_SRHDJL (JLXH ,HDBS1 ,HDBS2 ,ZYH ,BRBQ ,HDSJ ,HDGH ,HDZT ,JGID)
+		VALUES(#{JLXH},#{HDBS1},#{HDBS2},#{ZYH},#{BRBQ},#{HDSJ},#{HDGH},#{HDZT},#{JGID})
+		</if>
+	</insert>
+
+
+	<select id="getDoubleCheck" resultType="DoubleCheckType"  flushCache="true">
+		SELECT T.JLXH, T.HDBS1, T.HDBS2, T.ZYH, T.BRBQ, T.HDSJ, T.HDGH, T.HDZT, T.JGID FROM IENR_SRHDJL T
+		WHERE T.HDBS1 = #{HDBS} AND T.JGID = #{JGID} AND ZFBZ=0 ORDER BY T.HDSJ DESC
+	</select>
+
+</mapper>

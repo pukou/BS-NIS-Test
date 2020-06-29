@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bsoft.nis.common.servicesup.mapper.dataset.DataSetServiceMapper">
+
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+
+    <select id="getDataSetsBySJZXH" flushCache="false" resultType="DataSet" useCache="true">
+        SELECT SJZXH, SJZMC, GLSW, SJZDY, SJZSM, ZXBZ
+        FROM ENR_SJZDY
+        WHERE SJZXH = #{SJZXH}
+    </select>
+
+    <select id="getDataSetDatasBySql" parameterType="SqlStr" flushCache="true" resultType="Map" statementType="STATEMENT">
+        ${sql}
+    </select>
+</mapper>
