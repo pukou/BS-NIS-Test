@@ -45,4 +45,8 @@
 		</if>
 
 	</insert>
+
+	<select id="getPTSF" parameterType="SqlStr" resultType="String" useCache="false" flushCache="false">
+        ${sql}
+    </select>
 </mapper>
