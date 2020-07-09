@@ -102,6 +102,12 @@
             <element id="module-output" name="BS-NIS-ExternalInerface" />
           </element>
           <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.3.1" />
+          <element id="library" level="project" name="Maven: aopalliance:aopalliance:1.0" />
+          <element id="library" level="project" name="Maven: org.apache.axis:axis:1.4" />
+          <element id="library" level="project" name="Maven: org.apache.axis:axis-jaxrpc:1.4" />
+          <element id="library" level="project" name="Maven: org.apache.axis:axis-saaj:1.4" />
+          <element id="library" level="project" name="Maven: commons-discovery:commons-discovery:0.2" />
+          <element id="library" level="project" name="Maven: wsdl4j:wsdl4j:1.6.2" />
           <element id="file-copy" path="$PROJECT_DIR$/../../INER/ienrmaven/maven/mvn-res/ssdev/ssdev-rpc/3.2.1-SNAPSHOT/ssdev-rpc-3.2.1-20170608.052046-98.jar" output-file-name="ssdev-rpc-3.2.1-SNAPSHOT.jar" />
           <element id="file-copy" path="$PROJECT_DIR$/../../INER/ienrmaven/maven/mvn-res/ssdev/ssdev-spring/3.2.1-SNAPSHOT/ssdev-spring-3.2.1-20161213.010340-81.jar" output-file-name="ssdev-spring-3.2.1-SNAPSHOT.jar" />
           <element id="file-copy" path="$PROJECT_DIR$/../../INER/ienrmaven/maven/mvn-res/ssdev/ssdev-utils/3.2.1-SNAPSHOT/ssdev-utils-3.2.1-20200416.045505-92.jar" output-file-name="ssdev-utils-3.2.1-SNAPSHOT.jar" />
@@ -137,7 +143,6 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-core:4.2.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-context:4.2.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-aop:4.2.4.RELEASE" />
-          <element id="library" level="project" name="Maven: aopalliance:aopalliance:1.0" />
           <element id="library" level="project" name="Maven: org.springframework:spring-beans:4.2.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-expression:4.2.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:4.2.4.RELEASE" />
