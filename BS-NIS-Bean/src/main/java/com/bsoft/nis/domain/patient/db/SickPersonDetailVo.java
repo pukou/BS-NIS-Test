@@ -97,4 +97,9 @@ public class SickPersonDetailVo extends BaseVo {
 	 *病人血型
 	 */
 	public String BRXX;
+
+	/**
+	 * 增加显示床号
+	 */
+	public String XSCH;
 }

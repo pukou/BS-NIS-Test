@@ -109,6 +109,10 @@ public class SickPersonVo extends BaseVo {
 	public boolean hasGMYP;
 	public int dcjCount;
 
+	/**
+	 * 增加显示床号
+	 */
+	public String XSCH;
 	@Override
 	public boolean equals(Object o) {
 		return this.ZYH.equals(((SickPersonVo) o).ZYH);
