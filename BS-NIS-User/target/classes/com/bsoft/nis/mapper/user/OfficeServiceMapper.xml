@@ -13,7 +13,7 @@
 		 WHERE T1.YGDM=#{YGDM} AND
 		 	    T1.KSDM= T2.KSDM AND
 		 	    T1.JGID= T2.JGID AND
-		 	    T2.JGID = #{JGID} ORDER BY T2.PLSX
+		 	    T2.JGID = #{JGID} ORDER BY T2.KSMC
 	</select>
 
     <select id="getAreaVoForSurgery" flushCache="true" resultType="AreaVo">
