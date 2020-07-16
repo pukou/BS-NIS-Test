@@ -7,7 +7,7 @@
     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
 
     <select id="getClsdList" resultType="String" flushCache="true">
-		SELECT DMMC FROM MOB_XTPZ WHERE DMLB = 458 AND DMSB !=0
+		SELECT DMMC FROM MOB_XTPZ WHERE DMLB = 4125 AND DMSB !=0
 	</select>
 
     <select id="getBloodSugarList" resultType="BloodSugar" flushCache="true">
@@ -18,7 +18,17 @@
             ORDER BY SXSJ DESC
         </if>
         <if test="dbtype == 'oracle'">
-            SELECT JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, CLSD, CLZ, WCSJ, SYBZ, SYSJ, SYGH, JLZT, JGID
+            SELECT JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, (case CLSD when '空腹' then '空腹' else '空腹' end) as CLSD, nvl(KFXT, '无') as clz, WCSJ, SYBZ, SYSJ, SYGH, JLZT, JGID
+            FROM IENR_XTCLJL
+            WHERE ZYH = #{ZYH} AND SXSJ >= to_date(#{START}, 'yyyy-mm-dd') AND SXSJ &lt; to_date(#{END}, 'yyyy-mm-dd')
+            AND JLZT &lt;> 9 AND JGID = #{JGID}
+            union all
+            SELECT JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH,  (case CLSD when '餐后' then '餐后' else '餐后' end) as CLSD, nvl(CHXT, '无') as clz, WCSJ, SYBZ, SYSJ, SYGH, JLZT, JGID
+            FROM IENR_XTCLJL
+            WHERE ZYH = #{ZYH} AND SXSJ >= to_date(#{START}, 'yyyy-mm-dd') AND SXSJ &lt; to_date(#{END}, 'yyyy-mm-dd')
+            AND JLZT &lt;> 9 AND JGID = #{JGID}
+            union all
+            SELECT JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, (case CLSD when '随机' then '随机' else '随机' end) as CLSD, nvl(SJXT, '无') as clz, WCSJ, SYBZ, SYSJ, SYGH, JLZT, JGID
             FROM IENR_XTCLJL
             WHERE ZYH = #{ZYH} AND SXSJ >= to_date(#{START}, 'yyyy-mm-dd') AND SXSJ &lt; to_date(#{END}, 'yyyy-mm-dd')
             AND JLZT &lt;> 9 AND JGID = #{JGID}
@@ -88,6 +98,27 @@
         </if>
     </insert>
 
+    <insert id="addBloodSugar1">
+            INSERT INTO IENR_XTCLJL(JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, CLSD, KFXT, WCSJ, SYBZ, SYSJ, SYGH,
+            JLZT, JGID)
+            VALUES(#{JLXH}, #{ZYH}, #{SXBQ}, #{BRCH}, to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{SXGH}, to_date(#{CJSJ},
+            'yyyy-mm-dd hh24:mi:ss'), #{CJGH}, #{CLSD}, #{CLZ}, NULL, 0, NULL, NULL, 0, #{JGID})
+    </insert>
+
+    <insert id="addBloodSugar2">
+            INSERT INTO IENR_XTCLJL(JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, CLSD, CHXT, WCSJ, SYBZ, SYSJ, SYGH,
+            JLZT, JGID)
+            VALUES(#{JLXH}, #{ZYH}, #{SXBQ}, #{BRCH}, to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{SXGH}, to_date(#{CJSJ},
+            'yyyy-mm-dd hh24:mi:ss'), #{CJGH}, #{CLSD}, #{CLZ}, NULL, 0, NULL, NULL, 0, #{JGID})
+    </insert>
+
+    <insert id="addBloodSugar3">
+            INSERT INTO IENR_XTCLJL(JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, CLSD, SJXT, WCSJ, SYBZ, SYSJ, SYGH,
+            JLZT, JGID)
+            VALUES(#{JLXH}, #{ZYH}, #{SXBQ}, #{BRCH}, to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{SXGH}, to_date(#{CJSJ},
+            'yyyy-mm-dd hh24:mi:ss'), #{CJGH}, #{CLSD}, #{CLZ}, NULL, 0, NULL, NULL, 0, #{JGID})
+    </insert>
+
     <update id="editBloodSugar">
         <if test="dbtype == 'sqlserver'">
             UPDATE IENR_XTCLJL
@@ -99,6 +130,24 @@
             SET CLSD = #{CLSD}, SXSJ = to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'), CLZ = #{CLZ}
             WHERE JLXH = #{JLXH}
         </if>
+    </update>
+
+    <update id="editBloodSugar1">
+            UPDATE IENR_XTCLJL
+            SET CLSD = #{CLSD}, SXSJ = to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'), KFXT = #{CLZ}
+            WHERE JLXH = #{JLXH}
+    </update>
+
+    <update id="editBloodSugar2">
+            UPDATE IENR_XTCLJL
+            SET CLSD = #{CLSD}, SXSJ = to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'), CHXT = #{CLZ}
+            WHERE JLXH = #{JLXH}
+    </update>
+
+    <update id="editBloodSugar3">
+            UPDATE IENR_XTCLJL
+            SET CLSD = #{CLSD}, SXSJ = to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'), SJXT = #{CLZ}
+            WHERE JLXH = #{JLXH}
     </update>
 
     <update id="deleteBloodSugar">

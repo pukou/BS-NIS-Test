@@ -362,7 +362,7 @@ public class BloodSugarMainService {
             } catch (ParseException e) {
                 return response;
             }
-            List<BloodSugar> list = service.getBloodSugarList(today, tomorrow, zyh, jgid);
+            /*List<BloodSugar> list = service.getBloodSugarList(today, tomorrow, zyh, jgid);
             boolean todayHas = false;
             if (list != null && !list.isEmpty()) {
                 for (BloodSugar bloodSugar : list) {
@@ -376,7 +376,7 @@ public class BloodSugarMainService {
                 response.isSuccess = false;
                 response.message = "今日该测量时点的血糖值已存在!";
                 return response;
-            }
+            }*/
             int count = service.addBloodSugar(jlxh, zyh, sxbq, brch, sxsj, sxgh, cjsj, cjgh, clsd, clz, jgid);
             if (count > 0) {
                 response.data = jlxh;
