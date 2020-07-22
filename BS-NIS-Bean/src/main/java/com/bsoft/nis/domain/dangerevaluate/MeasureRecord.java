@@ -53,4 +53,6 @@ public class MeasureRecord implements Serializable {
 	public String SFPJ;
 	//ADD 2018-5-2 22:39:17
 //	public String ZGQK;
+
+	public boolean CustomIsSync;
 }

@@ -62,4 +62,7 @@ public class DERecord implements Serializable {
 
 	// 同步数据
 	public SelectResult SyncData;
+
+	//是否手动同步 by ling
+	public boolean CustomIsSync;
 }

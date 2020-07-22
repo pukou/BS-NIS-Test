@@ -6,7 +6,7 @@
 
     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
     <select id="getPatrol" flushCache="true" resultType="VisitPerson">
-        SELECT ZYH,BRXM,BRCH,HLJB
+        SELECT ZYH,BRXM,BRCH,HLJB, XSCH
         FROM V_MOB_HIS_BRRY
         WHERE CYPB = 0 AND
                BRBQ = #{KSDM} AND

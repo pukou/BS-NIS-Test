@@ -42,4 +42,9 @@ public class VisitPerson {
      * true为扫描选中，false是手动点击
      */
     public boolean isScanSlt;
+
+    /**
+     * 显示床号
+     */
+    public String XSCH;
 }
