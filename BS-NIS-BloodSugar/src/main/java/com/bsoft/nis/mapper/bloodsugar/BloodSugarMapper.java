@@ -31,14 +31,13 @@ public interface BloodSugarMapper {
                       @Param(value = "CLSD") String clsd, @Param(value = "CLZ") String clz,
                       @Param(value = "JGID") String jgid, @Param(value = "dbtype") String dbtype);
 
-    int addBloodSugar1(@Param(value = "JLXH") String jlxh, @Param(value = "ZYH") String zyh,
-                      @Param(value = "SXBQ") String sxbq, @Param(value = "BRCH") String brch,
-                      @Param(value = "SXSJ") String sxsj, @Param(value = "SXGH") String sxgh,
-                      @Param(value = "CJSJ") String cjsj, @Param(value = "CJGH") String cjgh,
-                      @Param(value = "CLSD") String clsd, @Param(value = "CLZ") String clz,
-                      @Param(value = "JGID") String jgid, @Param(value = "dbtype") String dbtype);
+    int addBloodSugar1(@Param(value = "BRKS") Integer brks, @Param(value = "ZYH") Integer zyh,
+                      @Param(value = "SXBQ") Integer sxbq, @Param(value = "BRCH") String brch,
+                      @Param(value = "SXGH") String sxgh, @Param(value = "CJSJ") String cjsj,
+                      @Param(value = "SJXT") Integer sjxt, @Param(value = "KFXT") Integer kfxt,
+                      @Param(value = "CHXT") Integer chxt);
 
-    int addBloodSugar2(@Param(value = "JLXH") String jlxh, @Param(value = "ZYH") String zyh,
+/*    int addBloodSugar2(@Param(value = "JLXH") String jlxh, @Param(value = "ZYH") String zyh,
                       @Param(value = "SXBQ") String sxbq, @Param(value = "BRCH") String brch,
                       @Param(value = "SXSJ") String sxsj, @Param(value = "SXGH") String sxgh,
                       @Param(value = "CJSJ") String cjsj, @Param(value = "CJGH") String cjgh,
@@ -50,13 +49,13 @@ public interface BloodSugarMapper {
                       @Param(value = "SXSJ") String sxsj, @Param(value = "SXGH") String sxgh,
                       @Param(value = "CJSJ") String cjsj, @Param(value = "CJGH") String cjgh,
                       @Param(value = "CLSD") String clsd, @Param(value = "CLZ") String clz,
-                      @Param(value = "JGID") String jgid, @Param(value = "dbtype") String dbtype);
+                      @Param(value = "JGID") String jgid, @Param(value = "dbtype") String dbtype);*/
 
     int editBloodSugar(@Param(value = "JLXH") String jlxh, @Param(value = "CLSD") String clsd,
                        @Param(value = "SXSJ") String sxsj, @Param(value = "CLZ") String clz,
                        @Param(value = "dbtype") String dbtype);
 
-    int editBloodSugar1(@Param(value = "JLXH") String jlxh, @Param(value = "CLSD") String clsd,
+    int editBloodSugar1(@Param(value = "JLXH") String jlxh, @Param(value = "CLSD") Integer clsd,
                        @Param(value = "SXSJ") String sxsj, @Param(value = "CLZ") String clz,
                        @Param(value = "dbtype") String dbtype);
 

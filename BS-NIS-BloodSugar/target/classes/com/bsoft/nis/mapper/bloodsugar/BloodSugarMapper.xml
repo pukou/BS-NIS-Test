@@ -18,20 +18,11 @@
             ORDER BY SXSJ DESC
         </if>
         <if test="dbtype == 'oracle'">
-            SELECT JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, (case CLSD when '空腹' then '空腹' else '空腹' end) as CLSD, nvl(KFXT, '无') as clz, WCSJ, SYBZ, SYSJ, SYGH, JLZT, JGID
-            FROM IENR_XTCLJL
-            WHERE ZYH = #{ZYH} AND SXSJ >= to_date(#{START}, 'yyyy-mm-dd') AND SXSJ &lt; to_date(#{END}, 'yyyy-mm-dd')
-            AND JLZT &lt;> 9 AND JGID = #{JGID}
-            union all
-            SELECT JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH,  (case CLSD when '餐后' then '餐后' else '餐后' end) as CLSD, nvl(CHXT, '无') as clz, WCSJ, SYBZ, SYSJ, SYGH, JLZT, JGID
-            FROM IENR_XTCLJL
-            WHERE ZYH = #{ZYH} AND SXSJ >= to_date(#{START}, 'yyyy-mm-dd') AND SXSJ &lt; to_date(#{END}, 'yyyy-mm-dd')
-            AND JLZT &lt;> 9 AND JGID = #{JGID}
-            union all
-            SELECT JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, (case CLSD when '随机' then '随机' else '随机' end) as CLSD, nvl(SJXT, '无') as clz, WCSJ, SYBZ, SYSJ, SYGH, JLZT, JGID
-            FROM IENR_XTCLJL
-            WHERE ZYH = #{ZYH} AND SXSJ >= to_date(#{START}, 'yyyy-mm-dd') AND SXSJ &lt; to_date(#{END}, 'yyyy-mm-dd')
-            AND JLZT &lt;> 9 AND JGID = #{JGID}
+            SELECT cjh as JLXH, ZYH, brbq as SXBQ, BRCH, jlsj as SXSJ, jlgh as SXGH, CJSJ, jlgh as CJGH, (case xmh when 160 then '随机' when  21283
+            then '餐后' else '空腹' end) as CLSD, nvl(tznr, '无') as clz, jlgh as WCSJ, null as SYBZ, null as SYSJ, null as SYGH, null as JLZT, JGID
+            FROM bq_smtz
+            WHERE ZYH = #{ZYH} AND jlsj >= to_date(#{START}, 'yyyy-mm-dd') AND jlsj &lt; to_date(#{END}, 'yyyy-mm-dd')
+            AND zfbz = 0 AND JGID = #{JGID}
             ORDER BY SXSJ DESC
         </if>
     </select>
@@ -98,12 +89,16 @@
         </if>
     </insert>
 
-    <insert id="addBloodSugar1">
+    <insert id="addBloodSugar1" flushCache="true" statementType="CALLABLE" >
+        {call BSOFT_PRO_BQ_SMTZ_XTJC(#{CJSJ,mode=IN},#{BRKS,mode=IN},#{ZYH,mode=IN},#{SXBQ,mode=IN},#{BRCH,mode=IN},
+        #{SXGH,mode=IN},#{SJXT,mode=IN},#{KFXT,mode=IN},#{CHXT,mode=IN})}
+    </insert>
+    <!--<insert id="addBloodSugar1">
             INSERT INTO IENR_XTCLJL(JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, CLSD, KFXT, WCSJ, SYBZ, SYSJ, SYGH,
             JLZT, JGID)
             VALUES(#{JLXH}, #{ZYH}, #{SXBQ}, #{BRCH}, to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'), #{SXGH}, to_date(#{CJSJ},
             'yyyy-mm-dd hh24:mi:ss'), #{CJGH}, #{CLSD}, #{CLZ}, NULL, 0, NULL, NULL, 0, #{JGID})
-    </insert>
+    </insert>-->
 
     <insert id="addBloodSugar2">
             INSERT INTO IENR_XTCLJL(JLXH, ZYH, SXBQ, BRCH, SXSJ, SXGH, CJSJ, CJGH, CLSD, CHXT, WCSJ, SYBZ, SYSJ, SYGH,
@@ -133,9 +128,9 @@
     </update>
 
     <update id="editBloodSugar1">
-            UPDATE IENR_XTCLJL
-            SET CLSD = #{CLSD}, SXSJ = to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'), KFXT = #{CLZ}
-            WHERE JLXH = #{JLXH}
+            UPDATE bq_smtz
+            SET XMH = #{CLSD}, JLSJ = to_date(#{SXSJ}, 'yyyy-mm-dd hh24:mi:ss'), TZNR = #{CLZ}
+            WHERE cjh = #{JLXH}
     </update>
 
     <update id="editBloodSugar2">
@@ -151,8 +146,9 @@
     </update>
 
     <update id="deleteBloodSugar">
-        UPDATE IENR_XTCLJL
-        SET JLZT = 9
-        WHERE JLXH = #{JLXH}
+        UPDATE bq_smtz
+
+        SET zfbz = 1
+        WHERE cjh = #{JLXH}
     </update>
 </mapper>

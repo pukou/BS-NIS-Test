@@ -54,7 +54,7 @@ public class BloodSugarServiceSup extends RouteDataSourceService {
      */
     public List<BloodSugar> getBloodSugarList(String start, String end, String zyh, String jgid)
             throws SQLException, DataAccessException {
-        keepOrRoutingDateSource(DataSource.MOB);
+        keepOrRoutingDateSource(DataSource.ENR);
         dbType = getCurrentDataSourceDBtype();
         return mapper.getBloodSugarList(start, end, zyh, jgid, dbType);
     }
@@ -87,17 +87,21 @@ public class BloodSugarServiceSup extends RouteDataSourceService {
                              String sxsj, String sxgh, String cjsj, String cjgh,
                              String clsd, String clz, String jgid)
             throws SQLException, DataAccessException {
-        keepOrRoutingDateSource(DataSource.MOB);
+        keepOrRoutingDateSource(DataSource.ENR);
         dbType = getCurrentDataSourceDBtype();
         switch (clsd) {
             case "空腹":
-                return mapper.addBloodSugar1(jlxh, zyh, sxbq, brch, sxsj, sxgh, cjsj, cjgh, clsd, clz, jgid, dbType);
+                return mapper.addBloodSugar1(null, Integer.parseInt(zyh), Integer.parseInt(sxbq),
+                        brch, sxgh, cjsj, null, Integer.parseInt(clz), null);
             case "餐后":
-                return mapper.addBloodSugar2(jlxh, zyh, sxbq, brch, sxsj, sxgh, cjsj, cjgh, clsd, clz, jgid, dbType);
+                return mapper.addBloodSugar1(null, Integer.parseInt(zyh), Integer.parseInt(sxbq),
+                        brch, sxgh, cjsj, null, null, Integer.parseInt(clz));
             case "随机":
-                return mapper.addBloodSugar3(jlxh, zyh, sxbq, brch, sxsj, sxgh, cjsj, cjgh, clsd, clz, jgid, dbType);
+                return mapper.addBloodSugar1(null, Integer.parseInt(zyh), Integer.parseInt(sxbq),
+                        brch, sxgh, cjsj, Integer.parseInt(clz), null, null);
             default:
-                return mapper.addBloodSugar(jlxh, zyh, sxbq, brch, sxsj, sxgh, cjsj, cjgh, clsd, clz, jgid, dbType);
+                return mapper.addBloodSugar1(null, Integer.parseInt(zyh), Integer.parseInt(sxbq),
+                        brch, sxgh, cjsj, Integer.parseInt(clz), null, null);
         }
 
     }
@@ -115,17 +119,17 @@ public class BloodSugarServiceSup extends RouteDataSourceService {
      */
     public int editBloodSugar(String jlxh, String clsd, String sxsj, String clz)
             throws SQLException, DataAccessException {
-        keepOrRoutingDateSource(DataSource.MOB);
+        keepOrRoutingDateSource(DataSource.ENR);
         dbType = getCurrentDataSourceDBtype();
         switch (clsd) {
             case "空腹":
-                return mapper.editBloodSugar1(jlxh, clsd, sxsj, clz, dbType);
+                return mapper.editBloodSugar1(jlxh, 21282, sxsj, clz, dbType);
             case "餐后":
-                return mapper.editBloodSugar2(jlxh, clsd, sxsj, clz, dbType);
+                return mapper.editBloodSugar1(jlxh, 21283, sxsj, clz, dbType);
             case "随机":
-                return mapper.editBloodSugar3(jlxh, clsd, sxsj, clz, dbType);
+                return mapper.editBloodSugar1(jlxh, 160, sxsj, clz, dbType);
             default:
-                return mapper.editBloodSugar(jlxh, clsd, sxsj, clz, dbType);
+                return mapper.editBloodSugar1(jlxh, 160, sxsj, clz, dbType);
         }
 
     }
@@ -140,7 +144,7 @@ public class BloodSugarServiceSup extends RouteDataSourceService {
      */
     public int deleteBloodSugar(String jlxh)
             throws SQLException, DataAccessException {
-        keepOrRoutingDateSource(DataSource.MOB);
+        keepOrRoutingDateSource(DataSource.ENR);
         dbType = getCurrentDataSourceDBtype();
         return mapper.deleteBloodSugar(jlxh);
     }

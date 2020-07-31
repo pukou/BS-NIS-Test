@@ -378,7 +378,7 @@ public class BloodSugarMainService {
                 return response;
             }*/
             int count = service.addBloodSugar(jlxh, zyh, sxbq, brch, sxsj, sxgh, cjsj, cjgh, clsd, clz, jgid);
-            if (count > 0) {
+            if (count == -1) {
                 response.data = jlxh;
                 response.isSuccess = true;
                 response.message = "新增血糖治疗数据成功!";
