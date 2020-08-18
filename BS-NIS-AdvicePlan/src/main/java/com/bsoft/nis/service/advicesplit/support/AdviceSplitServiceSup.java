@@ -1,11 +1,9 @@
 package com.bsoft.nis.service.advicesplit.support;
 
 import com.bsoft.nis.advicesplit.args.ExcuteResults;
-import com.bsoft.nis.advicesplit.args.PatientArgs;
 import com.bsoft.nis.core.datasource.DataSource;
 import com.bsoft.nis.core.datasource.RouteDataSourceService;
 import com.bsoft.nis.domain.advicesplit.advice.AdviceCom;
-import com.bsoft.nis.domain.advicesplit.advice.db.Advice;
 import com.bsoft.nis.domain.advicesplit.advice.db.AdvicePlan;
 import com.bsoft.nis.domain.advicesplit.advice.db.DoubleCheckMedical;
 import com.bsoft.nis.domain.advicesplit.advice.db.MonitoreAdvice;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,7 +86,7 @@ public class AdviceSplitServiceSup extends RouteDataSourceService{
                 Map deleteAdvicePlansMap = new HashMap();
                 deleteAdvicePlansMap.put("dbtype",dbtype);
                 deleteAdvicePlansMap.put("plans",deltPlans);
-                mapper.deleteAdvicePlans(deleteAdvicePlansMap);
+//                mapper.deleteAdvicePlans(deleteAdvicePlansMap);取消删除医嘱计划
             }else{
                 Double plcs = Math.ceil(Double.valueOf(deltPlans.size())/Double.valueOf(excuteCount)) ;
                 for (int i = 1 ; i <= plcs;i++){
@@ -106,7 +103,7 @@ public class AdviceSplitServiceSup extends RouteDataSourceService{
                     Map deleteAdvicePlansMap1 = new HashMap();
                     deleteAdvicePlansMap1.put("dbtype",dbtype);
                     deleteAdvicePlansMap1.put("plans",deltPlans.subList(startIndex,endIndex));
-                    mapper.deleteAdvicePlans(deleteAdvicePlansMap1);
+//                    mapper.deleteAdvicePlans(deleteAdvicePlansMap1);取消删除医嘱计划
                 }
             }
 
@@ -121,7 +118,7 @@ public class AdviceSplitServiceSup extends RouteDataSourceService{
             Map delPlandsByYzxhMap = new HashMap();
             delPlandsByYzxhMap.put("dbtype",dbtype);
             delPlandsByYzxhMap.put("plans",deltPlansByYzxh);
-            mapper.deleteAdvicePlansByYzxh(delPlandsByYzxhMap);
+//            mapper.deleteAdvicePlansByYzxh(delPlandsByYzxhMap);取消删除医嘱计划
         }
 
         // 批量执行插入计划语句
