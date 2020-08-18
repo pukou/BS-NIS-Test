@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -148,7 +149,7 @@ public class DangerEvaluateController {
 	@RequestMapping(value = {"auth/mobile/dangerevaluate/post/saveDE", "mobile/dangerevaluate/post/saveDE"})
 	//	@RequestMapping(value = "mobile/dangerevaluate/post/saveDE")
 	@ResponseBody
-	public Response<DERecord> saveDangerEvaluate(@RequestBody DERecordPostData data) {
+	public Response<DERecord> saveDangerEvaluate(@RequestBody DERecordPostData data) throws SQLException {
 		Response<DERecord> response = new Response<>();
 		BizResponse<DERecord> biz;
 		biz = service.saveDangerEvaluate(data);

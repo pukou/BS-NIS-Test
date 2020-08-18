@@ -29,4 +29,10 @@ public class DEFactor implements Serializable {
 
 	// 因子评分
 	public List<FactorGoal> YZPF;
+
+	// 分值上限(增加风险评估上下限)
+	public String YZSX;
+
+	//分值下限
+	public String YZXX;
 }

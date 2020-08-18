@@ -658,7 +658,7 @@ public class DangerEvaluateMainService extends RouteDataSourceService {
      * @param data JSON格式的保存数据，包含DERecord,ZYH,BQID,JGID
      * @return
      */
-    public BizResponse<DERecord> saveDangerEvaluate(DERecordPostData data) {
+    public BizResponse<DERecord> saveDangerEvaluate(DERecordPostData data) throws SQLException {
         keepOrRoutingDateSource(DataSource.MOB);
         BizResponse<DERecord> response = new BizResponse<>();
 
@@ -675,6 +675,21 @@ public class DangerEvaluateMainService extends RouteDataSourceService {
         String zkms = ""; // 质控描述
         double zqpc; // 质控描述
         Integer pgzf = Integer.parseInt(record.PGZF); // 评估总分
+//        String yzsx = ""; //分值上线
+//        List<DEFactor> fxyz_DEFactor = service.getDEFactorList(record.PGDH);
+//        if (fxyz_DEFactor != null && !fxyz_DEFactor.isEmpty()) {
+//            for (DEFactor deFactor : fxyz_DEFactor) {
+//                if (deFactor.YZSX != null && "".equals(deFactor.YZSX)) {
+//                    yzsx = deFactor.YZSX;
+//                    if (Integer.parseInt(record.PGZF) <= Integer.parseInt(yzsx)) {
+//                        pgzf = Integer.parseInt(record.PGZF);
+//                    } else {
+//                        pgzf = Integer.parseInt(yzsx);
+//                        record.PGZF = yzsx;
+//                    }
+//                }
+//            }
+//        }
         Double jgts = 0d; // 隔几天写一次(两次书写的间隔天数)
 
         // 保存时的操作数据
@@ -854,13 +869,14 @@ public class DangerEvaluateMainService extends RouteDataSourceService {
 
             // 获取返回值
             DERecord _record = getDERecord(pgxh, jgid).data;
-            Response<SelectResult> syncResponse = buildDERecordSyncData(zyh, bqid, _record, czbz,
-                    jgid);
-            if (syncResponse.ReType == 2) {
-                _record.IsSync = true;
-                _record.SyncData = syncResponse.Data;
+            if(record.CustomIsSync) {
+                Response<SelectResult> syncResponse = buildDERecordSyncData(zyh, bqid, _record, czbz,
+                        jgid);
+                if (syncResponse.ReType == 2) {
+                    _record.IsSync = true;
+                    _record.SyncData = syncResponse.Data;
+                }
             }
-
             response.isSuccess = true;
             response.data = _record;
             response.message = "保存风险评估记录成功";
@@ -1045,12 +1061,13 @@ public class DangerEvaluateMainService extends RouteDataSourceService {
             }
             DEMeasure measure = getMeasureRecord(jlxh, pgdh, record.PGXH, pgzf, jgid);
 
-            Response<SelectResult> syncResponse = buildDEMeasureSyncData(zyh, measure, czbz, jgid);
-            if (syncResponse.ReType == 2) {
-                measure.IsSync = true;
-                measure.SyncData = syncResponse.Data;
+            if(record.CustomIsSync){
+                Response<SelectResult> syncResponse = buildDEMeasureSyncData(zyh, measure, czbz, jgid);
+                if (syncResponse.ReType == 2) {
+                    measure.IsSync = true;
+                    measure.SyncData = syncResponse.Data;
+                }
             }
-
             response.isSuccess = true;
             response.data = measure;
             response.message = "保存评估措施记录成功";

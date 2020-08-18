@@ -53,7 +53,7 @@
 
 	<!--获取风险评估单的评估因子Risk_Factor-->
 	<select id="getDEFactorList" resultType="DEFactor" flushCache="true">
-		SELECT FXYZ, PGDH, YZMS, DXBZ,BXBZ
+		SELECT FXYZ, PGDH, YZMS, DXBZ,BXBZ, YZSX, YZXX
 		FROM IENR_FXPGYZ
 		WHERE ZFBZ = 0 AND PGDH = #{PGDH}
 		ORDER BY PLSX ASC
