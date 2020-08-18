@@ -12,7 +12,6 @@ import com.bsoft.nis.domain.patient.db.*;
 import com.bsoft.nis.mapper.patient.PatientMapper;
 import com.bsoft.nis.pojo.exchange.BizResponse;
 import com.bsoft.nis.service.patient.support.PatientServiceSup;
-import com.bsoft.nis.util.date.DateConvert;
 import com.bsoft.nis.util.date.DateUtil;
 import com.bsoft.nis.util.date.birthday.BirthdayUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -983,7 +982,13 @@ public class PatientMainService extends RouteDataSourceService {
         BizResponse<SickPersonVo> response = new BizResponse<>();
         try {
             keepOrRoutingDateSource(DataSource.MOB);
-            String zyh = service.getPatientZyhByScan(prefix + barcode);
+            //CK和WD增加pda不含此2字段
+            String zyh = null;
+            if ("null".equals(prefix) ){
+                zyh = service.getPatientZyhByScan(barcode);
+            } else {
+                zyh = service.getPatientZyhByScan(prefix + barcode);
+            }
             keepOrRoutingDateSource(DataSource.HRP);
             response.data = service.getPatientForScan(zyh, jgid);
             response.isSuccess = true;
