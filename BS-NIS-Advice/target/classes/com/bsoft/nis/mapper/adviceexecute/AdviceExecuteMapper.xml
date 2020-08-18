@@ -25,7 +25,7 @@
             WHERE JHH IN(
                 SELECT h.JHH
                 FROM ENR_SYD s, ENR_SYMX m, ENR_YZJH h
-                WHERE s.SYDH = #{QRDH} AND s.SYDH = m.SYDH AND m.YZXH = h.YZXH AND s.SYRQ = h.JHRQ AND s.SJBH = h.SJBH And h.GSLX = #{GSLX} AND h.ZFBZ = 0
+                WHERE s.SYDH = #{QRDH} AND s.SYDH = m.SYDH AND m.YZXH = h.YZXH AND s.SYRQ = h.JHRQ  And h.GSLX = #{GSLX} AND h.ZFBZ = 0
             )
         </if>
     </select>
@@ -47,7 +47,7 @@
             KSHDGH, JSHDSJ, JSHDGH, ZXLX, JGID,LSBS
             ,(Select b.TZJZ From ENR_KSJH b Where b.KSDM = ENR_YZJH.BRBQ And b.LXH = ENR_YZJH.LXH And b.JGID = ENR_YZJH.JGID) TZJZ
             FROM ENR_YZJH
-            WHERE YZZH = #{YZZH} AND JHSJ = to_date(#{JHSJ}, 'yyyy-mm-dd hh24:mi:ss') AND ZFBZ = 0 AND JGID = #{JGID}
+            WHERE YZZH = #{YZZH} AND JHSJ = to_date(#{JHSJ}, 'yyyy-mm-dd hh24:mi:ss') AND ZFBZ = 0 AND JGID = #{JGID} and gslx != 0
         </if>
     </select>
 
