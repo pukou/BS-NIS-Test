@@ -197,7 +197,7 @@
 	2.修改查询条件，去掉出院判别条件
 	-->
 	<select id="getPatientForScan" resultType="SickPersonVo" flushCache="true">
-		SELECT ZYH,ZYHM,BRBQ,BRXM,BRXB,CSNY,BRCH,HLJB
+		SELECT ZYH,ZYHM,BRBQ,BRXM,BRXB,CSNY,BRCH,HLJB, xsch
 		FROM V_MOB_HIS_BRRY
 		WHERE   ZYH = #{ZYH} AND JGID = #{JGID} ORDER BY BRCH
 	</select>
