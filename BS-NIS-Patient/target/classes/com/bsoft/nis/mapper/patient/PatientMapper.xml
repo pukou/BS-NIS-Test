@@ -126,6 +126,10 @@
 		SELECT ZYH FROM BQ_BRWD WHERE WDTM = #{BRWD} AND WDZT = 0
 	</select>
 
+	<select id="getPatientZyhByZyhm" flushCache="true" resultType="String">
+		SELECT ZYH FROM V_MOB_HIS_BRRY WHERE ZYHM = #{ZYHM}
+	</select>
+
 <!-- 升级编号【56010014】============================================= start
 今日出院的病人，系统会提早出院，但是该病人当天的药品需要执行完，目前PDA无法处理该类病人的医嘱执行。（需要将当日出院的病人也显示在病人类别中，并标识）
 ================= Classichu 2017/10/11 16:07
