@@ -981,13 +981,13 @@ public class PatientMainService extends RouteDataSourceService {
     public BizResponse<SickPersonVo> getPatientForScan(String prefix, String barcode, String jgid) {
         BizResponse<SickPersonVo> response = new BizResponse<>();
         try {
-            keepOrRoutingDateSource(DataSource.MOB);
+            keepOrRoutingDateSource(DataSource.HRP);
             //CK和WD增加pda不含此2字段
             String zyh = null;
             if ("null".equals(prefix) ){
-                zyh = service.getPatientZyhByScan(barcode);
+                zyh = service.getPatientZyhByZyhm(barcode);
             } else {
-                zyh = service.getPatientZyhByScan(prefix + barcode);
+                zyh = service.getPatientZyhByZyhm(prefix + barcode);
             }
             keepOrRoutingDateSource(DataSource.HRP);
             response.data = service.getPatientForScan(zyh, jgid);

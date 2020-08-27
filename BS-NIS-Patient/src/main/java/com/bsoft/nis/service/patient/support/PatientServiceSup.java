@@ -277,6 +277,19 @@ public class PatientServiceSup extends RouteDataSourceService {
     }
 
     /**
+     * 根据病人zyhm获取病人住院号
+     *
+     * @param scanStr
+     * @return
+     * @throws SQLException
+     * @throws DataAccessException
+     */
+    public String getPatientZyhByZyhm(String scanStr)
+            throws SQLException, DataAccessException {
+        return mapper.getPatientZyhByZyhm(scanStr);
+    }
+
+    /**
      * 根据病人住院号获取病人信息-扫描用
      *
      * @param zyh

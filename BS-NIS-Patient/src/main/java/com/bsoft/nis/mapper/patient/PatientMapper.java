@@ -60,6 +60,8 @@ public interface PatientMapper {
 
     String getPatientZyhByScan(@Param(value = "BRWD") String scanStr);
 
+    String getPatientZyhByZyhm(@Param(value = "ZYHM") String scanStr);
+
     List<SickPersonVo> getMyPatientHIS(@Param(value = "BRBQ") String brbq, @Param(value = "ZRHS") String hsgh, @Param(value = "JGID") String jgid);
 
     List<SickPersonVo> getMyPatientMOB(@Param(value = "BRBQ") String brbq, @Param(value = "HSGH") String hsgh, @Param(value = "JGID") String jgid);
