@@ -56,7 +56,7 @@ public class OralMedicationController {
         DataSource ds = DataSource.MOB;
         String sql = "select gsjb from MOB_YHCS t where t.csmc = 'IENR_PTSF' and t.csbz = '平台访问移动护理接口'";
         String value = null;
-        value = ptsfMainService.getPTSFBySQL(sql);
+        value = ptsfMainService.getPTSFBySQL(ds,sql);
         return value;
     }
 }
