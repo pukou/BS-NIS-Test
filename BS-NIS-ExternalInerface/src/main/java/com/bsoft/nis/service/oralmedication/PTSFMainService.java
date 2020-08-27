@@ -1,5 +1,7 @@
 package com.bsoft.nis.service.oralmedication;
 
+import com.bsoft.nis.core.datasource.DataSource;
+import com.bsoft.nis.core.datasource.RouteDataSourceService;
 import com.bsoft.nis.domain.core.SqlStr;
 import com.bsoft.nis.mapper.oralmedication.OralMedicationMapper;
 import org.apache.commons.logging.Log;
@@ -16,17 +18,18 @@ import java.sql.SQLException;
  * @Created by ling
  */
 @Service
-public class PTSFMainService {
+public class PTSFMainService extends RouteDataSourceService {
 
     private Log logs = LogFactory.getLog(PTSFMainService.class);
 
     @Autowired
     OralMedicationMapper mapper;
 
-    public String getPTSFBySQL(String sql){
+    public String getPTSFBySQL(DataSource ds, String sql){
         String sf = null;
         SqlStr sqlO = new SqlStr();
         sqlO.setSql(sql);
+        keepOrRoutingDateSource(ds);
         try {
             sf = mapper.getPTSF(sqlO);
         } catch (SQLException throwables) {
